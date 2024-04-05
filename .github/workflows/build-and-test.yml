@@ -31,9 +31,6 @@ jobs:
         if: steps.maui-cache.outputs.cache-hit != 'true'
         run: dotnet workload install maui
 
-      - name: Restore NuGet packages
-        run: dotnet restore --no-cache
-
       - name: Build Client Solution
         run: |
           cd Client
