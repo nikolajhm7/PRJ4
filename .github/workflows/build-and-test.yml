@@ -2,9 +2,12 @@
 name: Build and Test
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch: # to save minutes on the runners
+    inputs:
+      branch:
+        description: 'Branch to build and test'
+        required: true
+        default: 'main'
 
 jobs:
 
