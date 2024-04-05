@@ -8,125 +8,6 @@ on:
 
 jobs:
 
-  generate-cache-keys-windows:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      
-      # Install .NET SDK and generate cache keys
-      - name: Setup .NET SDK and generate cache keys (Windows)
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '8.0.x'
-      - name: Generate cache keys (Windows)
-        run: |
-          echo "::set-output name=cache-keys::maui-workload-windows-${{ hashFiles('Client/Client.csproj') }}-${{ hashFiles('**/*.sln') }}"
-
-      # Remove this job after cache keys are generated
-      - name: Remove this job
-        run: echo "This job is only used to generate cache keys. It will be removed after cache keys are generated."
-      - name: End of job
-        run: exit 0
-    outputs:
-      cache-keys: ${{ steps.generate-cache-keys-windows.outputs.cache-keys }}
-
-  # Temporary job to generate cache keys for Android
-  generate-cache-keys-android:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      
-      # Install .NET SDK and generate cache keys
-      - name: Setup .NET SDK and generate cache keys (Android)
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '8.0.x'
-      - name: Generate cache keys (Android)
-        run: |
-          echo "::set-output name=cache-keys::maui-workload-android-${{ hashFiles('Client/Client.csproj') }}-${{ hashFiles('**/*.sln') }}"
-
-      # Remove this job after cache keys are generated
-      - name: Remove this job
-        run: echo "This job is only used to generate cache keys. It will be removed after cache keys are generated."
-      - name: End of job
-        run: exit 0
-    outputs:
-      cache-keys: ${{ steps.generate-cache-keys-android.outputs.cache-keys }}
-
-  # Temporary job to generate cache keys for macOS
-  generate-cache-keys-macos:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      
-      # Install .NET SDK and generate cache keys
-      - name: Setup .NET SDK and generate cache keys (macOS)
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '8.0.x'
-      - name: Generate cache keys (macOS)
-        run: |
-          echo "::set-output name=cache-keys::maui-workload-macos-${{ hashFiles('Client/Client.csproj') }}-${{ hashFiles('**/*.sln') }}"
-
-      # Remove this job after cache keys are generated
-      - name: Remove this job
-        run: echo "This job is only used to generate cache keys. It will be removed after cache keys are generated."
-      - name: End of job
-        run: exit 0
-    outputs:
-      cache-keys: ${{ steps.generate-cache-keys-macos.outputs.cache-keys }}
-
-  # Temporary job to generate cache keys for MacCatalyst
-  generate-cache-keys-maccatalyst:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      
-      # Install .NET SDK and generate cache keys
-      - name: Setup .NET SDK and generate cache keys (MacCatalyst)
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '8.0.x'
-      - name: Generate cache keys (MacCatalyst)
-        run: |
-          echo "::set-output name=cache-keys::maui-workload-maccatalyst-${{ hashFiles('Client/Client.csproj') }}-${{ hashFiles('**/*.sln') }}"
-
-      # Remove this job after cache keys are generated
-      - name: Remove this job
-        run: echo "This job is only used to generate cache keys. It will be removed after cache keys are generated."
-      - name: End of job
-        run: exit 0
-    outputs:
-      cache-keys: ${{ steps.generate-cache-keys-maccatalyst.outputs.cache-keys }}
-
-  # Temporary job to generate cache keys for iOS
-  generate-cache-keys-ios:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      
-      # Install .NET SDK and generate cache keys
-      - name: Setup .NET SDK and generate cache keys (iOS)
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '8.0.x'
-      - name: Generate cache keys (iOS)
-        run: |
-          echo "::set-output name=cache-keys::maui-workload-ios-${{ hashFiles('Client/Client.csproj') }}-${{ hashFiles('**/*.sln') }}"
-
-      # Remove this job after cache keys are generated
-      - name: Remove this job
-        run: echo "This job is only used to generate cache keys. It will be removed after cache keys are generated."
-      - name: End of job
-        run: exit 0
-    outputs:
-      cache-keys: ${{ steps.generate-cache-keys-ios.outputs.cache-keys }}
-
   build-client:
     runs-on: windows-latest
 
@@ -195,6 +76,10 @@ jobs:
           key: maui-workload-windows-${{ runner.os }}-${{ hashFiles('Client/Client.csproj') }}
           restore-keys: |
             maui-workload-windows-${{ runner.os }}-
+
+      - name: Install .NET MAUI workload
+        if: steps.maui-cache.outputs.cache-hit != 'true'
+        run: dotnet workload install maui
 
       - name: Test Client Solution
         run: |
