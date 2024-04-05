@@ -1,126 +1,3 @@
-# # See https://docs.gitlab.com/ee/ci/testing/unit_test_report_examples.html
-# # Complete reference here: https://docs.gitlab.com/ee/ci/yaml/index.html
-# image: mcr.microsoft.com/dotnet/sdk:8.0
-
-# stages:
-#   - build
-#   - test
-
-# variables:
-#   GIT_STRATEGY: clone
-#   SOLUTION_CLIENT_PATH: "Client/Client.sln"
-#   SOLUTION_SERVER_PATH: "Server/Server.sln"
-
-# # Build the two solutions
-# # build_client:
-# #   stage: build
-# #   script:
-# #     - 'cd Client'
-# #     - 'dotnet clean'
-# #     - 'dotnet build'
-# # build_client:
-# #   stage: build
-# #   script:
-# #     - 'cd Client'
-# #     - 'dotnet workload install maui'
-# #     - 'dotnet restore'
-# #     - 'dotnet build -t:restore -t:build /p:Configuration=Release /p:Platform=AnyCPU'
-
-# build_client:
-#   stage: build
-#   script:
-#     - 'cd Client'
-#     - 'dotnet restore'
-#     - 'dotnet build -t:restore -t:build /p:Configuration=Release /p:Platform=AnyCPU'
-
-# build_server:
-#   stage: build
-#   script:
-#     - 'cd Server'
-#     - 'dotnet clean'
-#     - 'dotnet build'
-
-# # Test the two solutions
-# test_client:
-#   stage: test
-#   script:
-#     - 'cd Client'
-#     - 'dotnet test --collect:"XPlat Code Coverage" --logger:"junit;MethodFormat=Class;FailureBodyFormat=Verbose"'
-
-# test_server:
-#   stage: test
-#   script:
-#     - 'cd Server'
-#     - 'dotnet test --collect:"XPlat Code Coverage" --logger:"junit;MethodFormat=Class;FailureBodyFormat=Verbose"'
-    
-
-# # Coverage report for the two solutions
-# coverage_client:
-#   stage: test
-#   script:
-#     - 'cd Client'
-#     - 'dotnet ~/.nuget/packages/reportgenerator/*/tools/net8.0/ReportGenerator.dll -reports:**/coverage.cobertura.xml -targetdir:coveragereport "-reporttypes:Html;TextSummary"'
-#     - 'cat ./coveragereport/Summary.txt'
-#   artifacts:
-#     when: always
-#     untracked: true
-#     paths:
-#       - coveragereport
-#     reports:
-#       junit:
-#         - ./**/TestResults.xml
-#       coverage_report:
-#         coverage_format: cobertura
-#         path: ./**/coverage.cobertura.xml
-
-# coverage_server:
-#   stage: test
-#   script:
-#     - 'cd Server'
-#     - 'dotnet ~/.nuget/packages/reportgenerator/*/tools/net8.0/ReportGenerator.dll -reports:**/coverage.cobertura.xml -targetdir:coveragereport "-reporttypes:Html;TextSummary"'
-#     - 'cat ./coveragereport/Summary.txt'
-#   artifacts:
-#     when: always
-#     untracked: true
-#     paths:
-#       - coveragereport
-#     reports:
-#       junit:
-#         - ./**/TestResults.xml
-#       coverage_report:
-#         coverage_format: cobertura
-#         path: ./**/coverage.cobertura.xml
-
-# # build-and-test:
-# #   stage: test
-# #   variables:
-# #     GIT_STRATEGY: clone
-# #   script:
-# #     # Build and run tests
-# #     - 'dotnet clean'
-# #     - 'dotnet build'
-# #     # dotnet test will dump coverage.cobertura.xml in tests/MyThing.Tests/TestResults/<number>/coverage.cobertura.xml
-# #     - 'dotnet test --collect:"XPlat Code Coverage" --logger:"junit;MethodFormat=Class;FailureBodyFormat=Verbose"'
-# #     # Create Report using ReportGenerator: https://reportgenerator.io/usage
-# #     # When invoking nuget package directly it will execute from sln root folder
-# #     # The report path is therefore set to ./*/*/*/*/coverage.cobertura.xml#
-# #     - 'dotnet ~/.nuget/packages/reportgenerator/*/tools/net8.0/ReportGenerator.dll -reports:**/coverage.cobertura.xml -targetdir:coveragereport "-reporttypes:Html;TextSummary"'
-# #     # Display Coverage Summary (used by coverage regex to display coverage in GitLab)
-# #     - 'cat ./coveragereport/Summary.txt'
-# #   #  Regex expression applied to job log to subtract number to be displayed in GitLab 
-# #   coverage:  '/Line coverage: (\d+.\d+)/'  
-# # #  coverage:  '/Branch coverage: (\d+)/'  
-# #   artifacts:
-# #     when: always
-# #     untracked: true
-# #     paths:
-# #       - coveragereport
-# #     reports:
-# #       junit:
-# #         - ./**/TestResults.xml
-# #       coverage_report:
-# #         coverage_format: cobertura
-# #         path: ./**/coverage.cobertura.xml
 name: Build and Test
 
 on:
@@ -130,7 +7,7 @@ on:
 
 jobs:
   build-client:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
@@ -139,7 +16,7 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '8.0'
+          dotnet-version: '5.0.x'
 
       - name: Build Client Solution
         run: |
@@ -157,7 +34,7 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '8.0'
+          dotnet-version: '5.0.x'
 
       - name: Build Server Solution
         run: |
@@ -166,7 +43,7 @@ jobs:
           dotnet build -c Release
 
   test-client:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
@@ -175,7 +52,7 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '8.0'
+          dotnet-version: '5.0.x'
 
       - name: Test Client Solution
         run: |
@@ -192,10 +69,9 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '8.0'
+          dotnet-version: '5.0.x'
 
       - name: Test Server Solution
         run: |
           cd Server
           dotnet test --collect:"XPlat Code Coverage" --logger:"junit;MethodFormat=Class;FailureBodyFormat=Verbose"
-
