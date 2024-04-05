@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build-client:
+  buildClientWindows:
     runs-on: windows-latest
 
     steps:
@@ -20,17 +20,21 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore .NET MAUI workload from cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.dotnet/workloads
-          key: maui-workload-windows-${{ runner.os }}-${{ hashFiles('Client/Client.csproj') }}
-          restore-keys: |
-            maui-workload-windows-${{ runner.os }}-
-
       - name: Install .NET MAUI workload
-        if: steps.maui-cache.outputs.cache-hit != 'true'
-        run: dotnet workload install maui
+        shell: pwsh
+        run: |
+          & dotnet nuget locals all --clear
+          & dotnet workload install maui --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
+          & dotnet workload install android ios maccatalyst tvos macos maui wasm-tools maui-maccatalyst --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
+
+
+
+# DET HER KOMMER TIL AT BLIVE BRUGT NAAR VI SAETTER UNITTESTS OP
+#       - name: Build and Run UnitTests
+#         shell: bash
+#         run: |
+#           dotnet build <path to unit test csproj>
+#           dotnet test <path to unit test csproj> --no-build --verbosity normal
 
       - name: Build Client Solution
         run: |
@@ -38,7 +42,51 @@ jobs:
           dotnet restore
           dotnet build -c Release
 
-  build-server:
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: artifacts-windows
+      #     path: |
+      #       **\*.msix
+
+  buildClientAndroid:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install .NET MAUI workload
+        shell: bash
+        run: |
+          dotnet nuget locals all --clear 
+          dotnet workload install maui --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
+          dotnet workload install android ios maccatalyst tvos macos maui wasm-tools --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
+
+
+      - name: Restore nuget packages
+        run: |
+          cd Client
+          dotnet restore Client.sln    
+
+      - name : Build Android App
+        shell: bash
+        run: |
+          cd Client
+          dotnet publish -f:net8.0-android -c:Release
+
+      # to be implemented
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: artifacts-android
+      #     path: |
+      #       Client\*.apk
+
+  buildServer:
     runs-on: ubuntu-latest
 
     steps:
@@ -56,50 +104,50 @@ jobs:
           dotnet restore
           dotnet build -c Release
 
-  test-client:
-    runs-on: windows-latest
-    needs: build-client
+  # test-client:
+  #   runs-on: windows-latest
+  #   needs: build-client
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v2
 
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '8.0.x'
+  #     - name: Setup .NET SDK
+  #       uses: actions/setup-dotnet@v1
+  #       with:
+  #         dotnet-version: '8.0.x'
 
-      - name: Restore .NET MAUI workload from cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.dotnet/workloads
-          key: maui-workload-windows-${{ runner.os }}-${{ hashFiles('Client/Client.csproj') }}
-          restore-keys: |
-            maui-workload-windows-${{ runner.os }}-
+  #     - name: Restore .NET MAUI workload from cache
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: ~/.dotnet/workloads
+  #         key: maui-workload-windows-${{ runner.os }}-${{ hashFiles('Client/Client.csproj') }}
+  #         restore-keys: |
+  #           maui-workload-windows-${{ runner.os }}-
 
-      - name: Install .NET MAUI workload
-        if: steps.maui-cache.outputs.cache-hit != 'true'
-        run: dotnet workload install maui
+  #     - name: Install .NET MAUI workload
+  #       if: steps.maui-cache.outputs.cache-hit != 'true'
+  #       run: dotnet workload install maui
 
-      - name: Test Client Solution
-        run: |
-          cd Client
-          dotnet test --collect:"XPlat Code Coverage" --logger:"junit;MethodFormat=Class;FailureBodyFormat=Verbose"
+  #     - name: Test Client Solution
+  #       run: |
+  #         cd Client
+  #         dotnet test --collect:"XPlat Code Coverage" --logger:"junit;MethodFormat=Class;FailureBodyFormat=Verbose"
 
-  test-server:
-    runs-on: ubuntu-latest
-    needs: build-server
+  # test-server:
+  #   runs-on: ubuntu-latest
+  #   needs: build-server
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v2
 
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '8.0.x'
+  #     - name: Setup .NET SDK
+  #       uses: actions/setup-dotnet@v1
+  #       with:
+  #         dotnet-version: '8.0.x'
 
-      - name: Test Server Solution
-        run: |
-          cd Server
-          dotnet test --collect:"XPlat Code Coverage" --logger:"junit;MethodFormat=Class;FailureBodyFormat=Verbose"
+  #     - name: Test Server Solution
+  #       run: |
+  #         cd Server
+  #         dotnet test --collect:"XPlat Code Coverage" --logger:"junit;MethodFormat=Class;FailureBodyFormat=Verbose"
