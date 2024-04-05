@@ -18,8 +18,21 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '8.0.x'
+
+      - name: Restore .NET MAUI workload from cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.dotnet/workloads
+          key: maui-workload-windows-${{ runner.os }}-${{ hashFiles('Client/Client.csproj') }}
+          restore-keys: |
+            maui-workload-windows-${{ runner.os }}-
+
       - name: Install .NET MAUI workload
+        if: steps.maui-cache.outputs.cache-hit != 'true'
         run: dotnet workload install maui
+
+      - name: Restore NuGet packages
+        run: dotnet restore --no-cache
 
       - name: Build Client Solution
         run: |
@@ -57,6 +70,14 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '8.0.x'
+
+      - name: Restore .NET MAUI workload from cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.dotnet/workloads
+          key: maui-workload-windows-${{ runner.os }}-${{ hashFiles('Client/Client.csproj') }}
+          restore-keys: |
+            maui-workload-windows-${{ runner.os }}-
 
       - name: Test Client Solution
         run: |
