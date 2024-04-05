@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
+             x:Class="Client.UI.Views.LobbyPage"
+             x:DataType="viewModels:LobbyViewModel"
+             Title="LobbyPage">
+    <VerticalStackLayout Spacing="25" Padding="30">
+
+        <!-- Overskrift med game ID -->
+        <Frame CornerRadius="10" Padding="10" HorizontalOptions="FillAndExpand" BackgroundColor="#2196F3">
+            <Label Text="{Binding Lobby.LobbyId, StringFormat='ID: {0}'}" HorizontalTextAlignment="Center" TextColor="White"/>
+        </Frame>
+
+        <Image
+            Source="{Binding Image}"
+            Aspect="AspectFit"
+            HeightRequest="100"
+            WidthRequest="100"/>
+
+        <CollectionView x:Name="PlayersCollectionView" ItemsSource="{Binding Lobby.PlayerNames}" SelectionMode="None" HeightRequest="200">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="2" />
+                <!-- Adjust Span for desired number of columns -->
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame CornerRadius="10" Padding="10" Margin="5" HorizontalOptions="FillAndExpand">
+                        <Label Text="{Binding .}" HorizontalTextAlignment="Center"/>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+
+        <!-- Knapper for at tilføje eller fjerne spiller -->
+        <Button Command="{Binding TestAddPlayerCommand}" Text="Add Player" HorizontalOptions="Center"/>
+
+        <!-- Knapper for at tilbage eller starte spillet -->
+        <Grid VerticalOptions="FillAndExpand">
+            <!-- Use the RowDefinitions to define the space. The '*' means it takes up all available space -->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <!-- Use the ColumnDefinitions to split the grid into two columns -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Place the Tilbage/exit button in the bottom left -->
+            <Button Grid.Row="1" Grid.Column="0" Text="Tilbage/exit" HorizontalOptions="Start"
+                    Command="{Binding GoBackCommand}"/>
+
+            <!-- Place the Start spil button in the bottom right -->
+            <Button Grid.Row="1" Grid.Column="1" Text="Start spil" HorizontalOptions="End" />
+        </Grid>
+    </VerticalStackLayout>
+</ContentPage>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
+             xmlns:behaviors="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
+             x:Class="Client.UI.Views.PlatformPage"
+             x:DataType="viewModels:PlatformViewModel"
+            >
+
+    <Grid
+        RowSpacing="5"
+        Padding="30,0"
+        RowDefinitions="*,*,*,*,*,*"
+        ColumnDefinitions="*,*,*,*"
+        >
+
+        <Label 
+            Text="{Binding Username}"
+            Style="{StaticResource SubHeadline}"
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            HorizontalOptions="Fill"
+            VerticalOptions="Center"
+        />
+        <Button
+            Text="Log ud"
+            Command="{Binding LogOutCommand}"
+            Grid.Row="0"
+            Grid.Column="3"
+            WidthRequest="100"
+            BackgroundColor="Bisque"
+        />
+
+        <Button
+            Text="Host"
+            Grid.Row="2"
+            Grid.Column="1"
+            BackgroundColor="Bisque"
+            WidthRequest="200"
+            Command="{Binding ChangeViewCommand}"
+            IsVisible="{Binding Showhost}"/>
+
+            
+        <Button
+            Text="Join"
+            Grid.Row="2"
+            Grid.Column="2"
+            WidthRequest="200"
+            IsVisible="{Binding Showhost}"
+        />
+        <Button
+            Text="Back"
+            Grid.Row="4"
+            Grid.Column="3"
+            WidthRequest="100"
+            BackgroundColor="Bisque"
+            IsVisible="{Binding GamesShowing}"
+            Command="{Binding ChangeViewCommand}"/>
+        
+        <ImageButton
+            Source="{Binding Games[0].Name}"
+            Aspect="AspectFit"
+            Grid.Row="2"
+            Grid.Column="2"
+            Width="100"
+            IsVisible="{Binding GamesShowing}"
+            IsEnabled="{Binding Games[0].Playable}"
+            Command ="{Binding GoToLobbyCommand}"
+            CommandParameter="{Binding Games[0].Name}"/>
+
+        <ImageButton
+            Source="{Binding Games[1].Name}"
+            Aspect="AspectFit"
+            Grid.Row="2"
+            Grid.Column="1"
+            Width="100"
+            IsVisible="{Binding GamesShowing}"
+            IsEnabled="{Binding Games[1].Playable}"
+            Command ="{Binding GoToLobbyCommand}"
+            CommandParameter="{Binding Games[1].Name}"/>
+
+           
+    </Grid>
+</ContentPage>
