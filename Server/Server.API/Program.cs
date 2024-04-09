@@ -85,7 +85,6 @@ builder.Services.AddSingleton<JwtTokenService>();
 //logging
 builder.Host.UseSerilog((ctx, lc) => {
     lc.ReadFrom.Configuration(ctx.Configuration);
-    lc.Enrich.With(new ServerLogEnricher());
     lc.WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30);
     lc.WriteTo.MSSqlServer(
         connectionString: ctx.Configuration.GetConnectionString("DefaultConnection"),
@@ -216,21 +215,5 @@ void addJWTAuthentication(WebApplicationBuilder builder)
             };
         });
 }
-
-public class ServerLogEnricher : ILogEventEnricher
-{
-    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
-    {
-        var isFromLogsController = logEvent.Properties.ContainsKey("SourceContext") && 
-                                   logEvent.Properties["SourceContext"].ToString().Contains("LogsController");
-
-        if (!isFromLogsController)
-        {
-            var enrichedMessage = $"[Server] {logEvent.MessageTemplate.Text}";
-            logEvent.AddOrUpdateProperty(new LogEventProperty("MessageTemplate", new ScalarValue(enrichedMessage)));
-        }
-    }
-}
-
 
 public partial class Program { }

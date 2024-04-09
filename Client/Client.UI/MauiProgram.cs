@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text;
+using System.Text.RegularExpressions;
 using Client.UI.DTO;
 using Client.UI.ViewModels;
 using Client.UI.Views;
@@ -110,7 +111,7 @@ namespace Client.UI
                     if (await SendLogsToServer(jsonLogContent)) // Send som JSON
                     {
                         
-                        //File.Delete(logFile); // Slet filen, hvis uploadet lykkes
+                        File.Delete(logFile); // Slet filen, hvis uploadet lykkes
                     }
 
                 }
@@ -147,23 +148,46 @@ namespace Client.UI
         
         private static string ConvertLogLinesToJson(IEnumerable<string> logLines)
         {
-            var logEntries = logLines.Select(logLine =>
+            var logEntries = new List<LogEntryDTO>();
+            LogEntryDTO currentEntry = null;
+            var logStartPattern = new Regex(@"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} \+\d{2}:\d{2} \[(\w+)\]");
+
+            foreach (var line in logLines)
             {
-                var parts = logLine.Split(' ');
-                var timestamp = parts[0] + " " + parts[1];
-                var level = parts[2].Trim('[', ']');
-                var message = string.Join(" ", parts.Skip(4));
-
-                return new LogEntryDTO
+                var match = logStartPattern.Match(line);
+                if (match.Success)
                 {
-                    Timestamp = DateTime.Parse(timestamp),
-                    Level = level,
-                    Message = message
-                };
-            }).ToList();
+                    if (currentEntry != null)
+                    {
+                        logEntries.Add(currentEntry);
+                    }
 
-            return JsonConvert.SerializeObject(logEntries); // Konverterer hele listen til JSON
+                    var timestamp = DateTime.Parse(match.Value.Substring(0, 23));
+                    var level = match.Groups[1].Value;
+                    var message = line.Substring(match.Value.Length).TrimStart();
+
+                    currentEntry = new LogEntryDTO
+                    {
+                        Timestamp = timestamp,
+                        Level = level,
+                        Message = message
+                    };
+                }
+                else if (currentEntry != null)
+                {
+                    // Dette er en fortsættelse af den nuværende besked over flere linjer
+                    currentEntry.Message += "\n" + line;
+                }
+            }
+
+            if (currentEntry != null)
+            {
+                logEntries.Add(currentEntry);
+            }
+
+            return JsonConvert.SerializeObject(logEntries);
         }
+
     }
     
     public class AuthenticationHeaderHandler : DelegatingHandler
