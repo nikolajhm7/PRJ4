@@ -9,6 +9,7 @@ using Microsoft.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Maui.Controls;
 using Client.UI.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Client.UI.ViewModels;
 
@@ -16,7 +17,9 @@ public partial class LoginViewModel : ObservableObject
 {
     private readonly HttpClient _httpClient;
     public ICommand LoginOnPlatformCommand { get; }
-    public LoginViewModel(IHttpClientFactory httpClientFactory)
+    
+    private readonly IConfiguration _configuration;
+    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration)
     {
         _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
         
@@ -78,7 +81,7 @@ public partial class LoginViewModel : ObservableObject
 
         if (!string.IsNullOrWhiteSpace(token))
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, App.ApiUrl + "/checkLoginToken");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, _configuration["ConnectionSettings:ApiUrl"] + "/checkLoginToken");
             
             requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             
@@ -97,7 +100,7 @@ public partial class LoginViewModel : ObservableObject
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync(App.ApiUrl + "/login", new { Username = username, Password = password });
+            var response = await _httpClient.PostAsJsonAsync(_configuration["ConnectionSettings:ApiUrl"] + "/login", new { Username = username, Password = password });
 
             if (response.IsSuccessStatusCode)
             {

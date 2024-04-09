@@ -85,12 +85,12 @@ namespace Client.UI
 
             var app = builder.Build();
             
-            Task.Run(() => UploadLogsAsync());
+            Task.Run(() => UploadLogsAsync(configuration));
 
             return app;
         }
 
-        public static async Task UploadLogsAsync()
+        public static async Task UploadLogsAsync(IConfiguration configuration)
         {
             // Tjek om enheden har internetadgang og er på Wi-Fi
             if (!IsNetworkAvailable())
@@ -108,7 +108,7 @@ namespace Client.UI
                 {
                     var logLines = await File.ReadAllLinesAsync(logFile);
                     var jsonLogContent = ConvertLogLinesToJson(logLines); // Konverter til JSON
-                    if (await SendLogsToServer(jsonLogContent)) // Send som JSON
+                    if (await SendLogsToServer(jsonLogContent, configuration)) // Send som JSON
                     {
                         
                         File.Delete(logFile); // Slet filen, hvis uploadet lykkes
@@ -129,14 +129,14 @@ namespace Client.UI
                    Connectivity.Current.ConnectionProfiles.Contains(ConnectionProfile.WiFi);
         }
 
-        private static async Task<bool> SendLogsToServer(string jsonContentString)
+        private static async Task<bool> SendLogsToServer(string jsonContentString, IConfiguration _configuration)
         {
             try
             {
                 var jsonContent = new StringContent(jsonContentString, Encoding.UTF8, "application/json");
 
                 using var httpClient = new HttpClient();
-                var response = await httpClient.PostAsync(App.ApiUrl + "/logs", jsonContent);
+                var response = await httpClient.PostAsync(_configuration["ConnectionSettings:ApiUrl"] + "/logs", jsonContent);
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)

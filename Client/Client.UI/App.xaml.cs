@@ -6,7 +6,6 @@ namespace Client.UI
     public partial class App : Application
     {
         
-        public static string ApiUrl = "http://localhost:5008";
         public IServiceProvider ServiceProvider { get; }
         public App(IServiceProvider serviceProvider)
         {
