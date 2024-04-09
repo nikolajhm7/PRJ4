@@ -23,6 +23,8 @@ namespace Client.UI.ViewModels
         private bool gamesShowing = false;
         [ObservableProperty]
         private bool showhost = true;
+        [ObservableProperty]
+        private string _avatar;
 
         private ObservableCollection<Game> games;
         public ObservableCollection<Game> Games
@@ -31,12 +33,11 @@ namespace Client.UI.ViewModels
             set { SetProperty(ref games, value); }
         }
 
-        //private List<bool> ShowGameList;
-
         private int gameCounter = 0;
         public PlatformViewModel()
         {
             _username = User.Instance.Username;
+            _avatar = User.Instance.avatar;
             InitializeGame();
         }
 
@@ -74,6 +75,11 @@ namespace Client.UI.ViewModels
         public async Task GoToLobby(string s)
         {
             await Shell.Current.GoToAsync($"LobbyPage?Image={s}");
+        }
+        [RelayCommand]
+         public async Task GoToJoin(string s)
+        {
+            await Shell.Current.GoToAsync($"JoinPage");
         }
         
         public partial class Game: ObservableObject

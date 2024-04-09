@@ -29,7 +29,7 @@ public partial class LoginViewModel : ObservableObject
     {
         if (await IsUserAuthenticated())
         {
-            await Shell.Current.GoToAsync("PlatformPage");
+            await Shell.Current.GoToAsync("LobbyPage");
         }
     }
     
@@ -63,7 +63,7 @@ public partial class LoginViewModel : ObservableObject
         
         if (await LoginAsync(LoginUsername, LoginPassword))
         {
-            await Shell.Current.GoToAsync("PlatformPage");
+            await Shell.Current.GoToAsync("LobbyPage");
             
         }
         else
@@ -95,8 +95,6 @@ public partial class LoginViewModel : ObservableObject
     
     public async Task<bool> LoginAsync(string username, string password)
     {
-        
-        return true;
         try
         {
             var response = await _httpClient.PostAsJsonAsync(App.ApiUrl + "/login", new { Username = username, Password = password });

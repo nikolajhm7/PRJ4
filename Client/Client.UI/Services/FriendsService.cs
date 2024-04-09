@@ -1,51 +1,48 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Configuration;
 
 namespace Client.UI.Services
 {
-    public class FriendsService
+    public class FriendsService : ConnectionService
     {
-        private readonly IConnectionService _connectionService;
-
         public event Action<string>? NewFriendRequestEvent;
         public event Action<string>? FriendRequestAcceptedEvent;
         public event Action<string>? NewGameInviteEvent;
         public event Action<string>? FriendRemovedEvent;
 
-        public FriendsService(IConnectionService connectionService)
+        public FriendsService(IConfiguration configuration) : base(configuration["ConnectionSettings:ApiUrl"] + configuration["ConnectionSettings:FriendsEndpoint"])
         {
-            _connectionService = connectionService;
-
-            _connectionService.On<string>("NewFriendRequest", (username) =>
+            On<string>("NewFriendRequest", (username) =>
                 NewFriendRequestEvent?.Invoke(username));
 
-            _connectionService.On<string>("FriendRequestAccepted", (username) =>
+            On<string>("FriendRequestAccepted", (username) =>
                 FriendRequestAcceptedEvent?.Invoke(username));
 
-            _connectionService.On<string>("NewGameInvite", (username) =>
+            On<string>("NewGameInvite", (username) =>
                 NewGameInviteEvent?.Invoke(username));
 
-            _connectionService.On<string>("FriendRemoved", (username) =>
+            On<string>("FriendRemoved", (username) =>
                 FriendRemovedEvent?.Invoke(username));
         }
 
-        public async Task<IConnectionService.ActionResult> SendFriendRequest(string username)
+        public async Task<ActionResult> SendFriendRequest(string username)
         {
-            return await _connectionService.InvokeAsync("SendFriendRequest", username);
+            return await InvokeAsync("SendFriendRequest", username);
         }
 
-        public async Task<IConnectionService.ActionResult> AcceptFriendRequest(string username)
+        public async Task<ActionResult> AcceptFriendRequest(string username)
         {
-            return await _connectionService.InvokeAsync("AcceptFriendRequest", username);
+            return await InvokeAsync("AcceptFriendRequest", username);
         }
 
-        public async Task<IConnectionService.ActionResult> RemoveFriend(string username)
+        public async Task<ActionResult> RemoveFriend(string username)
         {
-            return await _connectionService.InvokeAsync("RemoveFriend", username);
+            return await InvokeAsync("RemoveFriend", username);
         }
 
-        public async Task<IConnectionService.ActionResult> InviteFriend(string username)
+        public async Task<ActionResult> InviteFriend(string username)
         {
-            return await _connectionService.InvokeAsync("InviteFriend", username);
+            return await InvokeAsync("InviteFriend", username);
         }
     }
 }

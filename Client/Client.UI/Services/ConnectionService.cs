@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,19 +9,26 @@ using System.Threading.Tasks;
 
 namespace Client.UI.Services
 {
-    public class ConnectionService : IConnectionService
+    public abstract class ConnectionService
     {
+        public record ActionResult(bool Success, string? Msg);
         private readonly HubConnection _hubConnection;
         public bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
 
-        public ConnectionService()
+        public ConnectionService(string url)
         {
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl(App.ApiUrl + "/socket")
+                .WithUrl(url, options =>
+                {
+                    options.AccessTokenProvider = () => Task.FromResult<string?>(Preferences.Get("auth_token", defaultValue: string.Empty));
+                })
+                .ConfigureLogging(logging =>
+                {
+                    logging.SetMinimumLevel(LogLevel.Debug);
+                    logging.AddDebug();
+                })
                 .Build();
         }
-
-        public HubConnection GetConnection() => _hubConnection;
 
         public async Task ConnectAsync()
         {
@@ -37,17 +46,31 @@ namespace Client.UI.Services
             }
         }
 
-        public async Task<IConnectionService.ActionResult> InvokeAsync(string methodName, params object[] args)
+        public async Task<ActionResult> InvokeAsync(string methodName)
         {
             await ConnectAsync();
 
             if (IsConnected)
             {
-                return await _hubConnection.InvokeAsync<IConnectionService.ActionResult>(methodName, args);
+                return await _hubConnection.InvokeAsync<ActionResult>(methodName);
             }
             else
             {
-                return new IConnectionService.ActionResult(false, "No connection to server.");
+                return new ActionResult(false, "No connection to server.");
+            }
+        }
+
+        public async Task<ActionResult> InvokeAsync(string methodName, params object[] args)
+        {
+            await ConnectAsync();
+
+            if (IsConnected)
+            {
+                return await _hubConnection.InvokeAsync<ActionResult>(methodName, args);
+            }
+            else
+            {
+                return new ActionResult(false, "No connection to server.");
             }
         }
 

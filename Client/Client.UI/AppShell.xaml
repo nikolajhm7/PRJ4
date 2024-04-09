@@ -7,6 +7,18 @@
     Shell.FlyoutBehavior="Disabled"
     Title="Client.UI">
 
+
+    <!--ShellContent
+        Title="Settings"
+        ContentTemplate="{DataTemplate views:SettingsPage}"
+        Route="Settings"
+        /-->
+
+    <ShellContent
+     Title="LoginPage"
+     ContentTemplate="{DataTemplate views:LoginPage}"
+     Route="LoginPage" />
+
     <ShellContent
         Title="Test"
         ContentTemplate="{DataTemplate views:TestPage}"
@@ -17,16 +29,22 @@
         ContentTemplate="{DataTemplate views:PlatformPage}"
         Route="Platform" />
 
+        <ShellContent
+        Title="Join"
+        ContentTemplate="{DataTemplate views:JoinPage}"
+        Route="Join" />
+
     <ShellContent
         Title="Lobby"
         ContentTemplate="{DataTemplate views:LobbyPage}"
         Route="Platform" />
-
 
     <ShellContent
         Title="LoginPage"
         ContentTemplate="{DataTemplate views:LoginPage}"
         Route="LoginPage" />
 
-
 </Shell>
+
+
+

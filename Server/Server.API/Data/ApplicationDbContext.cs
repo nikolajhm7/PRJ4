@@ -17,5 +17,11 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<Game> Games { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options.UseSqlServer(ConnectionString);
+    
+    public async Task DeleteOldLogEntriesAsync()
+    {
+        var sql = "DELETE FROM LogEvents WHERE TimeStamp < DATEADD(day, -30, GETUTCDATE())";
+        await Database.ExecuteSqlRawAsync(sql);
+    }
 
 }

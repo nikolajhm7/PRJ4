@@ -7,6 +7,7 @@ using Client.UI.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls;
+using Serilog;
 
 namespace Client.UI.ViewModels
 {

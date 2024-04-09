@@ -10,8 +10,12 @@ using Server.API.Data;
 using Server.API.Models;
 using Server.API.Hubs;
 using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
 using Server.API.Middleware;
+using Server.API.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMemoryCache();
@@ -73,12 +77,16 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+//Add SignalR
 builder.Services.AddSignalR();
+
+builder.Services.AddSingleton<JwtTokenService>();
 
 //logging
 builder.Host.UseSerilog((ctx, lc) => {
     lc.ReadFrom.Configuration(ctx.Configuration);
-    lc.WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day);
+    lc.Enrich.With(new ServerLogEnricher());
+    lc.WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30);
     lc.WriteTo.MSSqlServer(
         connectionString: ctx.Configuration.GetConnectionString("DefaultConnection"),
         sinkOptions: new MSSqlServerSinkOptions { TableName = "LogEvents", AutoCreateSqlTable = true }
@@ -112,11 +120,18 @@ app.UseMiddleware<ErrorLoggingMiddleware>();
 
 app.UseEndpoints(endpoints =>
 {
-    _ = endpoints.MapHub<LobbyHub>("/lobbyhub");
-    _ = endpoints.MapHub<FriendsHub>("/friendshub");
+    _ = endpoints.MapHub<LobbyHub>(builder.Configuration["ConnectionSettings:LobbyEndpoint"]);
+    _ = endpoints.MapHub<FriendsHub>(builder.Configuration["ConnectionSettings:FriendsEndpoint"]);
 });
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var dbContext = services.GetRequiredService<ApplicationDbContext>();
+    await dbContext.DeleteOldLogEntriesAsync();
+}
 
 app.Run();
 
@@ -142,13 +157,16 @@ void addJWTAuthentication(WebApplicationBuilder builder)
 
     var secretClient = new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
 
-    var jwtKeySecret = "3430350919ced15913aa218deb904200230f035cfcba33e4602ec193db8b6379";//secretClient.GetSecret("JwtKey");
-    var jwtIssuerSecret = "PartyPlayPalaceAPI";//secretClient.GetSecret("JwtIssuer");
-    var jwtAudienceSecret = "PartyPlayPalaceAPI";//secretClient.GetSecret("JwtAudience");
+    var jwtKeySecret = "3430350919ced15913aa218deb904200230f035cfcba33e4602ec193db8b6379";
+    //secretClient.GetSecret("JwtKey")
+    var jwtIssuerSecret = "PartyPlayPalaceAPI"; 
+    //secretClient.GetSecret("JwtIssuer")
+    var jwtAudienceSecret = "PartyPlayPalaceAPI";
+    //secretClient.GetSecret("JwtAudience")
 
-    builder.Configuration["Jwt:Key"] = jwtKeySecret;//.Value.Value;
-    builder.Configuration["Jwt:Issuer"] = jwtIssuerSecret;//.Value.Value;
-    builder.Configuration["Jwt:Audience"] = jwtAudienceSecret;//.Value.Value;
+    builder.Configuration["Jwt:Key"] = jwtKeySecret;
+    builder.Configuration["Jwt:Issuer"] = jwtIssuerSecret;
+    builder.Configuration["Jwt:Audience"] = jwtAudienceSecret;
     
     builder.Services.AddAuthentication(options => {
             options.DefaultAuthenticateScheme =
@@ -182,6 +200,37 @@ void addJWTAuthentication(WebApplicationBuilder builder)
                     Console.WriteLine("Token validated");
                     return Task.CompletedTask;
                 },
+                OnMessageReceived = context =>
+                {
+                    var accessToken = context.Request.Query["access_token"];
+
+                    // Hvis requesten er til en SignalR hub, hent tokenet fra query string
+                    var path = context.HttpContext.Request.Path;
+                    if (!string.IsNullOrEmpty(accessToken) &&
+                        path.StartsWithSegments("/hubs")) // Angiv stien til dine hubs
+                    {
+                        context.Token = accessToken;
+                    }
+                    return Task.CompletedTask;
+                }
             };
         });
 }
+
+public class ServerLogEnricher : ILogEventEnricher
+{
+    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
+    {
+        var isFromLogsController = logEvent.Properties.ContainsKey("SourceContext") && 
+                                   logEvent.Properties["SourceContext"].ToString().Contains("LogsController");
+
+        if (!isFromLogsController)
+        {
+            var enrichedMessage = $"[Server] {logEvent.MessageTemplate.Text}";
+            logEvent.AddOrUpdateProperty(new LogEventProperty("MessageTemplate", new ScalarValue(enrichedMessage)));
+        }
+    }
+}
+
+
+public partial class Program { }

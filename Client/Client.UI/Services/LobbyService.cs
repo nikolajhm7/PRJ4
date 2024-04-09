@@ -1,50 +1,51 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using Client.UI.DTO;
+using Microsoft.Extensions.Configuration;
 
 namespace Client.UI.Services
 {
-    public class LobbyService
+    public class LobbyService : ConnectionService
     {
-
-        private readonly IConnectionService _connectionService;
 
         public event Action<ConnectedUserDTO>? UserJoinedLobbyEvent;
         public event Action<ConnectedUserDTO>? UserLeftLobbyEvent;
         public event Action? GameStartedEvent;
+        public event Action? LobbyClosedEvent;
 
-        public LobbyService(IConnectionService connectionService)
+        public LobbyService(IConfiguration configuration) : base(configuration["ConnectionSettings:ApiUrl"] + configuration["ConnectionSettings:LobbyEndpoint"])
         {
-            _connectionService = connectionService;
-
-            _connectionService.On<ConnectedUserDTO>("UserJoinedLobby", (user) =>
+            On<ConnectedUserDTO>("UserJoinedLobby", (user) =>
                 UserJoinedLobbyEvent?.Invoke(user));
 
-            _connectionService.On<ConnectedUserDTO>("UserLeftLobby", (user) =>
+            On<ConnectedUserDTO>("UserLeftLobby", (user) =>
                 UserLeftLobbyEvent?.Invoke(user));
 
-            _connectionService.On("GameStarted", () =>
+            On("GameStarted", () =>
                 GameStartedEvent?.Invoke());
+
+            On("LobbyClosed", () =>
+                LobbyClosedEvent?.Invoke());
         }
 
-        public async Task<IConnectionService.ActionResult> CreateLobbyAsync()
+        public async Task<ActionResult> CreateLobbyAsync()
         {
-                return await _connectionService.InvokeAsync("CreateLobby");
+                return await InvokeAsync("CreateLobby");
         }
 
-        public async Task<IConnectionService.ActionResult> JoinLobbyAsync(string lobbyId)
+        public async Task<ActionResult> JoinLobbyAsync(string lobbyId)
         {
-            return await _connectionService.InvokeAsync("JoinLobby", lobbyId);
+            return await InvokeAsync("JoinLobby", lobbyId);
 
         }
 
-        public async Task<IConnectionService.ActionResult> LeaveLobbyAsync(string lobbyId)
+        public async Task<ActionResult> LeaveLobbyAsync(string lobbyId)
         {
-            return await _connectionService.InvokeAsync("LeaveLobby", lobbyId);
+            return await InvokeAsync("LeaveLobby", lobbyId);
         }
 
-        public async Task<IConnectionService.ActionResult> StartGameAsync(string lobbyId)
+        public async Task<ActionResult> StartGameAsync(string lobbyId)
         {
-            return await _connectionService.InvokeAsync("StartGame", lobbyId);
+            return await InvokeAsync("StartGame", lobbyId);
         }
     }
 }

@@ -15,7 +15,8 @@ namespace Client.UI.Models
 
         private User()
         {
-            games.Add("hangman.png");
+            games.Add(Path.GetFileNameWithoutExtension("/Resources/Images/hangman.png"+".png"));
+            avatar = "charizard.png";
         }
 
         public static User Instance
@@ -44,6 +45,7 @@ namespace Client.UI.Models
 
         public ObservableCollection<string> games { get; set; } = new ObservableCollection<string>();
         public ObservableCollection<string> friends { get; set; } = new ObservableCollection<string>();
+        public string avatar { get; set; }
         public double coins { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace Client.UI
 
             MainPage = new AppShell();
 
-
+            
         }
     }
 }

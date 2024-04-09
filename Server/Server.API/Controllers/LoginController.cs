@@ -7,26 +7,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Server.API.DTO;
 using Server.API.Models;
+using Server.API.Services;
+using System.Text.RegularExpressions;
 
 public class LoginController : ControllerBase
 {
-    private readonly string? _jwtKey;
-    private readonly string? _jwtIssuer;
-    private readonly string? _jwtAudience;
+
     private readonly ILogger<LoginController> _logger;
-
     private readonly UserManager<User> _userManager;
-    
     private readonly IMemoryCache _memoryCache;
+    private readonly JwtTokenService _jwtTokenService;
 
-    public LoginController(IConfiguration configuration, UserManager<User> userManager, ILogger<LoginController> logger, IMemoryCache memoryCache)
+    public LoginController(UserManager<User> userManager, ILogger<LoginController> logger, IMemoryCache memoryCache, JwtTokenService jwtTokenService)
     {
-        _jwtKey = configuration["Jwt:Key"];
-        _jwtIssuer = configuration["Jwt:Issuer"];
-        _jwtAudience = configuration["Jwt:Audience"];
         _userManager = userManager;
         _logger = logger;
         _memoryCache = memoryCache;
+        _jwtTokenService = jwtTokenService;
     }
 
     [HttpPost("login")]
@@ -58,23 +55,36 @@ public class LoginController : ControllerBase
             _logger.LogWarning("Incorrect password attempt for user: {UserName}", user.UserName);
             return Unauthorized("Wrong username or password");
         }
-
-        var signingCredentials = new SigningCredentials(
-            new SymmetricSecurityKey(
-                System.Text.Encoding.UTF8.GetBytes(_jwtKey)),
-            SecurityAlgorithms.HmacSha256);
-        var claims = new List<Claim>();
-        claims.Add(new Claim(ClaimTypes.Name, user.UserName));
-        var jwtObject = new JwtSecurityToken(
-            issuer: _jwtIssuer,
-            audience: _jwtAudience,
-            claims: claims,
-            expires: DateTime.Now.AddSeconds(300),
-            signingCredentials: signingCredentials);
-        var jwtString = new JwtSecurityTokenHandler()
-            .WriteToken(jwtObject);
+        
+        var jwtString = _jwtTokenService.GenerateToken(user.UserName);
         
         _logger.LogInformation("User {UserName} logged in successfully.", user.UserName);
+        return StatusCode(StatusCodes.Status200OK, jwtString);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("login-as-guest")]
+    public IActionResult LoginAsGuest([FromBody] GuestLoginDTO model)
+    {
+        if (string.IsNullOrWhiteSpace(model.GuestName))
+        {
+            _logger.LogWarning("Guest login attempt without a name.");
+            return BadRequest("Guest name is required.");
+        }
+
+        string pattern = @"^[A-Za-z0-9]{2,20}$";        
+
+        if (!Regex.IsMatch(model.GuestName, pattern))
+        {
+            _logger.LogWarning("Guest login attempt with illegal name.");
+            return BadRequest("Guest name must be 2-20 characters long, and only contain letters and numbers.");
+        }
+
+        _logger.LogInformation("Guest {GuestName} is attempting to log in.", model.GuestName);
+
+        var jwtString = _jwtTokenService.GenerateToken(model.GuestName, true);
+
+        _logger.LogInformation("Guest {GuestName} logged in successfully.", model.GuestName);
         return StatusCode(StatusCodes.Status200OK, jwtString);
     }
 

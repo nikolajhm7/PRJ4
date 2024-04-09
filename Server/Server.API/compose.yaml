@@ -1,0 +1,16 @@
+﻿name: projekt-sql-server
+services:
+  db:
+    container_name: PartyPlayPalaceDB
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    user: root
+    volumes:
+      - sql-data:/var/opt/mssql/data
+    environment:
+      MSSQL_SA_PASSWORD: "abc123AB"
+      ACCEPT_EULA: "Y"
+    ports:
+    - "1433:1433"
+volumes:
+  sql-data:
+    name: a1sqlvolume

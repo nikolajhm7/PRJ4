@@ -52,5 +52,11 @@ public class UserController : ControllerBase
     
         return Ok(new { message = "User created successfully." });
     }
+
+    //httpget
+
+    //httpput
+
+    //httpdelete
     
 }

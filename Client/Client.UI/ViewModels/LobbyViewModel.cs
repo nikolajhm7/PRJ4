@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using Client.UI.Models;
 using Client.UI.Services;
+using System.Diagnostics;
 
 
 
@@ -17,7 +18,7 @@ namespace Client.UI.ViewModels
     [QueryProperty("Image", "Image")]
     public partial class LobbyViewModel : ObservableObject
     {
-        private readonly LobbyService lobbyService;
+        private readonly LobbyService _lobbyService;
 
         [ObservableProperty]
         private string image;
@@ -27,16 +28,25 @@ namespace Client.UI.ViewModels
 
         public LobbyViewModel(LobbyService lobbyService)
         {
-            this.lobbyService = lobbyService;
-            
-            
+            _lobbyService = lobbyService;
+
+            Debug.WriteLine("Initializing lobby");
+            InitializeLobby();
+
             // Example initialization, replace with actual dynamic data loading
             Lobby.PlayerNames.Add("Player 1");
             Lobby.PlayerNames.Add("Player 2");
             Lobby.PlayerNames.Add("Player 3");
             Lobby.LobbyId = "12345"; // Example Lobby ID
-            Console.WriteLine(Image);
+            System.Console.WriteLine(Image);
         }
+
+        private async void InitializeLobby() 
+        {
+            var Message = await this._lobbyService.CreateLobbyAsync();
+            HandleActionResult(Message);
+        }
+
 
         [RelayCommand]
         public async Task TestAddPlayer()
@@ -48,6 +58,20 @@ namespace Client.UI.ViewModels
         async Task GoBack()
         {
             await Shell.Current.GoToAsync("..");
+        }
+
+        //Handle result of different functions, and error log if neccesary:
+        private void HandleActionResult(ConnectionService.ActionResult message)
+        {
+            if (!message.Success)
+            {
+                // Give the user feedback about the error
+                System.Console.WriteLine("Creating a lobby failed: msg:", message.Msg);
+            }
+            else
+            {
+                System.Console.WriteLine("This is your lobby id:", message.Msg);
+            }
         }
     }
 }
