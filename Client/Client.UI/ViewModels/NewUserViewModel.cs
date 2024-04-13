@@ -81,7 +81,7 @@ namespace Client.UI.ViewModels
                 await Shell.Current.DisplayAlert("Fejl", "Email skal udfyldes", "OK");
                 return;
             }
-            else (await Check(_username, _password,_email))
+            else (await Check(_username, _password,_email));
             {
 
             }

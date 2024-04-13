@@ -6,7 +6,8 @@
 
 
     <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-        <Entry Placeholder="Enter LobbyId"/>
+        <Entry Placeholder="Enter LobbyId"
+            Text="{Binding LobbyId}"/>
         <Button Text="Join"
             Command ="{Binding GoToLobbyCommand}"/>
     </StackLayout>

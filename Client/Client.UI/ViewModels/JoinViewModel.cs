@@ -15,13 +15,16 @@ namespace Client.UI.ViewModels
 {
     public partial class JoinViewModel : ObservableObject
     {
+        private readonly LobbyService _lobbyService;
+        [ObservableProperty]
+        private string _lobbyId;
         public JoinViewModel()
         { 
         }
         [RelayCommand]
        public async Task GoToLobby()
         {
-            await Shell.Current.GoToAsync($"LobbyPage");
+           await _lobbyService.JoinLobbyAsync(_lobbyId);
         }
     }
 }
