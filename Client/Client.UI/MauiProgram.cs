@@ -54,8 +54,7 @@ namespace Client.UI
 
             builder.Services.AddSingleton<LoginViewModel>();
             builder.Services.AddSingleton<LoginPage>();
-            // Singletons er når der kun er 1 indstans som vi navigere tilbage til og som består
-
+            
             builder.Services.AddTransient<TestViewModel>();
             builder.Services.AddTransient<TestPage>();
 
@@ -65,18 +64,14 @@ namespace Client.UI
             builder.Services.AddTransient<SettingsPage>();
             builder.Services.AddTransient<SettingsViewModel>();
 
-            builder.Services.AddTransient<JoinPage>();
-            builder.Services.AddTransient<JoinViewModel>();
+            builder.Services.AddSingleton<JoinPage>();
+            builder.Services.AddSingleton<JoinViewModel>();
 
             builder.Services.AddTransient<NewUserPage>();
             builder.Services.AddTransient<NewUserViewModel>();
 
-            // Når det er Transient betyder det at den laver nye kopier hver gang man navigere til siden
-            // All sider som er midlertidige skal være Transient
-
             builder.Services.AddSingleton<LobbyService>();
             builder.Services.AddSingleton<FriendsService>();
-
 
             builder.Services.AddTransient<AuthenticationHeaderHandler>();
             builder.Services.AddHttpClient("ApiHttpClient")

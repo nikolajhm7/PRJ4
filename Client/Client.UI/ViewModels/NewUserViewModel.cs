@@ -64,26 +64,27 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         public async Task MakeNewUser()
         {
-            if (string.IsNullOrWhiteSpace(_username))
+            if (string.IsNullOrWhiteSpace(Username))
             {
                 await Shell.Current.DisplayAlert("Fejl", "Brugernavn skal udfyldes", "OK");
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(_password))
+            if (string.IsNullOrWhiteSpace(Password))
             {
                 await Shell.Current.DisplayAlert("Fejl", "Adgangskode skal udfyldes", "OK");
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(_email))
+            if (string.IsNullOrWhiteSpace(Email))
             {
                 await Shell.Current.DisplayAlert("Fejl", "Email skal udfyldes", "OK");
                 return;
             }
-            else (await Check(_username, _password,_email));
+            else if (await Check(_username, _password, _email))
             {
-
+                await Shell.Current.DisplayAlert("Succses", $"{Username} was created","OK");
+                return;
             }
         }
     }
