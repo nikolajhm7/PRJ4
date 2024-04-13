@@ -8,11 +8,10 @@
     Title="Client.UI">
 
 
-    <!--ShellContent
-        Title="Settings"
-        ContentTemplate="{DataTemplate views:SettingsPage}"
-        Route="Settings"
-        /-->
+    <ShellContent
+        Title="NewUserPage"
+        ContentTemplate="{DataTemplate views:NewUserPage}"
+        Route="NewUserPage"/>
 
     <ShellContent
      Title="LoginPage"

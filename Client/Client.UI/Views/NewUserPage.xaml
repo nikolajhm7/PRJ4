@@ -2,9 +2,9 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
+             xmlns:behaviors="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
              x:Class="Client.UI.Views.NewUserPage"
-             x:DataType="viewModels:NewUserViewModel"
-             Title="MakeNewUserPage">
+             x:DataType="viewModels:NewUserViewModel">
     <VerticalStackLayout
         Padding="30,0"
         Spacing="25">
@@ -21,10 +21,10 @@
             SemanticProperties.Description="Party Play Palace" />
 
         <Entry Placeholder="Enter username"
-               Text="{Binding LoginUsername}" />
+               Text="{Binding Username}" />
 
         <Entry Placeholder="Enter password"
-               Text="{Binding LoginPassword}" />
+               Text="{Binding Password}" />
 
         <Entry Placeholder="Email"
                Text="{Binding Email}" />
