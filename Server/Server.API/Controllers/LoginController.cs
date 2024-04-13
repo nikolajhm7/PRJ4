@@ -62,7 +62,6 @@ public class LoginController : ControllerBase
         return StatusCode(StatusCodes.Status200OK, jwtString);
     }
 
-    [AllowAnonymous]
     [HttpPost("login-as-guest")]
     public IActionResult LoginAsGuest([FromBody] GuestLoginDTO model)
     {
@@ -91,6 +90,14 @@ public class LoginController : ControllerBase
     [Authorize]
     [HttpPost("checkLoginToken")]
     public IActionResult CheckLoginToken()
+    {
+        Console.WriteLine("Token is valid");
+        return Ok("Token is valid");
+    }
+
+    [Authorize(Policy = "Guest+")]
+    [HttpPost("checkGuestToken")]
+    public IActionResult CheckGuestToken()
     {
         Console.WriteLine("Token is valid");
         return Ok("Token is valid");
