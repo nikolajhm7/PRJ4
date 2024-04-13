@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Server.API.Models;
 using Server.API.DTO;
+using Server.API.Services;
 using Microsoft.AspNetCore.Authorization;
-using Server.API.Data;
-using System.Text.RegularExpressions;
 
 namespace Server.API.Hubs
 {
@@ -13,29 +12,11 @@ namespace Server.API.Hubs
         public record ActionResult(bool Success, string? Msg);
 
         private static readonly Dictionary<string, Lobby> lobbies = [];
-        private static AsyncLocal<Random> randomLocal = new AsyncLocal<Random>(); // Tilfældig lobby ID
         private readonly ILogger<LobbyHub> _logger;
 
         public LobbyHub(ILogger<LobbyHub> logger)
         {
             _logger = logger;
-        }
-
-        public static async Task<string> GenerateRandomLobbyIDAsync()
-        {
-            Random random = GetThreadRandom();
-            await Task.Delay(100); // Simulate some asynchronous operation
-            int randomNumber = random.Next(0, 999999);
-            return randomNumber.ToString("D6"); // to make the correct format
-        }
-        // Support function for GenerateRandomLobbyIDAsync
-        private static Random GetThreadRandom()
-        {
-            if (randomLocal.Value == null)
-            {
-                randomLocal.Value = new Random(); // Create a new Random instance for this thread
-            }
-            return randomLocal.Value;
         }
 
         public async Task<ActionResult> CreateLobby()
@@ -48,7 +29,7 @@ namespace Server.API.Hubs
             }
 
             _logger.LogDebug("Start generation of random lobby ID.");
-            var lobbyId = await GenerateRandomLobbyIDAsync();
+            var lobbyId = IDGenerator.GenerateRandomLobbyID();
             _logger.LogDebug("Random lobby ID {LobbyId} generated.", lobbyId);
 
             var lobby = new Lobby(lobbyId, Context.ConnectionId);
@@ -61,6 +42,7 @@ namespace Server.API.Hubs
             return new ActionResult(true, lobbyId);
         }
 
+        [Authorize(Policy = "Guest+")]
         public async Task<ActionResult> JoinLobby(string lobbyId)
         {
             _logger.LogDebug("Attempting to join lobby {LobbyId} by user {UserName}.", lobbyId, Context.User?.Identity?.Name);
@@ -90,6 +72,7 @@ namespace Server.API.Hubs
             }
         }
 
+        [Authorize(Policy = "Guest+")]
         public async Task<ActionResult> LeaveLobby(string lobbyId)
         {
             _logger.LogDebug("Attempting to leave lobby {LobbyId} by user {UserName}.", lobbyId, Context.User?.Identity?.Name);
@@ -146,6 +129,7 @@ namespace Server.API.Hubs
             return new ActionResult(false, "Lobby does not exist.");
         }
 
+        [Authorize(Policy = "Guest+")]
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             _logger.LogDebug("Handling disconnect of user {UserName}.", Context.User?.Identity?.Name);

@@ -15,6 +15,7 @@ using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
 using Server.API.Middleware;
 using Server.API.Services;
+using Microsoft.AspNetCore.Authorization;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -214,6 +215,18 @@ void addJWTAuthentication(WebApplicationBuilder builder)
                 }
             };
         });
+
+    builder.Services.AddAuthorization(options =>
+    {
+        options.DefaultPolicy = new AuthorizationPolicyBuilder()
+            .RequireAuthenticatedUser()
+            .RequireRole("User") // Angiv de roller, som standard autentificerede brugere skal have
+            .Build();
+
+        options.AddPolicy("Guest+", policy =>
+            policy.RequireAssertion(context =>
+                context.User.IsInRole("Guest") || context.User.IsInRole("User")));
+    });
 }
 
 public partial class Program { }
