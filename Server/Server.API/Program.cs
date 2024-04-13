@@ -25,7 +25,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     // tilføjer muligheden for at autentificere med JWT -->
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-    
+
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -65,13 +65,13 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
         options.Password.RequireUppercase = true;
         options.Password.RequireNonAlphanumeric = false;
         options.Password.RequiredLength = 8;
-        
+
         options.User.RequireUniqueEmail = true;
         options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        
+
         options.SignIn.RequireConfirmedEmail = true;
         options.SignIn.RequireConfirmedPhoneNumber = false;
-        
+
         options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
         options.Lockout.AllowedForNewUsers = true;
     })
@@ -83,7 +83,8 @@ builder.Services.AddSignalR();
 builder.Services.AddSingleton<JwtTokenService>();
 
 //logging
-builder.Host.UseSerilog((ctx, lc) => {
+builder.Host.UseSerilog((ctx, lc) =>
+{
     lc.ReadFrom.Configuration(ctx.Configuration);
     lc.WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30);
     lc.WriteTo.MSSqlServer(
@@ -137,7 +138,7 @@ app.Run();
 
 void addJWTAuthentication(WebApplicationBuilder builder)
 {
-    
+
     /*
      // Tilføjer konfiguration
        var azureAdConfig = builder.Configuration.GetSection("AzureAd");
@@ -151,14 +152,14 @@ void addJWTAuthentication(WebApplicationBuilder builder)
        var keyVaultUrl = builder.Configuration["AzureKeyVault:Endpoint"];
        var secretClient = new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
      */
-    
+
     var keyVaultUrl = builder.Configuration["AzureKeyVault:Endpoint"];
 
     var secretClient = new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
 
     var jwtKeySecret = "3430350919ced15913aa218deb904200230f035cfcba33e4602ec193db8b6379";
     //secretClient.GetSecret("JwtKey")
-    var jwtIssuerSecret = "PartyPlayPalaceAPI"; 
+    var jwtIssuerSecret = "PartyPlayPalaceAPI";
     //secretClient.GetSecret("JwtIssuer")
     var jwtAudienceSecret = "PartyPlayPalaceAPI";
     //secretClient.GetSecret("JwtAudience")
@@ -166,15 +167,16 @@ void addJWTAuthentication(WebApplicationBuilder builder)
     builder.Configuration["Jwt:Key"] = jwtKeySecret;
     builder.Configuration["Jwt:Issuer"] = jwtIssuerSecret;
     builder.Configuration["Jwt:Audience"] = jwtAudienceSecret;
-    
-    builder.Services.AddAuthentication(options => {
-            options.DefaultAuthenticateScheme =
-            options.DefaultChallengeScheme = 
-            options.DefaultForbidScheme =
-            options.DefaultScheme =
-            options.DefaultSignInScheme = 
-            options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
+
+    builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme =
+        options.DefaultChallengeScheme =
+        options.DefaultForbidScheme =
+        options.DefaultScheme =
+        options.DefaultSignInScheme =
+        options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
         .AddJwtBearer(options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters

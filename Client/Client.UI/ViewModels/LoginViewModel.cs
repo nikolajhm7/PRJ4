@@ -17,39 +17,39 @@ public partial class LoginViewModel : ObservableObject
 {
     private readonly HttpClient _httpClient;
     public ICommand LoginOnPlatformCommand { get; }
-    
+
     private readonly IConfiguration _configuration;
     public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration)
     {
         _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
-        
+
         LoginOnPlatformCommand = new Command(async () => await LoginOnPlatform());
-        
+
         IsAlreadyAuthenticated();
     }
-    
+
     private async void IsAlreadyAuthenticated()
     {
         if (await IsUserAuthenticated())
         {
-            await Shell.Current.GoToAsync("LobbyPage");
+            await Shell.Current.GoToAsync("PlatformPage");
         }
     }
-    
+
     private string _loginUsername = string.Empty;
     public string LoginUsername
     {
         get => _loginUsername;
         set => SetProperty(ref _loginUsername, value);
     }
-    
+
     private string _loginPassword = string.Empty;
     public string LoginPassword
     {
         get => _loginPassword;
         set => SetProperty(ref _loginPassword, value);
     }
-    
+
     public async Task LoginOnPlatform()
     {
 
@@ -63,18 +63,18 @@ public partial class LoginViewModel : ObservableObject
             await Shell.Current.DisplayAlert("Fejl", "Adgangskode skal udfyldes", "OK");
             return;
         }
-        
+
         if (await LoginAsync(LoginUsername, LoginPassword))
         {
-            await Shell.Current.GoToAsync("LobbyPage");
-            
+            User.Instance.Username = LoginUsername;
+            await Shell.Current.GoToAsync("PlatformPage");
         }
         else
         {
             await Shell.Current.DisplayAlert("Fejl", "Login fejlede", "OK");
         }
     }
-    
+
     private async Task<bool> IsUserAuthenticated()
     {
         var token = Preferences.Get("auth_token", defaultValue: string.Empty);
@@ -82,9 +82,9 @@ public partial class LoginViewModel : ObservableObject
         if (!string.IsNullOrWhiteSpace(token))
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, _configuration["ConnectionSettings:ApiUrl"] + "/checkLoginToken");
-            
+
             requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            
+
             var response = await _httpClient.SendAsync(requestMessage);
 
             if (response.IsSuccessStatusCode)
@@ -95,7 +95,7 @@ public partial class LoginViewModel : ObservableObject
 
         return false;
     }
-    
+
     public async Task<bool> LoginAsync(string username, string password)
     {
         try
@@ -105,13 +105,13 @@ public partial class LoginViewModel : ObservableObject
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponseToken = (await response.Content.ReadAsStringAsync()).Trim();
-                
+
                 if (!string.IsNullOrWhiteSpace(jsonResponseToken))
                 {
                     Preferences.Set("auth_token", jsonResponseToken);
                     return true;
                 }
-                    
+
             }
             else
             {

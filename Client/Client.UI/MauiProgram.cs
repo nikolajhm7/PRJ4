@@ -68,6 +68,9 @@ namespace Client.UI
             builder.Services.AddTransient<JoinPage>();
             builder.Services.AddTransient<JoinViewModel>();
 
+            builder.Services.AddTransient<NewUserPage>();
+            builder.Services.AddTransient<NewUserViewModel>();
+
             // Når det er Transient betyder det at den laver nye kopier hver gang man navigere til siden
             // All sider som er midlertidige skal være Transient
 
