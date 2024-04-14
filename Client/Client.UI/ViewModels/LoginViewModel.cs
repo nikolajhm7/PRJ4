@@ -29,9 +29,7 @@ public partial class LoginViewModel : ObservableObject
         _configuration = configuration;
         
         _logger = logger;
-
-        LoginOnPlatformCommand = new Command(async () => await LoginOnPlatform());
-
+        
         IsAlreadyAuthenticated();
     }
 
