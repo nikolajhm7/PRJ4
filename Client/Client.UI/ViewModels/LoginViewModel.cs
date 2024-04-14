@@ -9,6 +9,7 @@ using Microsoft.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Maui.Controls;
 using Client.UI.Models;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
 
 namespace Client.UI.ViewModels;
@@ -16,15 +17,11 @@ namespace Client.UI.ViewModels;
 public partial class LoginViewModel : ObservableObject
 {
     private readonly HttpClient _httpClient;
-    public ICommand LoginOnPlatformCommand { get; }
 
     private readonly IConfiguration _configuration;
     public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration)
     {
         _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
-
-        LoginOnPlatformCommand = new Command(async () => await LoginOnPlatform());
-
         IsAlreadyAuthenticated();
     }
 
@@ -35,21 +32,13 @@ public partial class LoginViewModel : ObservableObject
             await Shell.Current.GoToAsync("PlatformPage");
         }
     }
-
+    [ObservableProperty]
     private string _loginUsername = string.Empty;
-    public string LoginUsername
-    {
-        get => _loginUsername;
-        set => SetProperty(ref _loginUsername, value);
-    }
-
+   
+    [ObservableProperty]
     private string _loginPassword = string.Empty;
-    public string LoginPassword
-    {
-        get => _loginPassword;
-        set => SetProperty(ref _loginPassword, value);
-    }
 
+    [RelayCommand]
     public async Task LoginOnPlatform()
     {
 
