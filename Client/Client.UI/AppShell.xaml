@@ -38,10 +38,6 @@
         ContentTemplate="{DataTemplate views:LobbyPage}"
         Route="Platform" />
 
-    <ShellContent
-        Title="LoginPage"
-        ContentTemplate="{DataTemplate views:LoginPage}"
-        Route="LoginPage" />
 
 </Shell>
 

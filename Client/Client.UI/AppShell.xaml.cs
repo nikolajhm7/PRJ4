@@ -8,6 +8,7 @@ namespace Client.UI
         {
             InitializeComponent();
             Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
+            Routing.RegisterRoute(nameof(NewUserPage), typeof(NewUserPage));
             Routing.RegisterRoute(nameof(PlatformPage), typeof(PlatformPage));
             Routing.RegisterRoute(nameof(TestPage), typeof(TestPage));
             Routing.RegisterRoute(nameof(LobbyPage), typeof(LobbyPage));
