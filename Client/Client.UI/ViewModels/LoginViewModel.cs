@@ -37,10 +37,10 @@ public partial class LoginViewModel : ObservableObject
 
     private async void IsAlreadyAuthenticated()
     {
-        /*if (await IsUserAuthenticated())
+        if (await IsUserAuthenticated())
         {
             await Shell.Current.GoToAsync("PlatformPage");
-        }*/
+        }
     }
 
     private string _loginUsername = string.Empty;
