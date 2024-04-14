@@ -8,6 +8,10 @@
     Shell.FlyoutBehavior="Disabled"
     Title="Client.UI">
 
+    <ShellContent
+        Title="LoginPage"
+        ContentTemplate="{DataTemplate views:LoginPage}"
+        Route="LoginPage" />
 
     <ShellContent
         Title="NewUserPage"
@@ -34,10 +38,7 @@
         ContentTemplate="{DataTemplate views:LobbyPage}"
         Route="Platform" />
     
-    <ShellContent
-        Title="LoginPage"
-        ContentTemplate="{DataTemplate views:LoginPage}"
-        Route="LoginPage" />
+  
 
 
 </Shell>

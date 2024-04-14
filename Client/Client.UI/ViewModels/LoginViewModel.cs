@@ -30,8 +30,6 @@ public partial class LoginViewModel : ObservableObject
         
         _logger = logger;
 
-        LoginOnPlatformCommand = new Command(async () => await LoginOnPlatform());
-
         IsAlreadyAuthenticated();
     }
 
@@ -47,6 +45,12 @@ public partial class LoginViewModel : ObservableObject
    
     [ObservableProperty]
     private string _loginPassword = string.Empty;
+
+    [RelayCommand]
+    public async Task GoToNewUser()
+    {
+        await Shell.Current.GoToAsync("NewUserPage");
+    }
 
     [RelayCommand]
     public async Task LoginOnPlatform()

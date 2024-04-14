@@ -21,13 +21,14 @@ namespace Client.UI.ViewModels
         public NewUserViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
+            _configuration = configuration;
         }
 
         public async Task<bool> Check(string username, string password, string email)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync(_configuration["ConnectionSettings:ApiUrl"] + "/makeNewUser", new { username = username, email = email , password = password});
+                var response = await _httpClient.PostAsJsonAsync(_configuration["ConnectionSettings:ApiUrl"] + "/makeNewUser", new { UserName = username, Email = email , Password = password});
                 if (response.IsSuccessStatusCode)
                 {
                     return true;
@@ -84,7 +85,7 @@ namespace Client.UI.ViewModels
             if (await Check(Username, Password, Email))
             {
                 await Shell.Current.DisplayAlert("Succses", $"{Username} was created", "OK");
-                await Shell.Current.GoToAsync("LoginPage");
+                //await Shell.Current.GoToAsync("LoginPage");
                 return;
             }
             else
