@@ -11,6 +11,7 @@ using Microsoft.Maui.Controls;
 using Client.UI.Models;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Client.UI.ViewModels;
 
@@ -19,9 +20,18 @@ public partial class LoginViewModel : ObservableObject
     private readonly HttpClient _httpClient;
 
     private readonly IConfiguration _configuration;
-    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+    
+    private readonly ILogger<LoginViewModel> _logger;
+    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger)
     {
         _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
+        
+        _configuration = configuration;
+        
+        _logger = logger;
+
+        LoginOnPlatformCommand = new Command(async () => await LoginOnPlatform());
+
         IsAlreadyAuthenticated();
     }
 
@@ -106,20 +116,22 @@ public partial class LoginViewModel : ObservableObject
             {
                 // Log fejlresponsen for diagnosticeringsformål
                 var errorResponse = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Login fejlede med status kode {response.StatusCode}: {errorResponse}");
+                    
+                _logger.LogError($"Login fejlede med status kode {response.StatusCode}: {errorResponse}");
             }
         }
         catch (HttpRequestException e)
         {
             // Specifik handling for HTTP-relaterede fejl
-            Console.WriteLine($"En HTTP fejl opstod: {e.Message}");
-            // Overvej at vise en brugervenlig fejlmeddelelse
+            
+            _logger.LogError($"En HTTP fejl opstod: {e.Message}");
+            
         }
         catch (Exception e)
         {
             // Generel exception handling
-            Console.WriteLine($"En uventet fejl opstod: {e.Message}");
-            // Overvej at vise en brugervenlig fejlmeddelelse
+            
+            _logger.LogError($"En uventet fejl opstod: {e.Message}");
         }
         return false;
     }

@@ -98,7 +98,6 @@ namespace Client.UI
 
             var logsDirectory = Path.Combine(FileSystem.AppDataDirectory, "Logs");
             var logFiles = Directory.GetFiles(logsDirectory, "*.txt"); // Antager at logs er i .txt filer
-            Console.WriteLine("Log files:");
             foreach (var logFile in logFiles)
             {
                 

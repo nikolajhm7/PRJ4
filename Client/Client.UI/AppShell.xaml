@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <Shell
     x:Class="Client.UI.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -11,12 +12,7 @@
     <ShellContent
         Title="NewUserPage"
         ContentTemplate="{DataTemplate views:NewUserPage}"
-        Route="NewUserPage"/>
-
-    <ShellContent
-     Title="LoginPage"
-     ContentTemplate="{DataTemplate views:LoginPage}"
-     Route="LoginPage" />
+        Route="NewUserPage" />
 
     <ShellContent
         Title="Test"
@@ -28,7 +24,7 @@
         ContentTemplate="{DataTemplate views:PlatformPage}"
         Route="Platform" />
 
-        <ShellContent
+    <ShellContent
         Title="Join"
         ContentTemplate="{DataTemplate views:JoinPage}"
         Route="Join" />
@@ -37,13 +33,11 @@
         Title="Lobby"
         ContentTemplate="{DataTemplate views:LobbyPage}"
         Route="Platform" />
-
+    
     <ShellContent
         Title="LoginPage"
         ContentTemplate="{DataTemplate views:LoginPage}"
         Route="LoginPage" />
 
+
 </Shell>
-
-
-
