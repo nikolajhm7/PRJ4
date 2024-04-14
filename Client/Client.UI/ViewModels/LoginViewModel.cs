@@ -1,14 +1,8 @@
-using System;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using Client.UI.Views;
-using Microsoft.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Maui.Controls;
 using Client.UI.Models;
+using Client.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -22,7 +16,9 @@ public partial class LoginViewModel : ObservableObject
     private readonly IConfiguration _configuration;
     
     private readonly ILogger<LoginViewModel> _logger;
-    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger)
+    
+    private readonly AuthenticationService _authenticationService;
+    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger, AuthenticationService authenticationService)
     {
         _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
         
@@ -31,13 +27,15 @@ public partial class LoginViewModel : ObservableObject
         _logger = logger;
 
         LoginOnPlatformCommand = new Command(async () => await LoginOnPlatform());
+        
+        _authenticationService = authenticationService;
 
         IsAlreadyAuthenticated();
     }
 
     private async void IsAlreadyAuthenticated()
     {
-        if (await IsUserAuthenticated())
+        if (await _authenticationService.IsUserAuthenticated())
         {
             await Shell.Current.GoToAsync("PlatformPage");
         }
@@ -80,27 +78,6 @@ public partial class LoginViewModel : ObservableObject
         {
             await Shell.Current.DisplayAlert("Fejl", "Login fejlede", "OK");
         }
-    }
-
-    private async Task<bool> IsUserAuthenticated()
-    {
-        var token = Preferences.Get("auth_token", defaultValue: string.Empty);
-
-        if (!string.IsNullOrWhiteSpace(token))
-        {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, _configuration["ConnectionSettings:ApiUrl"] + "/checkLoginToken");
-
-            requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            var response = await _httpClient.SendAsync(requestMessage);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public async Task<bool> LoginAsync(string username, string password)

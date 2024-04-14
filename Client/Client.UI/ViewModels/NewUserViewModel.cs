@@ -20,6 +20,7 @@ namespace Client.UI.ViewModels
         public NewUserViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
+            _configuration = configuration;
         }
 
 
@@ -27,7 +28,7 @@ namespace Client.UI.ViewModels
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync(_configuration["ConnectionSettings:ApiUrl"] + "/makeNewUser", new { Username = username, Password = password, Email = email });
+                var response = await _httpClient.PostAsJsonAsync(_configuration["ConnectionSettings:ApiUrl"] + "/makeNewUser", new { UserName = username, Password = password, Email = email });
                 if (response.IsSuccessStatusCode)
                 {
                     return true;

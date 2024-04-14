@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Server.API.DTO;
@@ -12,6 +13,7 @@ public class LogsController : ControllerBase
         _logger = logger;
     }
 
+    [Authorize]
     [HttpPost("logs")]
     public IActionResult Logs([FromBody] List<LogEntryDTO> logEntries)
     {
