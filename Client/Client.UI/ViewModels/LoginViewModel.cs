@@ -29,7 +29,7 @@ public partial class LoginViewModel : ObservableObject
         _configuration = configuration;
         
         _logger = logger;
-
+        
         IsAlreadyAuthenticated();
     }
 

@@ -1,14 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text.Json;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Client.UI.Views;
-using Microsoft.Maui.Storage;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Maui.Controls;
 using Client.UI.Models;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
 
@@ -24,11 +23,12 @@ namespace Client.UI.ViewModels
             _configuration = configuration;
         }
 
+
         public async Task<bool> Check(string username, string password, string email)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync(_configuration["ConnectionSettings:ApiUrl"] + "/makeNewUser", new { UserName = username, Email = email , Password = password});
+                var response = await _httpClient.PostAsJsonAsync(_configuration["ConnectionSettings:ApiUrl"] + "/makeNewUser", new { UserName = username, Password = password, Email = email });
                 if (response.IsSuccessStatusCode)
                 {
                     return true;
@@ -56,11 +56,11 @@ namespace Client.UI.ViewModels
         }
 
         [ObservableProperty]
-        string _username = "test123";
+        string _username;
         [ObservableProperty]
-        string _password = "test123test123";
+        string _password;
         [ObservableProperty]
-        string _email = "test@123.com";
+        string _email;
 
         [RelayCommand]
         public async Task MakeNewUser()
@@ -81,16 +81,11 @@ namespace Client.UI.ViewModels
             {
                 await Shell.Current.DisplayAlert("Fejl", "Email skal udfyldes", "OK");
                 return;
-            } 
-            if (await Check(Username, Password, Email))
-            {
-                await Shell.Current.DisplayAlert("Succses", $"{Username} was created", "OK");
-                //await Shell.Current.GoToAsync("LoginPage");
-                return;
             }
-            else
-            { 
-                await Shell.Current.DisplayAlert("Fejl", "Oprettelse fejlede", "OK");
+            else if (await Check(_username, _password, _email))
+            {
+                await Shell.Current.DisplayAlert("Succses", $"{Username} was created","OK");
+                return;
             }
         }
     }
