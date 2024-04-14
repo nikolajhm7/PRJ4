@@ -5,9 +5,13 @@ using Client.UI.ViewModels;
 
 public partial class NewUserPage : ContentPage
 {
-	public NewUserPage(NewUserViewModel vm)
+	public NewUserPage()
 	{
         InitializeComponent();
-        BindingContext = vm;
+        if (Application.Current is App app)
+        {
+            var viewModel = app.ServiceProvider.GetService<NewUserViewModel>();
+            BindingContext = viewModel;
+        }
     }
 }

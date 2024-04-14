@@ -30,8 +30,8 @@
                Text="{Binding Email}" />
 
         <Button
-            x:Name="Create"
-            Text="Login" 
+            x:Name="CreateButton"
+            Text="Create" 
             HorizontalOptions="Fill"
             Command="{Binding MakeNewUserCommand}"/>
     </VerticalStackLayout>
