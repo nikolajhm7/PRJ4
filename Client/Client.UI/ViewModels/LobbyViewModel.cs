@@ -23,7 +23,7 @@ namespace Client.UI.ViewModels
         private readonly LobbyService _lobbyService;
 
         [ObservableProperty]
-        private int lobbyId; //test
+        private int lobbyId = 123; //test
 
         [ObservableProperty]
         private string image;
@@ -36,13 +36,11 @@ namespace Client.UI.ViewModels
             _lobbyService = lobbyService;
 
             Debug.WriteLine("Initializing lobby");
-            InitializeLobby();
 
             // Example initialization, replace with actual dynamic data loading
             Lobby.PlayerNames.Add("Player 1");
             Lobby.PlayerNames.Add("Player 2");
-            Lobby.PlayerNames.Add("Player 3");
-            Lobby.LobbyId = "12345"; // Example Lobby ID
+            Lobby.PlayerNames.Add("Player 3"); // Example Lobby ID
             System.Console.WriteLine(Image);
 
             // Subscribe to events
@@ -58,12 +56,6 @@ namespace Client.UI.ViewModels
         private void OnUserLeftLobby(ConnectedUserDTO user)
         {
             Lobby.PlayerNames.Remove(user.Username);
-        }
-
-        private async void InitializeLobby()
-        {
-            var Message = await this._lobbyService.CreateLobbyAsync();
-            HandleActionResult(Message);
         }
 
 
