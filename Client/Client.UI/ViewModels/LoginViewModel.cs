@@ -112,6 +112,7 @@ public partial class LoginViewModel : ObservableObject
                 if (!string.IsNullOrWhiteSpace(jsonResponseToken))
                 {
                     Preferences.Set("auth_token", jsonResponseToken);
+                    Preferences.Set("username", username);
                     return true;
                 }
 

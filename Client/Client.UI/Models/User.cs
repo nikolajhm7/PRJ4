@@ -11,7 +11,7 @@ namespace Client.UI.Models
     public class User
     {
         private static User _instance = null;
-        private string _username = "test";
+        private string _username = Preferences.Get("username", defaultValue: string.Empty);
 
         private User()
         {
