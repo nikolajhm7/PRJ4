@@ -1,13 +1,27 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using Client.Libary.Interfaces;
 using Client.UI.DTO;
+using Client.UI.Managers;
 using Client.UI.ViewModels;
 using Client.UI.Views;
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
 using Client.UI.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.Controls.Hosting;
+using Microsoft.Maui.Hosting;
+using Microsoft.Maui.Networking;
+using Microsoft.Maui.Storage;
 using Newtonsoft.Json;
 using Serilog;
 
@@ -35,12 +49,6 @@ namespace Client.UI
                 .CreateLogger();
             
             builder.Logging.AddSerilog();
-            
-            var logFilePath = Path.Combine(FileSystem.AppDataDirectory, "Logs/log-.txt");
-            Console.WriteLine($"Logfil sti: {logFilePath}");
-            
-            Log.Information("App started");
-            
          
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
@@ -50,6 +58,7 @@ namespace Client.UI
             builder.Configuration.AddConfiguration(configuration);
             
             builder.Services.AddSingleton<AuthenticationService>();
+            builder.Services.AddSingleton<IPreferenceManager, PreferenceManager>();
 
             builder.Services.AddSingleton<PlatformViewModel>();
             builder.Services.AddSingleton<PlatformPage>();

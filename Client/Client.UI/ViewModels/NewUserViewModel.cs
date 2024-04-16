@@ -10,6 +10,7 @@ using Client.UI.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Maui.Controls;
 
 namespace Client.UI.ViewModels
 {

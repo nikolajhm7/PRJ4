@@ -6,6 +6,7 @@ namespace Server.API.Models;
 
 public class User : IdentityUser
 {
+    public virtual List<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     public int coins { get; set; }
 
     // List of users who initiated the "friendship"

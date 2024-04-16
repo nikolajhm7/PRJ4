@@ -16,6 +16,9 @@ using Serilog.Sinks.MSSqlServer;
 using Server.API.Middleware;
 using Server.API.Services;
 using Microsoft.AspNetCore.Authorization;
+using Server.API.Repository;
+using Server.API.Repository.Interfaces;
+using Server.API.Services.Interfaces;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -81,8 +84,6 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 //Add SignalR
 builder.Services.AddSignalR();
 
-builder.Services.AddSingleton<JwtTokenService>();
-
 //logging
 builder.Host.UseSerilog((ctx, lc) =>
 {
@@ -98,6 +99,8 @@ builder.Host.UseSerilog((ctx, lc) =>
 });
 
 addJWTAuthentication(builder);
+
+ConfigureServices(builder.Services);
 
 var app = builder.Build();
 
@@ -117,7 +120,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseMiddleware<ErrorLoggingMiddleware>();
+ConfigureMiddleware(app);
 
 app.UseEndpoints(endpoints =>
 {
@@ -230,5 +233,26 @@ void addJWTAuthentication(WebApplicationBuilder builder)
                 context.User.IsInRole("Guest") || context.User.IsInRole("User")));
     });
 }
+
+void ConfigureMiddleware(WebApplication app)
+{
+    app.Use(async (context, next) => {
+        using (var scope = app.Services.CreateScope())
+        {
+            var jwtTokenService = scope.ServiceProvider.GetRequiredService<IJwtTokenService>();
+            var middleware = new TokenRefreshMiddleware(next, jwtTokenService);
+            await middleware.InvokeAsync(context);
+        }
+    });
+    app.UseMiddleware<ErrorLoggingMiddleware>();
+}
+
+void ConfigureServices(IServiceCollection services)
+{
+    services.AddScoped<ITokenRepository, TokenRepository>();
+    services.AddScoped<IJwtTokenService, JwtTokenService>();
+    services.AddScoped<ITimeService, TimeService>();
+}
+
 
 public partial class Program { }

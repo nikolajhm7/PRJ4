@@ -18,7 +18,13 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<Friendship> Friendships { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
-        => options.UseSqlServer(ConnectionString);
+    {
+        if (!options.IsConfigured)
+        {
+            options.UseSqlServer(ConnectionString);
+        }
+    }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Friendship>()

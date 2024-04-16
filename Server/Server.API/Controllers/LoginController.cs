@@ -1,6 +1,3 @@
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +6,7 @@ using Server.API.DTO;
 using Server.API.Models;
 using Server.API.Services;
 using System.Text.RegularExpressions;
+using Server.API.Services.Interfaces;
 
 public class LoginController : ControllerBase
 {
@@ -16,9 +14,9 @@ public class LoginController : ControllerBase
     private readonly ILogger<LoginController> _logger;
     private readonly UserManager<User> _userManager;
     private readonly IMemoryCache _memoryCache;
-    private readonly JwtTokenService _jwtTokenService;
+    private readonly IJwtTokenService _jwtTokenService;
 
-    public LoginController(UserManager<User> userManager, ILogger<LoginController> logger, IMemoryCache memoryCache, JwtTokenService jwtTokenService)
+    public LoginController(UserManager<User> userManager, ILogger<LoginController> logger, IMemoryCache memoryCache, IJwtTokenService jwtTokenService)
     {
         _userManager = userManager;
         _logger = logger;
@@ -56,10 +54,15 @@ public class LoginController : ControllerBase
             return Unauthorized("Wrong username or password");
         }
         
-        var jwtString = _jwtTokenService.GenerateToken(user.UserName);
+        var token = _jwtTokenService.GenerateToken(user.UserName);
+        var refreshToken = _jwtTokenService.GenerateRefreshToken(user.UserName);
         
         _logger.LogInformation("User {UserName} logged in successfully.", user.UserName);
-        return StatusCode(StatusCodes.Status200OK, jwtString);
+        
+        _memoryCache.Remove(cacheKey);
+        
+        return StatusCode(StatusCodes.Status200OK, new { Token = token, RefreshToken = refreshToken });
+        
     }
 
     [HttpPost("login-as-guest")]
@@ -81,10 +84,11 @@ public class LoginController : ControllerBase
 
         _logger.LogDebug("Guest {GuestName} is attempting to log in.", model.GuestName);
 
-        var jwtString = _jwtTokenService.GenerateToken(model.GuestName, true);
+        var token = _jwtTokenService.GenerateToken(model.GuestName, true);
+        var refreshToken = _jwtTokenService.GenerateRefreshToken(model.GuestName);
 
         _logger.LogInformation("Guest {GuestName} logged in successfully.", model.GuestName);
-        return StatusCode(StatusCodes.Status200OK, jwtString);
+        return StatusCode(StatusCodes.Status200OK, new { Token = token, RefreshToken = refreshToken });
     }
 
     [Authorize]

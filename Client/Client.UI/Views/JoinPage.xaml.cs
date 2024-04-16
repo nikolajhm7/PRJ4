@@ -1,5 +1,4 @@
 using System;
-using Client.UI.Services;
 using Client.UI.ViewModels;
 using Microsoft.Maui.Controls;
 

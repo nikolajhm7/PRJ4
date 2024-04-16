@@ -1,8 +1,12 @@
+using System.Net.Http;
+using System.Threading.Tasks;
+using Client.UI.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Maui.Storage;
 
 namespace Client.UI.Services;
 
-public class AuthenticationService
+public class AuthenticationService : IAuthenticationService
 {
     private readonly HttpClient _httpClient;
     private readonly IConfiguration _configuration;
