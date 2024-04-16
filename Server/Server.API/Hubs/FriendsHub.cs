@@ -11,12 +11,10 @@ namespace Server.API.Hubs
     {
         public record ActionResult(bool Success, string? Msg);
 
-        private readonly ApplicationDbContext _context;
         private readonly ILogger<FriendsHub> _logger;
 
-        public FriendsHub(ApplicationDbContext context, ILogger<FriendsHub> logger)
+        public FriendsHub(ILogger<FriendsHub> logger)
         {
-            _context = context;
             _logger = logger;
         }
         public async Task<ActionResult> SendFriendRequest(string otherUsername)

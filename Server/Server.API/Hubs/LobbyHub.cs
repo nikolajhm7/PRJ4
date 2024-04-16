@@ -65,6 +65,11 @@ namespace Server.API.Hubs
             {
                 var user = new ConnectedUserDTO(username, Context.ConnectionId);
 
+                foreach (var member in lobby.Members)
+                {
+                    await Clients.Caller.SendAsync("UserJoinedLobby", member);
+                }
+
                 lobby.Members.Add(user);
                 await Clients.Group(lobbyId).SendAsync("UserJoinedLobby", user);
                 await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);

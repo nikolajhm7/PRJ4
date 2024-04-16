@@ -21,6 +21,7 @@ namespace Server.Test
         private ILogger<LobbyHub> _logger;
         private IIdGenerator _idGen;
         private IClientProxy _clientProxy;
+        private ISingleClientProxy _singleClientProxy;
 
         [SetUp]
         public void Setup()
@@ -30,6 +31,7 @@ namespace Server.Test
             _groups = Substitute.For<IGroupManager>();
             _context = Substitute.For<HubCallerContext>();
             _clientProxy = Substitute.For<IClientProxy>();
+            _singleClientProxy = Substitute.For<ISingleClientProxy>();
 
 
             _logger = Substitute.For<ILogger<LobbyHub>>();
@@ -81,6 +83,7 @@ namespace Server.Test
             var hostconnection = "host-connection-id";
 
             _clients.Group(lobbyId).Returns(_clientProxy);
+            _clients.Caller.Returns(_singleClientProxy);
 
             // Create lobby
             _context.User?.Identity?.Name.Returns(hostuser);
@@ -102,6 +105,7 @@ namespace Server.Test
 
             //await _clientProxy.Received(1).SendAsync("UserJoinedLobby", Arg.Any<ConnectedUserDTO>());
             await _clientProxy.Received(1).SendCoreAsync("UserJoinedLobby", Arg.Any<object[]>());
+            await _singleClientProxy.Received(1).SendCoreAsync("UserJoinedLobby", Arg.Any<object[]>());
 
             await _groups.Received(1).AddToGroupAsync(connection, lobbyId);
         }
