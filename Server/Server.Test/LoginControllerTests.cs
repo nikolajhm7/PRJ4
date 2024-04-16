@@ -81,14 +81,8 @@ public class LoginControllerTests
     [TearDown]
     public void TearDown()
     {
-        if (_userManager != null)
-        {
-            _userManager.Dispose();
-        }
-        if (_memoryCache != null)
-        {
-            _memoryCache.Dispose();
-        }
+        _userManager?.Dispose();
+        _memoryCache?.Dispose();
     }
 
 }

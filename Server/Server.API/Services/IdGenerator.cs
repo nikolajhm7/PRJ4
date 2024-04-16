@@ -1,8 +1,8 @@
 ﻿namespace Server.API.Services
 {
-    public class IDGenerator
+    public class IdGenerator : IIdGenerator
     {
-        public static string GenerateRandomLobbyID()
+        public string GenerateRandomLobbyId()
         {
             Random random = new Random();
             int randomNumber = random.Next(0, 999999);
