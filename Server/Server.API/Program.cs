@@ -142,45 +142,35 @@ app.Run();
 
 void addJWTAuthentication(WebApplicationBuilder builder)
 {
+    // Tilføjer konfiguration
+    var azureAdConfig = builder.Configuration.GetSection("AzureAd");
 
-    /*
-     // Tilføjer konfiguration
-       var azureAdConfig = builder.Configuration.GetSection("AzureAd");
-
-       // Sætter miljøvariabler baseret på konfigurationen
-       Environment.SetEnvironmentVariable("AZURE_CLIENT_ID", azureAdConfig["ClientId"]);
-       Environment.SetEnvironmentVariable("AZURE_CLIENT_SECRET", azureAdConfig["ClientSecret"]);
-       Environment.SetEnvironmentVariable("AZURE_TENANT_ID", azureAdConfig["TenantId"]);
-
-       // Opretter SecretClient med DefaultAzureCredential
-       var keyVaultUrl = builder.Configuration["AzureKeyVault:Endpoint"];
-       var secretClient = new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
-     */
+    // Sætter miljøvariabler baseret på konfigurationen
+    Environment.SetEnvironmentVariable("AZURE_CLIENT_ID", azureAdConfig["ClientId"]);
+    Environment.SetEnvironmentVariable("AZURE_CLIENT_SECRET", azureAdConfig["ClientSecret"]);
+    Environment.SetEnvironmentVariable("AZURE_TENANT_ID", azureAdConfig["TenantId"]);
 
     var keyVaultUrl = builder.Configuration["AzureKeyVault:Endpoint"];
 
     var secretClient = new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
 
-    var jwtKeySecret = "3430350919ced15913aa218deb904200230f035cfcba33e4602ec193db8b6379";
-    //secretClient.GetSecret("JwtKey")
-    var jwtIssuerSecret = "PartyPlayPalaceAPI";
-    //secretClient.GetSecret("JwtIssuer")
-    var jwtAudienceSecret = "PartyPlayPalaceAPI";
-    //secretClient.GetSecret("JwtAudience")
+    var jwtKeySecret = secretClient.GetSecret("JwtKey").Value.Value;
+    var jwtIssuerSecret = secretClient.GetSecret("JwtIssuer").Value.Value;
+    var jwtAudienceSecret = secretClient.GetSecret("JwtAudience").Value.Value;
 
     builder.Configuration["Jwt:Key"] = jwtKeySecret;
     builder.Configuration["Jwt:Issuer"] = jwtIssuerSecret;
     builder.Configuration["Jwt:Audience"] = jwtAudienceSecret;
 
     builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme =
-        options.DefaultChallengeScheme =
-        options.DefaultForbidScheme =
-        options.DefaultScheme =
-        options.DefaultSignInScheme =
-        options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
+        {
+            options.DefaultAuthenticateScheme =
+                options.DefaultChallengeScheme =
+                    options.DefaultForbidScheme =
+                        options.DefaultScheme =
+                            options.DefaultSignInScheme =
+                                options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
         .AddJwtBearer(options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
@@ -216,6 +206,7 @@ void addJWTAuthentication(WebApplicationBuilder builder)
                     {
                         context.Token = accessToken;
                     }
+
                     return Task.CompletedTask;
                 }
             };
@@ -236,7 +227,8 @@ void addJWTAuthentication(WebApplicationBuilder builder)
 
 void ConfigureMiddleware(WebApplication app)
 {
-    app.Use(async (context, next) => {
+    app.Use(async (context, next) =>
+    {
         using (var scope = app.Services.CreateScope())
         {
             var jwtTokenService = scope.ServiceProvider.GetRequiredService<IJwtTokenService>();
@@ -255,4 +247,6 @@ void ConfigureServices(IServiceCollection services)
 }
 
 
-public partial class Program { }
+public partial class Program
+{
+}
