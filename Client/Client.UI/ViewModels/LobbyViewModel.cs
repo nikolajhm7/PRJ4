@@ -17,6 +17,7 @@ using Client.UI.DTO;
 namespace Client.UI.ViewModels
 {
     [QueryProperty("Image", "Image")]
+    [QueryProperty("LobbyId", "LobbyId")]
     public partial class LobbyViewModel : ObservableObject
     {
         private readonly LobbyService _lobbyService;
