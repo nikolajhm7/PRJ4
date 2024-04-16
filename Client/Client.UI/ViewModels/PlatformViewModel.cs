@@ -68,6 +68,7 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         public async Task LogOut()
         {
+            Preferences.Clear("auth_token");
             await Shell.Current.GoToAsync("LoginPage");
         }
 
