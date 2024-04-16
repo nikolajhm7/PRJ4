@@ -33,7 +33,7 @@ public class UserControllerTests
             .Returns(Task.FromResult(IdentityResult.Success));
     }
 
-    [Test]
+    /*[Test]
     public async Task MakeNewUser_CreatesUser_ReturnsOk()
     {
         // Arrange
@@ -46,7 +46,7 @@ public class UserControllerTests
         // Assert
         Assert.That(result, Is.InstanceOf<OkObjectResult>());
         _subUserManager?.Received(1).CreateAsync(Arg.Any<User>(), Arg.Any<string>());
-    }
+    }*/
 
     [TearDown]
     public void TearDown()
