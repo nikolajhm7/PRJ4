@@ -169,13 +169,13 @@ jobs:
       - name: Run Unit Tests with Coverage
         run: |
           cd Server
-          dotnet test Server.Test/Server.Test.csproj --filter Category=Unit /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          dotnet test Server.Test/Server.Test.csproj --filter /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           
       # Run integration tests with coverage
       - name: Run Integration Tests with Coverage
         run: |
           cd Server
-          dotnet test Server.IntegrationTest/Server.IntegrationTest.csproj --filter Category=Integration /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          dotnet test Server.IntegrationTest/Server.IntegrationTests.csproj --filter /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 
       # Generate coverage report
       - name: Generate Coverage Report
