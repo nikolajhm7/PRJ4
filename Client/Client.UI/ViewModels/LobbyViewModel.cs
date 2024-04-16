@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using Client.UI.Models;
 using Client.UI.Services;
 using System.Diagnostics;
+using Client.UI.DTO;
 
 
 
@@ -19,6 +20,9 @@ namespace Client.UI.ViewModels
     public partial class LobbyViewModel : ObservableObject
     {
         private readonly LobbyService _lobbyService;
+
+        [ObservableProperty]
+        private int lobbyId; //test
 
         [ObservableProperty]
         private string image;
@@ -39,9 +43,23 @@ namespace Client.UI.ViewModels
             Lobby.PlayerNames.Add("Player 3");
             Lobby.LobbyId = "12345"; // Example Lobby ID
             System.Console.WriteLine(Image);
+
+            // Subscribe to events
+            _lobbyService.UserJoinedLobbyEvent += OnUserJoinedLobby;
+            _lobbyService.UserLeftLobbyEvent += OnUserLeftLobby;
         }
 
-        private async void InitializeLobby() 
+        private void OnUserJoinedLobby(ConnectedUserDTO user)
+        {
+            Lobby.PlayerNames.Add(user.Username);
+        }
+
+        private void OnUserLeftLobby(ConnectedUserDTO user)
+        {
+            Lobby.PlayerNames.Remove(user.Username);
+        }
+
+        private async void InitializeLobby()
         {
             var Message = await this._lobbyService.CreateLobbyAsync();
             HandleActionResult(Message);
@@ -66,11 +84,11 @@ namespace Client.UI.ViewModels
             if (!message.Success)
             {
                 // Give the user feedback about the error
-                System.Console.WriteLine("Creating a lobby failed: msg:", message.Msg);
+                Debug.WriteLine("Creating a lobby failed: msg:", message.Msg);
             }
             else
             {
-                System.Console.WriteLine("This is your lobby id:", message.Msg);
+                Debug.WriteLine("This is your lobby id:", message.Msg);
             }
         }
     }
