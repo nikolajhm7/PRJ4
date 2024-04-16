@@ -9,22 +9,27 @@ using Microsoft.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Maui.Controls;
 using Client.UI.Models;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Client.UI.ViewModels;
 
 public partial class LoginViewModel : ObservableObject
 {
     private readonly HttpClient _httpClient;
-    public ICommand LoginOnPlatformCommand { get; }
 
     private readonly IConfiguration _configuration;
-    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+    
+    private readonly ILogger<LoginViewModel> _logger;
+    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger)
     {
         _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
-
-        LoginOnPlatformCommand = new Command(async () => await LoginOnPlatform());
-
+        
+        _configuration = configuration;
+        
+        _logger = logger;
+        
         IsAlreadyAuthenticated();
     }
 
@@ -35,21 +40,19 @@ public partial class LoginViewModel : ObservableObject
             await Shell.Current.GoToAsync("PlatformPage");
         }
     }
-
+    [ObservableProperty]
     private string _loginUsername = string.Empty;
-    public string LoginUsername
-    {
-        get => _loginUsername;
-        set => SetProperty(ref _loginUsername, value);
-    }
-
+   
+    [ObservableProperty]
     private string _loginPassword = string.Empty;
-    public string LoginPassword
+
+    [RelayCommand]
+    public async Task GoToNewUser()
     {
-        get => _loginPassword;
-        set => SetProperty(ref _loginPassword, value);
+        await Shell.Current.GoToAsync("NewUserPage");
     }
 
+    [RelayCommand]
     public async Task LoginOnPlatform()
     {
 
@@ -109,6 +112,7 @@ public partial class LoginViewModel : ObservableObject
                 if (!string.IsNullOrWhiteSpace(jsonResponseToken))
                 {
                     Preferences.Set("auth_token", jsonResponseToken);
+                    Preferences.Set("username", username);
                     return true;
                 }
 
@@ -117,20 +121,22 @@ public partial class LoginViewModel : ObservableObject
             {
                 // Log fejlresponsen for diagnosticeringsformål
                 var errorResponse = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Login fejlede med status kode {response.StatusCode}: {errorResponse}");
+                    
+                _logger.LogError($"Login fejlede med status kode {response.StatusCode}: {errorResponse}");
             }
         }
         catch (HttpRequestException e)
         {
             // Specifik handling for HTTP-relaterede fejl
-            Console.WriteLine($"En HTTP fejl opstod: {e.Message}");
-            // Overvej at vise en brugervenlig fejlmeddelelse
+            
+            _logger.LogError($"En HTTP fejl opstod: {e.Message}");
+            
         }
         catch (Exception e)
         {
             // Generel exception handling
-            Console.WriteLine($"En uventet fejl opstod: {e.Message}");
-            // Overvej at vise en brugervenlig fejlmeddelelse
+            
+            _logger.LogError($"En uventet fejl opstod: {e.Message}");
         }
         return false;
     }

@@ -33,6 +33,12 @@
                 Text="Login" 
                 HorizontalOptions="Fill"
                 Command="{Binding LoginOnPlatformCommand}"/>
-        </VerticalStackLayout>
+
+            <Button
+                x:Name="NewUserBtn"
+                Text="Make a new user" 
+                HorizontalOptions="Fill"
+                Command="{Binding GoToNewUserCommand}"/>
+    </VerticalStackLayout>
 
 </ContentPage>

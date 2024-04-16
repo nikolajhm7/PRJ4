@@ -48,6 +48,8 @@ namespace Client.UI
                 .Build();
 
             builder.Configuration.AddConfiguration(configuration);
+            
+            builder.Services.AddSingleton<AuthenticationService>();
 
             builder.Services.AddSingleton<PlatformViewModel>();
             builder.Services.AddSingleton<PlatformPage>();
@@ -83,22 +85,23 @@ namespace Client.UI
 
             var app = builder.Build();
             
-            Task.Run(() => UploadLogsAsync(configuration));
+            var authenticationService = app.Services.GetRequiredService<AuthenticationService>();
+            
+            Task.Run(() => UploadLogsAsync(configuration, authenticationService));
 
             return app;
         }
 
-        public static async Task UploadLogsAsync(IConfiguration configuration)
+        public static async Task UploadLogsAsync(IConfiguration configuration, AuthenticationService authenticationService)
         {
             // Tjek om enheden har internetadgang og er på Wi-Fi
-            if (!IsNetworkAvailable())
+            if (!IsNetworkAvailable() && !await authenticationService.IsUserAuthenticated())
             {
                 return;
             }
 
             var logsDirectory = Path.Combine(FileSystem.AppDataDirectory, "Logs");
             var logFiles = Directory.GetFiles(logsDirectory, "*.txt"); // Antager at logs er i .txt filer
-            Console.WriteLine("Log files:");
             foreach (var logFile in logFiles)
             {
                 
