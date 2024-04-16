@@ -79,7 +79,7 @@ public class LoginController : ControllerBase
             return BadRequest("Guest name must be 2-20 characters long, and only contain letters and numbers.");
         }
 
-        _logger.LogInformation("Guest {GuestName} is attempting to log in.", model.GuestName);
+        _logger.LogDebug("Guest {GuestName} is attempting to log in.", model.GuestName);
 
         var jwtString = _jwtTokenService.GenerateToken(model.GuestName, true);
 
