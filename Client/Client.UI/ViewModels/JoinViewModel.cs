@@ -18,13 +18,23 @@ namespace Client.UI.ViewModels
         private readonly LobbyService _lobbyService;
         [ObservableProperty]
         private string _lobbyId;
-        public JoinViewModel()
+        public JoinViewModel(LobbyService lobbyService)
         { 
+            _lobbyService = lobbyService;
         }
         [RelayCommand]
        public async Task GoToLobby()
         {
-           await _lobbyService.JoinLobbyAsync(_lobbyId);
+            var result = await _lobbyService.JoinLobbyAsync(_lobbyId);
+            if (result.Success)
+            {
+                await Shell.Current.GoToAsync($"LobbyPage?LobbyId={_lobbyId}");
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Failed", "to join lobby", "OK");
+            }
+
         }
     }
 }

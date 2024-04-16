@@ -85,6 +85,7 @@ namespace Client.UI.ViewModels
             else if (await Check(_username, _password, _email))
             {
                 await Shell.Current.DisplayAlert("Succses", $"{Username} was created","OK");
+                await Shell.Current.GoToAsync("LoginPage");
                 return;
             }
         }

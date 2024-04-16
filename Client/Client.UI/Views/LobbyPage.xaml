@@ -9,7 +9,9 @@
 
         <!-- Overskrift med game ID -->
         <Frame CornerRadius="10" Padding="10" HorizontalOptions="FillAndExpand" BackgroundColor="#2196F3">
-            <Label Text="{Binding Lobby.LobbyId, StringFormat='ID: {0}'}" HorizontalTextAlignment="Center" TextColor="White"/>
+            <Label Text="{Binding LobbyId}" 
+                   HorizontalTextAlignment="Center" 
+                   TextColor="White"/>
         </Frame>
 
         <Image

@@ -12,6 +12,7 @@ using Client.UI.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls;
+using Client.UI.Services;
 
 namespace Client.UI.ViewModels
 {
@@ -26,6 +27,8 @@ namespace Client.UI.ViewModels
         [ObservableProperty]
         private string _avatar;
 
+        private readonly LobbyService _lobbyService;
+
         private ObservableCollection<Game> games;
         public ObservableCollection<Game> Games
         {
@@ -34,11 +37,12 @@ namespace Client.UI.ViewModels
         }
 
         private int gameCounter = 0;
-        public PlatformViewModel()
+        public PlatformViewModel(LobbyService lobbyService)
         {
             _username = User.Instance.Username;
             _avatar = User.Instance.avatar;
             InitializeGame();
+            _lobbyService = lobbyService;
         }
 
         private void InitializeGame()
@@ -75,7 +79,15 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         public async Task GoToLobby(string s)
         {
-            await Shell.Current.GoToAsync($"LobbyPage?Image={s}");
+            var response= await _lobbyService.CreateLobbyAsync();
+            if (response.Success)
+            {
+                await Shell.Current.GoToAsync($"LobbyPage?Image={s}&LobbyId={response.Msg}");
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Fejl", "Kunne ikke oprette lobby", "OK");
+            }
         }
         [RelayCommand]
          public async Task GoToJoin(string s)
