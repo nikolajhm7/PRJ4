@@ -154,3 +154,38 @@ jobs:
   #       run: |
   #         cd Server
   #         dotnet test --collect:"XPlat Code Coverage" --logger:"junit;MethodFormat=Class;FailureBodyFormat=Verbose"
+
+  test-server:
+    needs: buildServer
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Add steps to set up .NET SDK and other necessary configurations
+
+      # Run unit tests with coverage
+      - name: Run Unit Tests with Coverage
+        run: |
+          cd Server
+          dotnet test ../../Server/Server.Test/Server.Test.csproj --filter Category=Unit /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          
+      # Run integration tests with coverage
+      - name: Run Integration Tests with Coverage
+        run: |
+          cd Server
+          dotnet test ../../Server/Server.IntegrationTest/Server.IntegrationTest.csproj --filter Category=Integration /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
+      # Generate coverage report
+      - name: Generate Coverage Report
+        run: |
+          dotnet tool install --global dotnet-reportgenerator-globaltool
+          reportgenerator "-reports:Server/**/coverage.opencover.xml" "-targetdir:coverage" -reporttypes:Html
+
+      # Upload coverage report as artifact
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: coverage
