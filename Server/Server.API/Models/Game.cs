@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
-namespace Server.API.Data.Models
+namespace Server.API.Models
 {
     public class Game
     {
