@@ -8,6 +8,11 @@
     Title="Client.UI">
 
 
+ <ShellContent
+        Title="Join"
+        ContentTemplate="{DataTemplate views:JoinPage}"
+        Route="Join" />
+
     <ShellContent
         Title="NewUserPage"
         ContentTemplate="{DataTemplate views:NewUserPage}"
@@ -28,10 +33,6 @@
         ContentTemplate="{DataTemplate views:PlatformPage}"
         Route="Platform" />
 
-        <ShellContent
-        Title="Join"
-        ContentTemplate="{DataTemplate views:JoinPage}"
-        Route="Join" />
 
     <ShellContent
         Title="Lobby"
