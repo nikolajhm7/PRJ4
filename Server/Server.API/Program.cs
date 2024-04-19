@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Authorization;
 using Server.API.Repository;
 using Server.API.Repository.Interfaces;
 using Server.API.Services.Interfaces;
+using Server.API.Repositories.Interfaces;
+using Server.API.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -244,6 +246,8 @@ void ConfigureServices(IServiceCollection services)
     services.AddScoped<ITokenRepository, TokenRepository>();
     services.AddScoped<IJwtTokenService, JwtTokenService>();
     services.AddScoped<ITimeService, TimeService>();
+    services.AddScoped<IIdGenerator, IdGenerator>();
+    services.AddScoped<IFriendsRepository, FriendsRepository>();
 }
 
 
