@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Maui.Storage;
+using System.Diagnostics;
+using Newtonsoft.Json.Linq;
+
 
 namespace Client.UI.Services
 {
@@ -21,7 +24,12 @@ namespace Client.UI.Services
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(url, options =>
                 {
-                    options.AccessTokenProvider = () => Task.FromResult<string?>(Preferences.Get("auth_token", defaultValue: string.Empty));
+                    options.AccessTokenProvider = () => {
+                        var json = Preferences.Get("auth_token", defaultValue: "{}");
+                        var token = JObject.Parse(json)["token"]?.ToString();
+                        Debug.WriteLine($"Using token: {token}");
+                        return Task.FromResult(token);
+                    };
                 })
                 .ConfigureLogging(logging =>
                 {
@@ -35,7 +43,16 @@ namespace Client.UI.Services
         {
             if (!IsConnected)
             {
-                await _hubConnection.StartAsync();
+                try
+                {
+                    await _hubConnection.StartAsync();
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception or handle it accordingly
+                    Debug.WriteLine($"Error while trying to start connection: {ex.Message}");
+                    throw;  // Rethrow or handle as necessary
+                }
             }
         }
 
