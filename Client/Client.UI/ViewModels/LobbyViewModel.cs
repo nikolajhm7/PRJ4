@@ -41,7 +41,6 @@ namespace Client.UI.ViewModels
             Lobby.PlayerNames.Add("Player 1");
             Lobby.PlayerNames.Add("Player 2");
             Lobby.PlayerNames.Add("Player 3"); // Example Lobby ID
-            System.Console.WriteLine(Image);
 
             // Subscribe to events
             _lobbyService.UserJoinedLobbyEvent += OnUserJoinedLobby;
@@ -68,7 +67,7 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task GoBack()
         {
-            await Shell.Current.GoToAsync("..");
+            await Shell.Current.GoToAsync("//..");
         }
 
         //Handle result of different functions, and error log if neccesary:

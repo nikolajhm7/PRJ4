@@ -28,7 +28,7 @@ namespace Client.UI.ViewModels
             var result = await _lobbyService.JoinLobbyAsync(_lobbyId);
             if (result.Success)
             {
-                await Shell.Current.GoToAsync($"LobbyPage?LobbyId={_lobbyId}");
+                await Shell.Current.GoToAsync($"//LobbyPage?LobbyId={_lobbyId}");
             }
             else
             {

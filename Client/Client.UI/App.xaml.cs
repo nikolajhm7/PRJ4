@@ -1,4 +1,5 @@
 ﻿using System;
+using Client.UI.Views;
 using Microsoft.Maui.Controls;
 
 namespace Client.UI
@@ -11,7 +12,7 @@ namespace Client.UI
         {
             InitializeComponent();
             ServiceProvider = serviceProvider;
-
+            
             MainPage = new AppShell();
 
             

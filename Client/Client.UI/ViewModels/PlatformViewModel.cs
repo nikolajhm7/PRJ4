@@ -73,7 +73,7 @@ namespace Client.UI.ViewModels
         public async Task LogOut()
         {
             Preferences.Clear("auth_token");
-            await Shell.Current.GoToAsync("LoginPage");
+            await Shell.Current.GoToAsync($"//LoginPage");
         }
 
         [RelayCommand]
@@ -82,7 +82,7 @@ namespace Client.UI.ViewModels
             var response= await _lobbyService.CreateLobbyAsync();
             if (response.Success)
             {
-                await Shell.Current.GoToAsync($"LobbyPage?Image={s}&LobbyId={response.Msg}");
+                await Shell.Current.GoToAsync($"//LobbyPage?Image={s}&LobbyId={response.Msg}");
             }
             else
             {
@@ -92,7 +92,7 @@ namespace Client.UI.ViewModels
         [RelayCommand]
          public async Task GoToJoin(string s)
         {
-            await Shell.Current.GoToAsync($"JoinPage");
+            await Shell.Current.GoToAsync($"//JoinPage");
         }
         
         public partial class Game: ObservableObject

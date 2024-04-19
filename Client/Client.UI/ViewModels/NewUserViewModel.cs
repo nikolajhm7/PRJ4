@@ -57,11 +57,11 @@ namespace Client.UI.ViewModels
         }
 
         [ObservableProperty]
-        string _username;
+        string _username = "Test123";
         [ObservableProperty]
-        string _password;
+        string _password = "Test123Test123";
         [ObservableProperty]
-        string _email;
+        string _email = "Test@123.com";
 
         [RelayCommand]
         public async Task MakeNewUser()
@@ -86,7 +86,7 @@ namespace Client.UI.ViewModels
             else if (await Check(_username, _password, _email))
             {
                 await Shell.Current.DisplayAlert("Succses", $"{Username} was created","OK");
-                await Shell.Current.GoToAsync("LoginPage");
+                await Shell.Current.GoToAsync("//LoginPage");
                 return;
             }
         }
