@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Client.Libary.Interfaces;
 using Client.UI.Views;
 using Microsoft.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -26,7 +27,9 @@ public partial class LoginViewModel : ObservableObject
     private readonly ILogger<LoginViewModel> _logger;
 
     private readonly NavigationService _navigationService;
-    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger)
+    
+    private IJwtTokenService _jwtTokenService;
+    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger, IJwtTokenService jwtTokenService)
     {
         _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
         
@@ -35,13 +38,15 @@ public partial class LoginViewModel : ObservableObject
         _navigationService = new NavigationService();
         
         _logger = logger;
+        
+        _jwtTokenService = jwtTokenService;
 
         IsAlreadyAuthenticated();
     }
 
     private async void IsAlreadyAuthenticated()
     {
-        if (await IsUserAuthenticated())
+        if (await _jwtTokenService.IsAuthenticated())
         {
             await _navigationService.NavigateToPage(nameof(PlatformPage));
         }
@@ -88,27 +93,6 @@ public partial class LoginViewModel : ObservableObject
     public async Task JoinAsGuest()
     {
         await _navigationService.NavigateToPage(nameof(JoinPage));
-    }
-
-    private async Task<bool> IsUserAuthenticated()
-    {
-        var token = Preferences.Get("auth_token", defaultValue: string.Empty);
-
-        if (!string.IsNullOrWhiteSpace(token))
-        {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, _configuration["ConnectionSettings:ApiUrl"] + "/checkLoginToken");
-
-            requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            var response = await _httpClient.SendAsync(requestMessage);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public async Task<bool> LoginAsync(string username, string password)

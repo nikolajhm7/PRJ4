@@ -1,20 +1,33 @@
 using Client.Libary.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Net.Http.Headers;
+using Client.Libary.Interfaces;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Storage;
+
 namespace Client.Libary;
 
 public class JwtTokenService : IJwtTokenService
 {
-    public JwtTokenService()
+    public IApiService _apiService;
+    public JwtTokenService(IApiService apiService)
     {
+        _apiService = apiService;
     }
     
-    public bool IsAuthenticated()
+    public async Task<bool> IsAuthenticated()
     {
         var token = Preferences.Get("auth_token", defaultValue: string.Empty);
 
         if (!string.IsNullOrWhiteSpace(token))
         {
-            return true;
+            var result = await _apiService.MakeApiCall("/checkLoginToken", HttpMethod.Post);
+           if (result.StatusCode == HttpStatusCode.OK)
+           {
+               return true;
+           }
         }
         return false;
     }

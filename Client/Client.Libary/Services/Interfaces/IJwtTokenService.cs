@@ -2,6 +2,6 @@ namespace Client.Libary.Interfaces;
 
 public interface IJwtTokenService
 {
-    bool IsAuthenticated();
+    public Task<bool> IsAuthenticated();
     string GetUsernameFromToken();
 }

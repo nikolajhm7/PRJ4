@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using NSubstitute;
 using Server.API.DTO;
 using Server.API.Models;
+using Server.API.Repository.Interfaces;
 
 namespace Server.Test;
 
@@ -16,6 +17,7 @@ public class LoginControllerTests : TestBase
     private ILogger<LoginController>? _logger;
     private IMemoryCache? _memoryCache;
     private LoginController? _controller;
+    private IUserRepository? _userRepository;
 
     [SetUp]
     public void Setup()
@@ -23,8 +25,9 @@ public class LoginControllerTests : TestBase
         _userManager = Substitute.For<UserManager<User>>(Substitute.For<IUserStore<User>>(), null, null, null, null, null, null, null, null);
         _logger = Substitute.For<ILogger<LoginController>>();
         _memoryCache = Substitute.For<IMemoryCache>();
+        _userRepository = Substitute.For<IUserRepository>();
         
-        _controller = new LoginController(_userManager, _logger, _memoryCache, JwtTokenService!);
+        _controller = new LoginController(_logger, _memoryCache, JwtTokenService!, _userRepository);
         
     }
     

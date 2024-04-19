@@ -4,7 +4,6 @@ using System.Net.Http.Headers;
 using Client.Libary.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Storage;
 
 namespace Client.Libary;
 
