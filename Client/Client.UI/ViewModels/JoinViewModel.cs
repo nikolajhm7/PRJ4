@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using Client.UI.Models;
 using Client.UI.Services;
 using System.Diagnostics;
+using Client.UI.Views;
 
 namespace Client.UI.ViewModels
 {
@@ -43,11 +44,11 @@ namespace Client.UI.ViewModels
                 string authToken = Preferences.Get("auth_token", defaultValue: string.Empty);
                 if(!string.IsNullOrEmpty(authToken))
                 {
-                    await _navigationService.NavigateToPage("/PlatformPage");
+                    await _navigationService.NavigateToPage(nameof(PlatformPage));
                 }
                 else
                 {
-                    await _navigationService.NavigateToPage("///LoginPage");
+                    await _navigationService.NavigateToPage("//"+nameof(LoginPage));
                 }
         }
     }

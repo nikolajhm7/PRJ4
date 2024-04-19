@@ -60,8 +60,8 @@ namespace Client.UI
             builder.Services.AddSingleton<AuthenticationService>();
             builder.Services.AddSingleton<IPreferenceManager, PreferenceManager>();
 
-            builder.Services.AddSingleton<PlatformViewModel>();
-            builder.Services.AddSingleton<PlatformPage>();
+            builder.Services.AddTransient<PlatformViewModel>();
+            builder.Services.AddTransient<PlatformPage>();
 
             builder.Services.AddSingleton<LoginViewModel>();
             builder.Services.AddSingleton<LoginPage>();
