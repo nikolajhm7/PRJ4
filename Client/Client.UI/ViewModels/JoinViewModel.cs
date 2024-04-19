@@ -40,7 +40,15 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         public async Task GoBack()
         {
-            await _navigationService.NavigateBack();
+                string authToken = Preferences.Get("auth_token", defaultValue: string.Empty);
+                if(!string.IsNullOrEmpty(authToken))
+                {
+                    await _navigationService.NavigateToPage("/PlatformPage");
+                }
+                else
+                {
+                    await _navigationService.NavigateToPage("///LoginPage");
+                }
         }
     }
 }

@@ -86,7 +86,7 @@ public partial class LoginViewModel : ObservableObject
     [RelayCommand]
     public async Task JoinAsGuest()
     {
-        await _navigationService.NavigateToPage(nameof(JoinAsGuest));
+        await _navigationService.NavigateToPage(nameof(JoinPage));
     }
 
     private async Task<bool> IsUserAuthenticated()
