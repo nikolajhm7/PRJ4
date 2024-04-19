@@ -13,7 +13,6 @@ public class ApplicationDbContext : IdentityDbContext<User>
     private const string DbName = "PartyPlayPalaceDB";
     private const string ConnectionString = $"Data Source=localhost;Initial Catalog={DbName};User ID=SA;Password=abc123AB;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
 
-    public DbSet<User> User => Set<User>();
     public DbSet<Game> Games { get; set; }
     public DbSet<Friendship> Friendships { get; set; }
 
@@ -54,6 +53,13 @@ public class ApplicationDbContext : IdentityDbContext<User>
         // Configure primary key for IdentityUserLogin<string>
         modelBuilder.Entity<IdentityUserToken<string>>()
             .HasKey(l => new { l.UserId, l.LoginProvider, l.Name });
+        
+        //Laver usergames relation
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.UserGames)
+            .WithMany(g => g.UserGames)
+            .UsingEntity(j => j.ToTable("UserGames"));
+
     }
     public async Task DeleteOldLogEntriesAsync()
     {
