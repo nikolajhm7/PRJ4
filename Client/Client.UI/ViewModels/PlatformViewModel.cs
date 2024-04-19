@@ -16,6 +16,8 @@ using Client.UI.Services;
 using Client.UI.Views;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
+using System.Diagnostics;
+
 
 namespace Client.UI.ViewModels
 {
@@ -89,7 +91,13 @@ namespace Client.UI.ViewModels
             var response= await _lobbyService.CreateLobbyAsync();
             if (response.Success)
             {
-                await Shell.Current.GoToAsync("//LobbyPage?Image={s}&LobbyId={response.Msg}");
+                try{
+                    await Shell.Current.GoToAsync($"//LobbyPage?Image={s}&LobbyId={response.Msg}");
+                }catch(Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                }
+                
             }
             else
             {
