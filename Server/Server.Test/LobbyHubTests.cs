@@ -2,11 +2,11 @@
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Server.API.Hubs;
-using Server.API.Services;
 using NUnit.Framework;
 using Server.API.DTO;
 using Server.API.Models;
 using Microsoft.AspNetCore.Http;
+using Server.API.Services.Interfaces;
 
 namespace Server.Test
 {

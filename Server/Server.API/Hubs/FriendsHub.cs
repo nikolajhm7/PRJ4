@@ -3,6 +3,8 @@ using Server.API.DTO;
 using Server.API.Models;
 using Microsoft.AspNetCore.SignalR;
 using Server.API.Data;
+using Server.API.Repositories.Interfaces;
+using Server.API.Repositories;
 
 namespace Server.API.Hubs
 {
@@ -12,10 +14,12 @@ namespace Server.API.Hubs
         public record ActionResult(bool Success, string? Msg);
 
         private readonly ILogger<FriendsHub> _logger;
+        private readonly IFriendsRepository _friendsRepository;
 
-        public FriendsHub(ILogger<FriendsHub> logger)
+        public FriendsHub(ILogger<FriendsHub> logger, IFriendsRepository friendsRepository)
         {
             _logger = logger;
+            _friendsRepository = friendsRepository;
         }
         public async Task<ActionResult> SendFriendRequest(string otherUsername)
         {
@@ -30,7 +34,7 @@ namespace Server.API.Hubs
 
             await Clients.User(otherUsername).SendAsync("NewFriendRequest", username);
 
-            // TODO: Store friend request in database
+            _friendsRepository.AddFriendRequest(username, otherUsername);
 
             return new ActionResult(true, null);
         }
@@ -48,7 +52,7 @@ namespace Server.API.Hubs
 
             await Clients.User(otherUsername).SendAsync("FriendRequestAccepted", username);
 
-            // TODO: Remove friend in database
+            _friendsRepository.AcceptFriendRequest(username, otherUsername);
 
             return new ActionResult(true, null);
         }
@@ -66,7 +70,7 @@ namespace Server.API.Hubs
 
             await Clients.User(otherUsername).SendAsync("FriendRemoved",username);
 
-            // TODO: Remove friend in database
+            _friendsRepository.RemoveFriend(username, otherUsername);
 
             return new ActionResult(true, null);
         }

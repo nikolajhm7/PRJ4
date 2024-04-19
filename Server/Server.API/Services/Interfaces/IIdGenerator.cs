@@ -1,4 +1,4 @@
-﻿namespace Server.API.Services
+﻿namespace Server.API.Services.Interfaces
 {
     public interface IIdGenerator
     {
