@@ -25,10 +25,10 @@ namespace Client.UI.ViewModels
         private readonly NavigationService _navigationService;
 
         [ObservableProperty]
-        private int lobbyId = 123; //test
+        private string ?lobbyId;
 
         [ObservableProperty]
-        private string image;
+        private string ?image;
 
         [ObservableProperty]
         private Lobby lobby = new Lobby();
@@ -38,12 +38,12 @@ namespace Client.UI.ViewModels
             _lobbyService = lobbyService;
             _navigationService = new NavigationService();
 
-            Debug.WriteLine("Initializing lobby");
-
             // Example initialization, replace with actual dynamic data loading
-            Lobby.PlayerNames.Add("Player 1");
-            Lobby.PlayerNames.Add("Player 2");
-            Lobby.PlayerNames.Add("Player 3"); // Example Lobby ID
+            if(lobbyId != null)
+                Lobby.LobbyId = lobbyId; // Example Lobby ID
+            else
+                Lobby.LobbyId = "00000"; // Example Lobby ID
+            System.Console.WriteLine(Image);
 
             // Subscribe to events
             _lobbyService.UserJoinedLobbyEvent += OnUserJoinedLobby;
