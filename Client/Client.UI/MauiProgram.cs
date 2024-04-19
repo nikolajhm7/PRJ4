@@ -24,6 +24,7 @@ using Microsoft.Maui.Networking;
 using Microsoft.Maui.Storage;
 using Newtonsoft.Json;
 using Serilog;
+using Client.Libary;
 
 namespace Client.UI
 {
@@ -56,7 +57,10 @@ namespace Client.UI
                 .Build();
 
             builder.Configuration.AddConfiguration(configuration);
-            
+
+            builder.Services.AddTransient<LoadingPage>();
+            builder.Services.AddTransient<LoadingViewModel>();
+
             builder.Services.AddSingleton<AuthenticationService>();
             builder.Services.AddSingleton<IPreferenceManager, PreferenceManager>();
 
@@ -83,6 +87,9 @@ namespace Client.UI
 
             builder.Services.AddSingleton<LobbyService>();
             builder.Services.AddSingleton<FriendsService>();
+
+            builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
+            builder.Services.AddSingleton<IApiService, ApiService>();
 
             builder.Services.AddTransient<AuthenticationHeaderHandler>();
             builder.Services.AddHttpClient("ApiHttpClient")
