@@ -80,4 +80,15 @@ public class JwtTokenService : IJwtTokenService
         return _tokenRepository.GetRefreshToken(userName) == refreshToken && _tokenRepository.IsActive(userName);
     }
     
+    public bool ValidateUsername(string token, string userName)
+    {
+        return GetUserNameFromToken(token) == userName;
+    }
+
+    public string GetTokenString(HttpContext context)
+    {
+        return context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+    }
+
+    
 }

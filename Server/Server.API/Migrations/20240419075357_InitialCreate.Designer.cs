@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.API.Data;
 
@@ -11,9 +12,11 @@ using Server.API.Data;
 namespace Server.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240419075357_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace Server.API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("GameUser", b =>
-                {
-                    b.Property<int>("UserGamesGameId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserGamesId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("UserGamesGameId", "UserGamesId");
-
-                    b.HasIndex("UserGamesId");
-
-                    b.ToTable("UserGames", (string)null);
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -267,21 +255,6 @@ namespace Server.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("GameUser", b =>
-                {
-                    b.HasOne("Server.API.Models.Game", null)
-                        .WithMany()
-                        .HasForeignKey("UserGamesGameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Server.API.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserGamesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Server.API.Models.Friendship", b =>

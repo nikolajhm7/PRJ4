@@ -16,6 +16,7 @@ using Serilog.Sinks.MSSqlServer;
 using Server.API.Middleware;
 using Server.API.Services;
 using Microsoft.AspNetCore.Authorization;
+using Server.API.Repositories;
 using Server.API.Repository;
 using Server.API.Repository.Interfaces;
 using Server.API.Services.Interfaces;

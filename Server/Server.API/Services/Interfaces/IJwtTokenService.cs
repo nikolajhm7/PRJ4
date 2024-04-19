@@ -7,4 +7,6 @@ public interface IJwtTokenService
     bool ValidateRefreshToken(string userName, string refreshToken);
     string GetUserNameFromToken(string token);
     bool IsGuest(string token);
+    bool ValidateUsername(string token, string userName);
+    string GetTokenString(HttpContext context);
 }

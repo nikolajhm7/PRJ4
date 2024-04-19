@@ -38,7 +38,7 @@ public class TokenRefreshMiddlewareTests : TestBase
         var refreshToken = _jwtTokenService.GenerateRefreshToken("testUser");
         _httpContext.Request.Headers["X-Refresh-Token"] = refreshToken;
 
-        Context.User.Add(
+        Context.Users.Add(
             new User
             {
                 Id = "testUser",
@@ -86,7 +86,7 @@ public class TokenRefreshMiddlewareTests : TestBase
         var refreshToken = _jwtTokenService.GenerateRefreshToken("testUser");
         _httpContext.Request.Headers["X-Refresh-Token"] = refreshToken;
 
-        Context.User.Add(
+        Context.Users.Add(
             new User
             {
                 Id = "testUser",

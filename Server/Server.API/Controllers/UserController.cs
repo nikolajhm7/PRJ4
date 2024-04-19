@@ -3,21 +3,20 @@ using Microsoft.AspNetCore.Mvc;
 using Server.API.DTO;
 using Server.API.Data;
 using Server.API.Models;
+using Server.API.Repository.Interfaces;
 
 namespace Server.API.Controllers;
 
 public class UserController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
-    private readonly UserManager<User> _userManager;
     private readonly ILogger<UserController> _logger;
-    
-    public UserController(ApplicationDbContext context, UserManager<User> userManager, ILogger<UserController> logger)
+    private IUserRepository _userRepository;
+    public UserController(ILogger<UserController> logger, IUserRepository userRepository)
     {
-        _context = context;
-        _userManager = userManager;
         _logger = logger;
+        _userRepository = userRepository;
     }
+    
 
     [HttpPost("makeNewUser")]
     public async Task<IActionResult> MakeNewUser([FromBody] RegisterDto registerDto)
@@ -39,7 +38,7 @@ public class UserController : ControllerBase
 
         _logger.LogDebug("Attempting to create user: {UserName}", newUser.UserName);
     
-        var result = await _userManager.CreateAsync(newUser, registerDto.Password);
+        var result = await _userRepository.AddUser(newUser);
 
         if (!result.Succeeded)
         {
@@ -52,11 +51,5 @@ public class UserController : ControllerBase
     
         return Ok(new { message = "User created successfully." });
     }
-
-    //httpget
-
-    //httpput
-
-    //httpdelete
     
 }

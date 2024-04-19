@@ -22,21 +22,6 @@ namespace Server.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("GameUser", b =>
-                {
-                    b.Property<int>("UserGamesGameId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserGamesId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("UserGamesGameId", "UserGamesId");
-
-                    b.HasIndex("UserGamesId");
-
-                    b.ToTable("UserGames", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -266,22 +251,7 @@ namespace Server.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("GameUser", b =>
-                {
-                    b.HasOne("Server.API.Models.Game", null)
-                        .WithMany()
-                        .HasForeignKey("UserGamesGameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Server.API.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserGamesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("Server.API.Models.Friendship", b =>
