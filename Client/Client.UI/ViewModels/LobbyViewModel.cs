@@ -11,6 +11,7 @@ using Client.UI.Models;
 using Client.UI.Services;
 using System.Diagnostics;
 using Client.UI.DTO;
+using Client.UI.Services;
 
 
 
@@ -21,6 +22,7 @@ namespace Client.UI.ViewModels
     public partial class LobbyViewModel : ObservableObject
     {
         private readonly LobbyService _lobbyService;
+        private readonly NavigationService _navigationService;
 
         [ObservableProperty]
         private int lobbyId = 123; //test
@@ -34,6 +36,7 @@ namespace Client.UI.ViewModels
         public LobbyViewModel(LobbyService lobbyService)
         {
             _lobbyService = lobbyService;
+            _navigationService = new NavigationService();
 
             Debug.WriteLine("Initializing lobby");
 
@@ -67,7 +70,7 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task GoBack()
         {
-            await Shell.Current.GoToAsync("//..");
+            _navigationService.NavigateBack();
         }
 
         //Handle result of different functions, and error log if neccesary:

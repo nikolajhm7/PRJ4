@@ -10,5 +10,10 @@
             Text="{Binding LobbyId}"/>
         <Button Text="Join"
             Command ="{Binding GoToLobbyCommand}"/>
+
+        <Button
+            Text="Back"
+        HorizontalOptions="Fill"
+        Command="{Binding GoBackCommand}"/>
     </StackLayout>
 </ContentPage>

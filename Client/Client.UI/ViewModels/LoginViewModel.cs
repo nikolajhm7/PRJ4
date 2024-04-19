@@ -24,14 +24,14 @@ public partial class LoginViewModel : ObservableObject
     
     private readonly ILogger<LoginViewModel> _logger;
 
-    //private readonly NavigationService _navigationService;
+    private readonly NavigationService _navigationService;
     public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger)
     {
         _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
         
         _configuration = configuration;
 
-        //_navigationService = new NavigationService();
+        _navigationService = new NavigationService();
         
         _logger = logger;
 
@@ -42,8 +42,7 @@ public partial class LoginViewModel : ObservableObject
     {
         if (await IsUserAuthenticated())
         {
-            //await _navigationService.NavigateToPage("PlatformPage");
-            await Shell.Current.GoToAsync("//PlatformPage");
+            await _navigationService.NavigateToPage(nameof(PlatformPage));
         }
     }
     [ObservableProperty]
@@ -53,10 +52,9 @@ public partial class LoginViewModel : ObservableObject
     private string _loginPassword = string.Empty;
 
     [RelayCommand]
-    public async Task GoToNewUser()
+    async Task GoToNewUser()
     {
-        //await _navigationService.NavigateToPage("NewUserPage");
-        await Shell.Current.GoToAsync("//NewUserPage");
+        await _navigationService.NavigateToPage(nameof(NewUserPage));
     }
 
     [RelayCommand]
@@ -77,8 +75,7 @@ public partial class LoginViewModel : ObservableObject
         if (await LoginAsync(LoginUsername, LoginPassword))
         {
             User.Instance.Username = LoginUsername;
-            //await _navigationService.NavigateToPage("PlatformPage");
-            await Shell.Current.GoToAsync("$//PlatformPage");
+            await _navigationService.NavigateToPage(nameof(PlatformPage));
         }
         else
         {
@@ -89,7 +86,7 @@ public partial class LoginViewModel : ObservableObject
     [RelayCommand]
     public async Task JoinAsGuest()
     {
-        await Shell.Current.GoToAsync("$//JoinPage");
+        await _navigationService.NavigateToPage(nameof(JoinAsGuest));
     }
 
     private async Task<bool> IsUserAuthenticated()

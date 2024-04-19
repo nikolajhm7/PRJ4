@@ -16,11 +16,13 @@ namespace Client.UI.ViewModels
     public partial class JoinViewModel : ObservableObject
     {
         private readonly LobbyService _lobbyService;
+        private readonly NavigationService _navigationService;
         [ObservableProperty]
         private string _lobbyId;
         public JoinViewModel(LobbyService lobbyService)
         { 
             _lobbyService = lobbyService;
+            _navigationService = new NavigationService();
         }
         [RelayCommand]
        public async Task GoToLobby()
@@ -34,7 +36,11 @@ namespace Client.UI.ViewModels
             {
                 await Shell.Current.DisplayAlert("Failed", "to join lobby", "OK");
             }
-
+        }
+        [RelayCommand]
+        public async Task GoBack()
+        {
+            await _navigationService.NavigateBack();
         }
     }
 }

@@ -13,30 +13,4 @@
         ContentTemplate="{DataTemplate views:LoginPage}"
         Route="LoginPage" />
 
-
-    <ShellContent
-        Title="NewUserPage"
-        ContentTemplate="{DataTemplate views:NewUserPage}"
-        Route="NewUserPage" />
-
-    <ShellContent
-        Title="Test"
-        ContentTemplate="{DataTemplate views:TestPage}"
-        Route="TestPage" />
-
-    <ShellContent
-        Title="PlatormPage"
-        ContentTemplate="{DataTemplate views:PlatformPage}"
-        Route="Platform" />
-
-    <ShellContent
-        Title="Join"
-        ContentTemplate="{DataTemplate views:JoinPage}"
-        Route="Join" />
-
-    <ShellContent
-        Title="Lobby"
-        ContentTemplate="{DataTemplate views:LobbyPage}"
-        Route="Platform" />
-
 </Shell>
