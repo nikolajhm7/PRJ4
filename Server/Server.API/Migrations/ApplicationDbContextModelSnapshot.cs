@@ -182,23 +182,8 @@ namespace Server.API.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreatedByIp")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("Expires")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("ReplacedByToken")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Revoked")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("RevokedByIp")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Token")
                         .IsRequired()
@@ -288,13 +273,6 @@ namespace Server.API.Migrations
                     b.Navigation("User2");
                 });
 
-            modelBuilder.Entity("Server.API.Models.User", b =>
-                {
-                    b.Navigation("Invitees");
-
-                    b.Navigation("Inviters");
-                });
-
             modelBuilder.Entity("Server.API.Models.RefreshToken", b =>
                 {
                     b.HasOne("Server.API.Models.User", null)
@@ -304,6 +282,10 @@ namespace Server.API.Migrations
 
             modelBuilder.Entity("Server.API.Models.User", b =>
                 {
+                    b.Navigation("Invitees");
+
+                    b.Navigation("Inviters");
+
                     b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
