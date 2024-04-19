@@ -14,6 +14,8 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls;
 using Client.UI.Services;
 using Client.UI.Views;
+using Microsoft.Extensions.Configuration;
+using System.Net.Http;
 
 namespace Client.UI.ViewModels
 {
@@ -42,12 +44,13 @@ namespace Client.UI.ViewModels
         private int gameCounter = 0;
         public PlatformViewModel(LobbyService lobbyService)
         {
-            _username = User.Instance.Username;
-            _avatar = User.Instance.avatar;
             InitializeGame();
             _lobbyService = lobbyService;
             _navigationService = new NavigationService();
+            _username = User.Instance.Username;
+            _avatar = User.Instance.avatar;
         }
+
 
         private void InitializeGame()
         {
@@ -76,8 +79,8 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task LogOut()
         {
-            await _navigationService.NavigateToPage(nameof(LoginPage));
-            //Preferences.Clear("auth_token");
+            Preferences.Remove("auth_token");
+            await _navigationService.NavigateToPage("///"+nameof(LoginPage));
         }
 
         [RelayCommand]

@@ -70,7 +70,7 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task GoBack()
         {
-            _navigationService.NavigateBack();
+            await _navigationService.NavigateBack();
         }
 
         //Handle result of different functions, and error log if neccesary:

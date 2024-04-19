@@ -13,4 +13,5 @@
         ContentTemplate="{DataTemplate views:LoginPage}"
         Route="LoginPage" />
 
+
 </Shell>

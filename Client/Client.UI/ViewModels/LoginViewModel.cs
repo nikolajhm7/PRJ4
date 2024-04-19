@@ -13,6 +13,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Client.UI.Services;
+using Client.UI.Views;
 
 namespace Client.UI.ViewModels;
 
