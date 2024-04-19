@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Server.API.Hubs;
+using Server.API.Repositories.Interfaces;
 using Server.API.Services;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace Server.Test
         private HubCallerContext _context;
 
         private ILogger<FriendsHub> _logger;
+        private IFriendsRepository _friendsRepository;
         private IClientProxy _clientProxy;
         private ISingleClientProxy _singleClientProxy;
 
@@ -32,9 +34,10 @@ namespace Server.Test
             _clientProxy = Substitute.For<IClientProxy>();
             _singleClientProxy = Substitute.For<ISingleClientProxy>();
 
+            _friendsRepository = Substitute.For<IFriendsRepository>();
             _logger = Substitute.For<ILogger<FriendsHub>>();
 
-            _uut = new FriendsHub(_logger)
+            _uut = new FriendsHub(_logger, _friendsRepository)
             {
                 Clients = _clients,
                 Groups = _groups,

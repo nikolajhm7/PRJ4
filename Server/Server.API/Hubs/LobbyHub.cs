@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Server.API.Models;
 using Server.API.DTO;
-using Server.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Reflection;
+using Server.API.Services.Interfaces;
 
 namespace Server.API.Hubs
 {

@@ -1,4 +1,6 @@
-﻿namespace Server.API.Services
+﻿using Server.API.Services.Interfaces;
+
+namespace Server.API.Services
 {
     public class IdGenerator : IIdGenerator
     {
