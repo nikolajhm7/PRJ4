@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.API.Data;
+using Server.API.DTO;
 using Server.API.Models;
 using Server.API.Repositories;
 using Server.API.Repository.Interfaces;
@@ -31,7 +32,7 @@ public class GameController : ControllerBase
     }
     
     [Authorize]
-    [HttpGet("getGamesForUser")]
+    [HttpGet("getGamesForUser/{userId}")]
     public async Task<IActionResult> GetGamesForUser([FromRoute] string userId)
     {
         _logger.LogDebug("Starting retrieval of games for user {UserId}.", userId);
@@ -44,9 +45,9 @@ public class GameController : ControllerBase
             return NotFound();
         }
 
-        var tokenString = _jwtTokenService.GetTokenString(HttpContext);
+        var tokenString = _jwtTokenService.GetTokenStringFromHttpContext(HttpContext);
         
-        if (_jwtTokenService.ValidateUsername(tokenString, userId))
+        if (!_jwtTokenService.ValidateUsername(tokenString, userId))
         {
             _logger.LogWarning("User {TokenUsername} is trying to access games for another user ({UserId}).", _jwtTokenService.GetUserNameFromToken(tokenString), userId);
             return Unauthorized();
@@ -59,4 +60,40 @@ public class GameController : ControllerBase
         return Ok(games);
     }
     
+    [HttpPost("addGameForUser")]
+    public async Task<IActionResult> AddGameForUser([FromBody] GameUserDTO gameUserDto)
+    {
+        _logger.LogDebug("Starting addition of game {GameId} for user {UserId}.", gameUserDto.GameId, gameUserDto.UserName);
+    
+        var user = await _userRepository.GetUserByName(gameUserDto.UserName);
+    
+        if (user == null)
+        {
+            _logger.LogDebug("User {UserId} not found.", gameUserDto.UserName);
+            return NotFound();
+        }
+        
+        await _gameRepository.AddGameToUser(gameUserDto.UserName, gameUserDto.GameId);
+        
+        _logger.LogDebug("Game {GameId} added to user {UserId}.", gameUserDto.GameId, gameUserDto.UserName);
+        
+        return Ok();
+    }
+    
+    [HttpPost("addGame")]
+    public async Task<IActionResult> AddGame([FromBody] GameDTO game)
+    {
+        _logger.LogDebug("Starting addition of game {GameName}.", game.Name);
+    
+        var newGame = new Game
+        {
+            Name = game.Name,
+        };
+
+        await _gameRepository.AddGame(newGame);
+        
+        _logger.LogDebug("Game {GameName} added.", newGame.Name);
+        
+        return Ok();
+    }
 }

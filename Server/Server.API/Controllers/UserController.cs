@@ -1,7 +1,5 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Server.API.DTO;
-using Server.API.Data;
 using Server.API.Models;
 using Server.API.Repository.Interfaces;
 
@@ -38,7 +36,7 @@ public class UserController : ControllerBase
 
         _logger.LogDebug("Attempting to create user: {UserName}", newUser.UserName);
     
-        var result = await _userRepository.AddUser(newUser);
+        var result = await _userRepository.AddUser(newUser, registerDto.Password);
 
         if (!result.Succeeded)
         {

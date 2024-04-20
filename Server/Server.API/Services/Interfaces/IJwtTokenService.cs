@@ -8,5 +8,6 @@ public interface IJwtTokenService
     string GetUserNameFromToken(string token);
     bool IsGuest(string token);
     bool ValidateUsername(string token, string userName);
-    string GetTokenString(HttpContext context);
+    string GetTokenStringFromHttpContext(HttpContext context);
+    bool IsTokenExpiring(string token);
 }

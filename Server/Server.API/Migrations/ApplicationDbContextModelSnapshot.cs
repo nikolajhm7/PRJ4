@@ -22,21 +22,6 @@ namespace Server.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("GameUser", b =>
-                {
-                    b.Property<int>("UserGamesGameId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserGamesId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("UserGamesGameId", "UserGamesId");
-
-                    b.HasIndex("UserGamesId");
-
-                    b.ToTable("UserGames", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -159,8 +144,12 @@ namespace Server.API.Migrations
                     b.Property<string>("User2Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("date")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("User1Id", "User2Id");
 
@@ -266,22 +255,31 @@ namespace Server.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("User");
                 });
 
-            modelBuilder.Entity("GameUser", b =>
+            modelBuilder.Entity("Server.API.Models.UserGame", b =>
                 {
-                    b.HasOne("Server.API.Models.Game", null)
-                        .WithMany()
-                        .HasForeignKey("UserGamesGameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("UserGameId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.HasOne("Server.API.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserGamesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserGameId"));
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserGameId");
+
+                    b.HasIndex("GameId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserGames");
                 });
 
             modelBuilder.Entity("Server.API.Models.Friendship", b =>
@@ -310,6 +308,30 @@ namespace Server.API.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("Server.API.Models.UserGame", b =>
+                {
+                    b.HasOne("Server.API.Models.Game", "Game")
+                        .WithMany("UserGames")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.API.Models.User", "User")
+                        .WithMany("UserGames")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Server.API.Models.Game", b =>
+                {
+                    b.Navigation("UserGames");
+                });
+
             modelBuilder.Entity("Server.API.Models.User", b =>
                 {
                     b.Navigation("Invitees");
@@ -317,6 +339,8 @@ namespace Server.API.Migrations
                     b.Navigation("Inviters");
 
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("UserGames");
                 });
 #pragma warning restore 612, 618
         }

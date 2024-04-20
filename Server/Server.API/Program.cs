@@ -10,8 +10,6 @@ using Server.API.Data;
 using Server.API.Models;
 using Server.API.Hubs;
 using Serilog;
-using Serilog.Core;
-using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
 using Server.API.Middleware;
 using Server.API.Services;
@@ -21,8 +19,6 @@ using Server.API.Repository;
 using Server.API.Repository.Interfaces;
 using Server.API.Services.Interfaces;
 using Server.API.Repositories.Interfaces;
-using Server.API.Repositories;
-
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMemoryCache();
@@ -249,6 +245,8 @@ void ConfigureServices(IServiceCollection services)
     services.AddScoped<ITimeService, TimeService>();
     services.AddScoped<IIdGenerator, IdGenerator>();
     services.AddScoped<IFriendsRepository, FriendsRepository>();
+    services.AddScoped<IUserRepository, UserRepository>();
+    services.AddScoped<IGameRepository, GameRepository>();
 }
 
 

@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Client.Libary;
 using Client.Libary.Interfaces;
 using Client.UI.DTO;
 using Client.UI.Managers;
@@ -57,7 +58,7 @@ namespace Client.UI
 
             builder.Configuration.AddConfiguration(configuration);
             
-            builder.Services.AddSingleton<AuthenticationService>();
+            builder.Services.AddSingleton<JwtTokenService>();
             builder.Services.AddSingleton<IPreferenceManager, PreferenceManager>();
 
             builder.Services.AddTransient<PlatformViewModel>();
@@ -94,17 +95,17 @@ namespace Client.UI
 
             var app = builder.Build();
             
-            var authenticationService = app.Services.GetRequiredService<AuthenticationService>();
+            var jwtTokenService = app.Services.GetRequiredService<JwtTokenService>();
             
-            Task.Run(() => UploadLogsAsync(configuration, authenticationService));
+            Task.Run(() => UploadLogsAsync(configuration, jwtTokenService));
 
             return app;
         }
 
-        public static async Task UploadLogsAsync(IConfiguration configuration, AuthenticationService authenticationService)
+        public static async Task UploadLogsAsync(IConfiguration configuration, IJwtTokenService jwtTokenService)
         {
             // Tjek om enheden har internetadgang og er på Wi-Fi
-            if (!IsNetworkAvailable() && !await authenticationService.IsUserAuthenticated())
+            if (!IsNetworkAvailable() && !await jwtTokenService.IsAuthenticated())
             {
                 return;
             }

@@ -13,7 +13,6 @@ namespace Server.Test;
 
 public class LoginControllerTests : TestBase
 {
-    private UserManager<User>? _userManager;
     private ILogger<LoginController>? _logger;
     private IMemoryCache? _memoryCache;
     private LoginController? _controller;
@@ -22,7 +21,7 @@ public class LoginControllerTests : TestBase
     [SetUp]
     public void Setup()
     {
-        _userManager = Substitute.For<UserManager<User>>(Substitute.For<IUserStore<User>>(), null, null, null, null, null, null, null, null);
+        
         _logger = Substitute.For<ILogger<LoginController>>();
         _memoryCache = Substitute.For<IMemoryCache>();
         _userRepository = Substitute.For<IUserRepository>();
@@ -37,8 +36,8 @@ public class LoginControllerTests : TestBase
         // Arrange
         var loginDto = new LoginDto { UserName = "testUser", Password = "correctPassword" };
         var user = new User { UserName = loginDto.UserName };
-        _userManager.FindByNameAsync(loginDto.UserName).Returns(Task.FromResult(user));
-        _userManager.CheckPasswordAsync(user, loginDto.Password).Returns(Task.FromResult(true));
+        _userRepository.GetUserByName(loginDto.UserName).Returns(Task.FromResult(user));
+        _userRepository.UserCheckPassword(user, loginDto.Password).Returns(Task.FromResult(true));
 
         // Act
         var result = await _controller.Login(loginDto);
@@ -63,8 +62,8 @@ public class LoginControllerTests : TestBase
     {
         // Arrange
         var loginDto = new LoginDto { UserName = "nonExistingUser", Password = "wrongPassword" };
-        _userManager.FindByNameAsync(loginDto.UserName).Returns(Task.FromResult<User>(null)); // Bruger findes ikke
-
+        _userRepository.GetUserByName(loginDto.UserName).Returns(Task.FromResult<User?>(null));
+        
         // Act
         var result = await _controller!.Login(loginDto);
 
@@ -78,7 +77,7 @@ public class LoginControllerTests : TestBase
         // Arrange
         var guestLoginDto = new GuestLoginDTO { GuestName = "GuestName" };
         var user = new User { UserName = guestLoginDto.GuestName };
-        _userManager.FindByNameAsync(guestLoginDto.GuestName).Returns(Task.FromResult(user));
+        _userRepository.GetUserByName(guestLoginDto.GuestName).Returns(Task.FromResult<User?>(null));
 
         // Act
         var result = _controller!.LoginAsGuest(guestLoginDto);
@@ -100,7 +99,6 @@ public class LoginControllerTests : TestBase
     [TearDown]
     public void TearDown()
     {
-        _userManager?.Dispose();
         _memoryCache?.Dispose();
     }
 

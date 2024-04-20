@@ -85,10 +85,17 @@ public class JwtTokenService : IJwtTokenService
         return GetUserNameFromToken(token) == userName;
     }
 
-    public string GetTokenString(HttpContext context)
+    public string GetTokenStringFromHttpContext(HttpContext context)
     {
         return context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
     }
 
+    public bool IsTokenExpiring(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var securityToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+        var timeToExpire = securityToken?.ValidTo - _timeService.UtcNow;
+        return timeToExpire?.TotalMinutes < 15;
+    }
     
 }

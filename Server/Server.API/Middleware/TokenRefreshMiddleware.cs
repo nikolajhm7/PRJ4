@@ -24,7 +24,7 @@ public class TokenRefreshMiddleware
         {
             var userName = _jwtTokenService.GetUserNameFromToken(token);
             if (userName != null && _jwtTokenService.ValidateRefreshToken(userName, refreshToken) &&
-                JwtTokenIsExpiringSoon(token))
+                _jwtTokenService.IsTokenExpiring(token))
             {
                 var isGuest = _jwtTokenService.IsGuest(token);
                 var newAccessToken = _jwtTokenService.GenerateToken(userName, isGuest);
@@ -36,12 +36,5 @@ public class TokenRefreshMiddleware
 
         await _next(context);
     }
-
-    private bool JwtTokenIsExpiringSoon(string token)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var securityToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
-        var timeToExpire = securityToken?.ValidTo - DateTime.UtcNow;
-        return timeToExpire?.TotalMinutes < 15; // For example, refresh if less than 30 minutes to expire
-    }
+    
 }
