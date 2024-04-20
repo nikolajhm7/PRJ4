@@ -8,7 +8,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Client.Libary;
 using Client.Libary.Interfaces;
 using Client.UI.DTO;
 using Client.UI.Managers;
@@ -25,6 +24,7 @@ using Microsoft.Maui.Networking;
 using Microsoft.Maui.Storage;
 using Newtonsoft.Json;
 using Serilog;
+using Client.Libary;
 
 namespace Client.UI
 {
@@ -58,7 +58,9 @@ namespace Client.UI
 
             builder.Configuration.AddConfiguration(configuration);
             
-            builder.Services.AddSingleton<JwtTokenService>();
+            builder.Services.AddTransient<LoadingPage>();
+            builder.Services.AddTransient<LoadingViewModel>();
+
             builder.Services.AddSingleton<IPreferenceManager, PreferenceManager>();
 
             builder.Services.AddTransient<PlatformViewModel>();
@@ -84,6 +86,9 @@ namespace Client.UI
 
             builder.Services.AddSingleton<LobbyService>();
             builder.Services.AddSingleton<FriendsService>();
+
+            builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
+            builder.Services.AddSingleton<IApiService, ApiService>();
 
             builder.Services.AddTransient<AuthenticationHeaderHandler>();
             builder.Services.AddHttpClient("ApiHttpClient")

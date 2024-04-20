@@ -9,12 +9,37 @@
     Title="Client.UI">
 
     <ShellContent
-        Title="LoginPage"
+        Title="LoadingPage"
+        ContentTemplate="{DataTemplate views:LoadingPage}"
+        Route="Loading" />
+
+    <ShellContent
+        Title="Platorm"
+        ContentTemplate="{DataTemplate views:PlatformPage}"
+        Route="PlatformPage" />
+    
+    <ShellContent
+        Title="Login"
         ContentTemplate="{DataTemplate views:LoginPage}"
         Route="LoginPage" />
 
     <ShellContent
-        Title="LobbyPage"
+        Title="NewUser"
+        ContentTemplate="{DataTemplate views:NewUserPage}"
+        Route="NewUserPage" />
+
+    <ShellContent
+        Title="Test"
+        ContentTemplate="{DataTemplate views:TestPage}"
+        Route="TestPage" />
+
+    <ShellContent
+        Title="Join"
+        ContentTemplate="{DataTemplate views:JoinPage}"
+        Route="JoinPage" />
+
+    <ShellContent
+        Title="Lobby"
         ContentTemplate="{DataTemplate views:LobbyPage}"
         Route="LobbyPage" />
 
