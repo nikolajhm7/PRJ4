@@ -5,89 +5,86 @@ on:
   workflow_dispatch: # to save minutes on the runners
     inputs:
       branch:
-        description: 'Branch to build and test'
+        description: "Branch to build and test"
         required: true
-        default: 'main'
+        default: "main"
 
 jobs:
+  #  buildClientWindows:
+  #    runs-on: windows-latest
+  #
+  #    steps:
+  #      - name: Checkout repository
+  #        uses: actions/checkout@v2
+  #
+  #      - name: Setup .NET SDK
+  #        uses: actions/setup-dotnet@v1
+  #        with:
+  #          dotnet-version: '8.0.x'
+  #
+  #      - name: Install .NET MAUI workload
+  #        shell: pwsh
+  #        run: |
+  #          & dotnet nuget locals all --clear
+  #          & dotnet workload install maui --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
+  #          & dotnet workload install android ios maccatalyst tvos macos maui wasm-tools maui-maccatalyst --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
 
-#  buildClientWindows:
-#    runs-on: windows-latest
-#
-#    steps:
-#      - name: Checkout repository
-#        uses: actions/checkout@v2
-#
-#      - name: Setup .NET SDK
-#        uses: actions/setup-dotnet@v1
-#        with:
-#          dotnet-version: '8.0.x'
-#
-#      - name: Install .NET MAUI workload
-#        shell: pwsh
-#        run: |
-#          & dotnet nuget locals all --clear
-#          & dotnet workload install maui --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
-#          & dotnet workload install android ios maccatalyst tvos macos maui wasm-tools maui-maccatalyst --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
+  # DET HER KOMMER TIL AT BLIVE BRUGT NAAR VI SAETTER UNITTESTS OP
+  #       - name: Build and Run UnitTests
+  #         shell: bash
+  #         run: |
+  #           dotnet build <path to unit test csproj>
+  #           dotnet test <path to unit test csproj> --no-build --verbosity normal
 
+  #      - name: Build Client Solution
+  #        run: |
+  #          cd Client
+  #          dotnet restore
+  #          dotnet build -c Release
 
+  # - uses: actions/upload-artifact@v2
+  #   with:
+  #     name: artifacts-windows
+  #     path: |
+  #       **\*.msix
 
-# DET HER KOMMER TIL AT BLIVE BRUGT NAAR VI SAETTER UNITTESTS OP
-#       - name: Build and Run UnitTests
-#         shell: bash
-#         run: |
-#           dotnet build <path to unit test csproj>
-#           dotnet test <path to unit test csproj> --no-build --verbosity normal
+  #  buildClientAndroid:
+  #    runs-on: windows-latest
+  #
+  #    steps:
+  #      - name: Checkout repository
+  #        uses: actions/checkout@v2
+  #
+  #      - name: Setup .NET SDK
+  #        uses: actions/setup-dotnet@v1
+  #        with:
+  #          dotnet-version: '8.0.x'
+  #
+  #      - name: Install .NET MAUI workload
+  #        shell: bash
+  #        run: |
+  #          dotnet nuget locals all --clear
+  #          dotnet workload install maui --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
+  #          dotnet workload install android ios maccatalyst tvos macos maui wasm-tools --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
+  #
+  #
+  #      - name: Restore nuget packages
+  #        run: |
+  #          cd Client
+  #          dotnet restore Client.sln
+  #
+  #      - name : Build Android App
+  #        shell: bash
+  #        run: |
+  #          cd Client
+  #          dotnet publish -f:net8.0-android -c:Release
 
-#      - name: Build Client Solution
-#        run: |
-#          cd Client
-#          dotnet restore
-#          dotnet build -c Release
-
-      # - uses: actions/upload-artifact@v2
-      #   with:
-      #     name: artifacts-windows
-      #     path: |
-      #       **\*.msix
-
-#  buildClientAndroid:
-#    runs-on: windows-latest
-#
-#    steps:
-#      - name: Checkout repository
-#        uses: actions/checkout@v2
-#
-#      - name: Setup .NET SDK
-#        uses: actions/setup-dotnet@v1
-#        with:
-#          dotnet-version: '8.0.x'
-#
-#      - name: Install .NET MAUI workload
-#        shell: bash
-#        run: |
-#          dotnet nuget locals all --clear 
-#          dotnet workload install maui --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
-#          dotnet workload install android ios maccatalyst tvos macos maui wasm-tools --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
-#
-#
-#      - name: Restore nuget packages
-#        run: |
-#          cd Client
-#          dotnet restore Client.sln    
-#
-#      - name : Build Android App
-#        shell: bash
-#        run: |
-#          cd Client
-#          dotnet publish -f:net8.0-android -c:Release
-
-      # to be implemented
-      # - uses: actions/upload-artifact@v2
-      #   with:
-      #     name: artifacts-android
-      #     path: |
-      #       Client\*.apk
+  # to be implemented
+  # - uses: actions/upload-artifact@v2
+  #   with:
+  #     name: artifacts-android
+  #     path: |
+  #       Client\*.apk
 
   buildServer:
     runs-on: ubuntu-latest
@@ -99,7 +96,7 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: "8.0.x"
 
       - name: Build Server Solution
         run: |
@@ -166,7 +163,7 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: "8.0.x"
 
       - name: Run Unit Tests with Coverage
         run: |
@@ -179,7 +176,7 @@ jobs:
       - name: Generate Coverage Report
         run: |
           reportgenerator "-reports:Server/coverage/*.cobertura.xml" "-targetdir:Server/coverage/CoverageReport" "-reporttypes:Html"
-      
+
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v2
         with:
