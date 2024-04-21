@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.API", "Server.API\Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Test", "Server.Test\Server.Test.csproj", "{81B0CD69-28FC-4CBD-8F11-88501DDA89A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.IntegrationTests", "Server.IntegrationTests\Server.IntegrationTests.csproj", "{516E5083-EBF2-40DC-8C37-72FFA63514CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.IntegrationTest", "Server.IntegrationTest\Server.IntegrationTest.csproj", "{516E5083-EBF2-40DC-8C37-72FFA63514CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

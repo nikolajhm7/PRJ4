@@ -3,33 +3,38 @@ using Microsoft.EntityFrameworkCore;
 using Server.API.Data;
 using Server.API.Models;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
+using Server.API.Repository.Interfaces;
 
 namespace Server.API.Repositories
 {
-    internal sealed class UserRepository
+    public class UserRepository : IUserRepository
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly UserManager<User> _userManager;
 
-        public UserRepository(ApplicationDbContext dbContext)
+        public UserRepository(UserManager<User> userManager)
         {
-            _dbContext = dbContext;
+            _userManager = userManager;
         }
 
-        public void AddUser(User user)
+        public async Task<User> GetUserByName(string userName)
         {
-            _dbContext.Set<User>().Add(user);
+            return await _userManager.FindByNameAsync(userName);
         }
-
-        public void RemoveUser(User user)
+        
+        public async Task<IdentityResult> AddUser(User user, string password)
         {
-            _dbContext.Set<User>().Remove(user);
+            return await _userManager.CreateAsync(user, password);
         }
-
-        public async Task<User> GetUserByName(string name, CancellationToken cancellationToken = default)
+        
+        public async Task<IdentityResult> RemoveUser(User user)
         {
-            return await _dbContext.Set<User>()
-                .Include(g => g.UserName)
-                .FirstOrDefaultAsync(g => g.UserName == name, cancellationToken);
+            return await _userManager.DeleteAsync(user);
+        }
+        
+        public async Task<bool> UserCheckPassword(User user, string password)
+        {
+            return await _userManager.CheckPasswordAsync(user, password);
         }
 
     }

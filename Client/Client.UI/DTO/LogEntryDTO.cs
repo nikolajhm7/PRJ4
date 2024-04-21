@@ -1,3 +1,5 @@
+using System;
+
 namespace Client.UI.DTO;
 
 public class LogEntryDTO

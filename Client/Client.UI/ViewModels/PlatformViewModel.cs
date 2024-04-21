@@ -8,11 +8,12 @@ using System.Text;
 using Client.UI.Models;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Client.UI.Models;
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls;
 using Client.UI.Services;
+using Client.UI.Views;
 
 namespace Client.UI.ViewModels
 {
@@ -29,6 +30,8 @@ namespace Client.UI.ViewModels
 
         private readonly LobbyService _lobbyService;
 
+        private readonly NavigationService _navigationService;
+
         private ObservableCollection<Game> games;
         public ObservableCollection<Game> Games
         {
@@ -43,6 +46,7 @@ namespace Client.UI.ViewModels
             _avatar = User.Instance.avatar;
             InitializeGame();
             _lobbyService = lobbyService;
+            _navigationService = new NavigationService();
         }
 
         private void InitializeGame()
@@ -70,19 +74,25 @@ namespace Client.UI.ViewModels
         }
 
         [RelayCommand]
-        public async Task LogOut()
+        async Task LogOut()
         {
             Preferences.Clear("auth_token");
-            await Shell.Current.GoToAsync("LoginPage");
+            await _navigationService.NavigateToPage("///"+nameof(LoginPage));
         }
 
         [RelayCommand]
-        public async Task GoToLobby(string s)
+        async Task GoToSettings()
+        {
+            await _navigationService.NavigateToPage(nameof(SettingsPage));
+        }
+
+        [RelayCommand]
+        async Task GoToLobby(string s)
         {
             var response= await _lobbyService.CreateLobbyAsync();
             if (response.Success)
             {
-                await Shell.Current.GoToAsync($"LobbyPage?Image={s}&LobbyId={response.Msg}");
+                await Shell.Current.GoToAsync($"//LobbyPage?Image={s}&LobbyId={response.Msg}");
             }
             else
             {
@@ -90,9 +100,9 @@ namespace Client.UI.ViewModels
             }
         }
         [RelayCommand]
-         public async Task GoToJoin(string s)
+        async Task GoToJoin(string s)
         {
-            await Shell.Current.GoToAsync($"JoinPage");
+            await _navigationService.NavigateToPage(nameof(JoinPage));
         }
         
         public partial class Game: ObservableObject

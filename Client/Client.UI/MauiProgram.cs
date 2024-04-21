@@ -1,15 +1,30 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using Client.Libary.Interfaces;
 using Client.UI.DTO;
+using Client.UI.Managers;
 using Client.UI.ViewModels;
 using Client.UI.Views;
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
 using Client.UI.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.Controls.Hosting;
+using Microsoft.Maui.Hosting;
+using Microsoft.Maui.Networking;
+using Microsoft.Maui.Storage;
 using Newtonsoft.Json;
 using Serilog;
+using Client.Libary;
 
 namespace Client.UI
 {
@@ -35,12 +50,6 @@ namespace Client.UI
                 .CreateLogger();
             
             builder.Logging.AddSerilog();
-            
-            var logFilePath = Path.Combine(FileSystem.AppDataDirectory, "Logs/log-.txt");
-            Console.WriteLine($"Logfil sti: {logFilePath}");
-            
-            Log.Information("App started");
-            
          
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
@@ -49,10 +58,13 @@ namespace Client.UI
 
             builder.Configuration.AddConfiguration(configuration);
             
-            builder.Services.AddSingleton<AuthenticationService>();
+            builder.Services.AddTransient<LoadingPage>();
+            builder.Services.AddTransient<LoadingViewModel>();
 
-            builder.Services.AddSingleton<PlatformViewModel>();
-            builder.Services.AddSingleton<PlatformPage>();
+            builder.Services.AddSingleton<IPreferenceManager, PreferenceManager>();
+
+            builder.Services.AddTransient<PlatformViewModel>();
+            builder.Services.AddTransient<PlatformPage>();
 
             builder.Services.AddSingleton<LoginViewModel>();
             builder.Services.AddSingleton<LoginPage>();
@@ -75,6 +87,9 @@ namespace Client.UI
             builder.Services.AddSingleton<LobbyService>();
             builder.Services.AddSingleton<FriendsService>();
 
+            builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
+            builder.Services.AddSingleton<IApiService, ApiService>();
+
             builder.Services.AddTransient<AuthenticationHeaderHandler>();
             builder.Services.AddHttpClient("ApiHttpClient")
                 .AddHttpMessageHandler<AuthenticationHeaderHandler>();
@@ -84,18 +99,18 @@ namespace Client.UI
             #endif
 
             var app = builder.Build();
-            
-            var authenticationService = app.Services.GetRequiredService<AuthenticationService>();
-            
-            Task.Run(() => UploadLogsAsync(configuration, authenticationService));
+
+            var jwtTokenService = app.Services.GetRequiredService<IJwtTokenService>();
+
+            Task.Run(() => UploadLogsAsync(configuration, jwtTokenService));
 
             return app;
         }
 
-        public static async Task UploadLogsAsync(IConfiguration configuration, AuthenticationService authenticationService)
+        public static async Task UploadLogsAsync(IConfiguration configuration, IJwtTokenService jwtTokenService)
         {
             // Tjek om enheden har internetadgang og er på Wi-Fi
-            if (!IsNetworkAvailable() && !await authenticationService.IsUserAuthenticated())
+            if (!IsNetworkAvailable() && !await jwtTokenService.IsAuthenticated())
             {
                 return;
             }

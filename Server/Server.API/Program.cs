@@ -10,13 +10,15 @@ using Server.API.Data;
 using Server.API.Models;
 using Server.API.Hubs;
 using Serilog;
-using Serilog.Core;
-using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
 using Server.API.Middleware;
 using Server.API.Services;
 using Microsoft.AspNetCore.Authorization;
-
+using Server.API.Repositories;
+using Server.API.Repository;
+using Server.API.Repository.Interfaces;
+using Server.API.Services.Interfaces;
+using Server.API.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMemoryCache();
@@ -81,23 +83,27 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 //Add SignalR
 builder.Services.AddSignalR();
 
-builder.Services.AddSingleton<JwtTokenService>();
-
 //logging
 builder.Host.UseSerilog((ctx, lc) =>
 {
-    lc.ReadFrom.Configuration(ctx.Configuration);
-    lc.WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30);
-    lc.WriteTo.MSSqlServer(
-        connectionString: ctx.Configuration.GetConnectionString("DefaultConnection"),
-        sinkOptions: new MSSqlServerSinkOptions { TableName = "LogEvents", AutoCreateSqlTable = true }
-    );
-    lc.WriteTo.Seq("http://localhost:5341"); // Erstat med den faktiske adresse til din Seq server
-    lc.Enrich.WithMachineName();
-    lc.Enrich.WithThreadId();
+    // Aktiver kun Serilog i bestemte miljøer
+    if (ctx.HostingEnvironment.IsDevelopment() || ctx.HostingEnvironment.IsProduction())
+    {
+        lc.ReadFrom.Configuration(ctx.Configuration);
+        lc.WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30);
+        lc.WriteTo.MSSqlServer(
+            connectionString: ctx.Configuration.GetConnectionString("DefaultConnection"),
+            sinkOptions: new MSSqlServerSinkOptions { TableName = "LogEvents", AutoCreateSqlTable = true }
+        );
+        lc.WriteTo.Seq("http://localhost:5341"); // Erstat med den faktiske adresse til din Seq server
+        lc.Enrich.WithMachineName();
+        lc.Enrich.WithThreadId();
+    }
 });
 
 addJWTAuthentication(builder);
+
+ConfigureServices(builder.Services);
 
 var app = builder.Build();
 
@@ -117,7 +123,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseMiddleware<ErrorLoggingMiddleware>();
+ConfigureMiddleware(app);
 
 app.UseEndpoints(endpoints =>
 {
@@ -130,54 +136,50 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var dbContext = services.GetRequiredService<ApplicationDbContext>();
-    await dbContext.DeleteOldLogEntriesAsync();
+    var env = services.GetRequiredService<IWebHostEnvironment>();
+    
+    if (!env.IsEnvironment("Testing"))
+    {
+        var dbContext = services.GetRequiredService<ApplicationDbContext>();
+        await dbContext.DeleteOldLogEntriesAsync();
+    }
 }
+
 
 app.Run();
 
 
 void addJWTAuthentication(WebApplicationBuilder builder)
 {
+    // Tilføjer konfiguration
+    var azureAdConfig = builder.Configuration.GetSection("AzureAd");
 
-    /*
-     // Tilføjer konfiguration
-       var azureAdConfig = builder.Configuration.GetSection("AzureAd");
-
-       // Sætter miljøvariabler baseret på konfigurationen
-       Environment.SetEnvironmentVariable("AZURE_CLIENT_ID", azureAdConfig["ClientId"]);
-       Environment.SetEnvironmentVariable("AZURE_CLIENT_SECRET", azureAdConfig["ClientSecret"]);
-       Environment.SetEnvironmentVariable("AZURE_TENANT_ID", azureAdConfig["TenantId"]);
-
-       // Opretter SecretClient med DefaultAzureCredential
-       var keyVaultUrl = builder.Configuration["AzureKeyVault:Endpoint"];
-       var secretClient = new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
-     */
+    // Sætter miljøvariabler baseret på konfigurationen
+    Environment.SetEnvironmentVariable("AZURE_CLIENT_ID", azureAdConfig["ClientId"]);
+    Environment.SetEnvironmentVariable("AZURE_CLIENT_SECRET", azureAdConfig["ClientSecret"]);
+    Environment.SetEnvironmentVariable("AZURE_TENANT_ID", azureAdConfig["TenantId"]);
 
     var keyVaultUrl = builder.Configuration["AzureKeyVault:Endpoint"];
 
     var secretClient = new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
 
-    var jwtKeySecret = "3430350919ced15913aa218deb904200230f035cfcba33e4602ec193db8b6379";
-    //secretClient.GetSecret("JwtKey")
-    var jwtIssuerSecret = "PartyPlayPalaceAPI";
-    //secretClient.GetSecret("JwtIssuer")
-    var jwtAudienceSecret = "PartyPlayPalaceAPI";
-    //secretClient.GetSecret("JwtAudience")
+    var jwtKeySecret = secretClient.GetSecret("JwtKey").Value.Value;
+    var jwtIssuerSecret = secretClient.GetSecret("JwtIssuer").Value.Value;
+    var jwtAudienceSecret = secretClient.GetSecret("JwtAudience").Value.Value;
 
     builder.Configuration["Jwt:Key"] = jwtKeySecret;
     builder.Configuration["Jwt:Issuer"] = jwtIssuerSecret;
     builder.Configuration["Jwt:Audience"] = jwtAudienceSecret;
 
     builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme =
-        options.DefaultChallengeScheme =
-        options.DefaultForbidScheme =
-        options.DefaultScheme =
-        options.DefaultSignInScheme =
-        options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
+        {
+            options.DefaultAuthenticateScheme =
+                options.DefaultChallengeScheme =
+                    options.DefaultForbidScheme =
+                        options.DefaultScheme =
+                            options.DefaultSignInScheme =
+                                options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
         .AddJwtBearer(options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
@@ -213,6 +215,7 @@ void addJWTAuthentication(WebApplicationBuilder builder)
                     {
                         context.Token = accessToken;
                     }
+
                     return Task.CompletedTask;
                 }
             };
@@ -231,4 +234,32 @@ void addJWTAuthentication(WebApplicationBuilder builder)
     });
 }
 
-public partial class Program { }
+void ConfigureMiddleware(WebApplication app)
+{
+    app.Use(async (context, next) =>
+    {
+        using (var scope = app.Services.CreateScope())
+        {
+            var jwtTokenService = scope.ServiceProvider.GetRequiredService<IJwtTokenService>();
+            var middleware = new TokenRefreshMiddleware(next, jwtTokenService);
+            await middleware.InvokeAsync(context);
+        }
+    });
+    app.UseMiddleware<ErrorLoggingMiddleware>();
+}
+
+void ConfigureServices(IServiceCollection services)
+{
+    services.AddScoped<ITokenRepository, TokenRepository>();
+    services.AddScoped<IJwtTokenService, JwtTokenService>();
+    services.AddScoped<ITimeService, TimeService>();
+    services.AddScoped<IIdGenerator, IdGenerator>();
+    services.AddScoped<IFriendsRepository, FriendsRepository>();
+    services.AddScoped<IUserRepository, UserRepository>();
+    services.AddScoped<IGameRepository, GameRepository>();
+}
+
+
+public partial class Program
+{
+}

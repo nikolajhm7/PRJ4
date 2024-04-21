@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Client.Libary.Interfaces;
 using Client.UI.Views;
 using Microsoft.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -12,6 +13,8 @@ using Client.UI.Models;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Client.UI.Services;
+using Client.UI.Views;
 
 namespace Client.UI.ViewModels;
 
@@ -22,22 +25,30 @@ public partial class LoginViewModel : ObservableObject
     private readonly IConfiguration _configuration;
     
     private readonly ILogger<LoginViewModel> _logger;
-    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger)
+
+    private readonly NavigationService _navigationService;
+    
+    private IJwtTokenService _jwtTokenService;
+    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger, IJwtTokenService jwtTokenService)
     {
         _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
         
         _configuration = configuration;
+
+        _navigationService = new NavigationService();
         
         _logger = logger;
         
+        _jwtTokenService = jwtTokenService;
+
         IsAlreadyAuthenticated();
     }
 
     private async void IsAlreadyAuthenticated()
     {
-        if (await IsUserAuthenticated())
+        if (await _jwtTokenService.IsAuthenticated())
         {
-            await Shell.Current.GoToAsync("PlatformPage");
+            await _navigationService.NavigateToPage($"//{nameof(PlatformPage)}");
         }
     }
     [ObservableProperty]
@@ -47,9 +58,9 @@ public partial class LoginViewModel : ObservableObject
     private string _loginPassword = string.Empty;
 
     [RelayCommand]
-    public async Task GoToNewUser()
+    async Task GoToNewUser()
     {
-        await Shell.Current.GoToAsync("NewUserPage");
+        await _navigationService.NavigateToPage(nameof(NewUserPage));
     }
 
     [RelayCommand]
@@ -69,8 +80,7 @@ public partial class LoginViewModel : ObservableObject
 
         if (await LoginAsync(LoginUsername, LoginPassword))
         {
-            User.Instance.Username = LoginUsername;
-            await Shell.Current.GoToAsync("PlatformPage");
+            await _navigationService.NavigateToPage($"//{nameof(PlatformPage)}");
         }
         else
         {
@@ -78,25 +88,10 @@ public partial class LoginViewModel : ObservableObject
         }
     }
 
-    private async Task<bool> IsUserAuthenticated()
+    [RelayCommand]
+    public async Task JoinAsGuest()
     {
-        var token = Preferences.Get("auth_token", defaultValue: string.Empty);
-
-        if (!string.IsNullOrWhiteSpace(token))
-        {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, _configuration["ConnectionSettings:ApiUrl"] + "/checkLoginToken");
-
-            requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            var response = await _httpClient.SendAsync(requestMessage);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        await _navigationService.NavigateToPage(nameof(JoinPage));
     }
 
     public async Task<bool> LoginAsync(string username, string password)

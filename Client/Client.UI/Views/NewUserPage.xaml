@@ -6,8 +6,8 @@
              x:Class="Client.UI.Views.NewUserPage"
              x:DataType="viewModels:NewUserViewModel">
     <VerticalStackLayout
-        Padding="30,0"
-        Spacing="25">
+        Padding="20,0"
+        Spacing="10">
 
         <Label
             Text="Make a new user"
@@ -34,6 +34,11 @@
             Text="Create" 
             HorizontalOptions="Fill"
             Command="{Binding MakeNewUserCommand}"/>
+        <Button
+            x:Name="Back"
+Text="Back"
+HorizontalOptions="Fill"
+Command="{Binding GoBackCommand}"/>
     </VerticalStackLayout>
 
 </ContentPage>

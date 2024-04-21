@@ -1,6 +1,3 @@
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,21 +6,23 @@ using Server.API.DTO;
 using Server.API.Models;
 using Server.API.Services;
 using System.Text.RegularExpressions;
+using Server.API.Repository.Interfaces;
+using Server.API.Services.Interfaces;
 
 public class LoginController : ControllerBase
 {
 
     private readonly ILogger<LoginController> _logger;
-    private readonly UserManager<User> _userManager;
     private readonly IMemoryCache _memoryCache;
-    private readonly JwtTokenService _jwtTokenService;
+    private readonly IJwtTokenService _jwtTokenService;
+    private IUserRepository _userRepository;
 
-    public LoginController(UserManager<User> userManager, ILogger<LoginController> logger, IMemoryCache memoryCache, JwtTokenService jwtTokenService)
+    public LoginController(ILogger<LoginController> logger, IMemoryCache memoryCache, IJwtTokenService jwtTokenService, IUserRepository userRepository)
     {
-        _userManager = userManager;
         _logger = logger;
         _memoryCache = memoryCache;
         _jwtTokenService = jwtTokenService;
+        _userRepository = userRepository;
     }
 
     [HttpPost("login")]
@@ -42,24 +41,31 @@ public class LoginController : ControllerBase
             }
         }
         
-        var user = await _userManager.FindByNameAsync(loginDto.UserName);
+        var user = await _userRepository.GetUserByName(loginDto.UserName);
 
         if (user == null)
         {
+            _memoryCache.Set(cacheKey, attempts + 1, lockoutTime);
             _logger.LogWarning("Login attempt with unknown username: {UserName}", loginDto.UserName);
             return Unauthorized("Wrong username or password");
         }
 
-        if (!await _userManager.CheckPasswordAsync(user, loginDto.Password))
+        if (!await _userRepository.UserCheckPassword(user, loginDto.Password))
         {
-            _logger.LogWarning("Incorrect password attempt for user: {UserName}", user.UserName);
+            _memoryCache.Set(cacheKey, attempts + 1, lockoutTime);
+            _logger.LogWarning("Incorrect password attempt for user: {UserName}", loginDto.UserName);
             return Unauthorized("Wrong username or password");
         }
         
-        var jwtString = _jwtTokenService.GenerateToken(user.UserName);
+        var token = _jwtTokenService.GenerateToken(user.UserName);
+        var refreshToken = _jwtTokenService.GenerateRefreshToken(user.UserName);
         
         _logger.LogInformation("User {UserName} logged in successfully.", user.UserName);
-        return StatusCode(StatusCodes.Status200OK, jwtString);
+        
+        _memoryCache.Remove(cacheKey);
+        
+        return StatusCode(StatusCodes.Status200OK, new { Token = token, RefreshToken = refreshToken });
+        
     }
 
     [HttpPost("login-as-guest")]
@@ -79,12 +85,13 @@ public class LoginController : ControllerBase
             return BadRequest("Guest name must be 2-20 characters long, and only contain letters and numbers.");
         }
 
-        _logger.LogInformation("Guest {GuestName} is attempting to log in.", model.GuestName);
+        _logger.LogDebug("Guest {GuestName} is attempting to log in.", model.GuestName);
 
-        var jwtString = _jwtTokenService.GenerateToken(model.GuestName, true);
+        var token = _jwtTokenService.GenerateToken(model.GuestName, true);
+        var refreshToken = _jwtTokenService.GenerateRefreshToken(model.GuestName);
 
         _logger.LogInformation("Guest {GuestName} logged in successfully.", model.GuestName);
-        return StatusCode(StatusCodes.Status200OK, jwtString);
+        return StatusCode(StatusCodes.Status200OK, new { Token = token, RefreshToken = refreshToken });
     }
 
     [Authorize]

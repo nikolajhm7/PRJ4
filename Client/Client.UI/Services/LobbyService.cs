@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR.Client;
 using Client.UI.DTO;
 using Microsoft.Extensions.Configuration;
 

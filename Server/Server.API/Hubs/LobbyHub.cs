@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Server.API.Models;
 using Server.API.DTO;
-using Server.API.Services;
 using Microsoft.AspNetCore.Authorization;
+using System.Reflection;
+using Server.API.Services.Interfaces;
 
 namespace Server.API.Hubs
 {
@@ -11,12 +12,15 @@ namespace Server.API.Hubs
     {
         public record ActionResult(bool Success, string? Msg);
 
-        private static readonly Dictionary<string, Lobby> lobbies = [];
-        private readonly ILogger<LobbyHub> _logger;
+        public readonly Dictionary<string, Lobby> lobbies = [];
 
-        public LobbyHub(ILogger<LobbyHub> logger)
+        private readonly ILogger<LobbyHub> _logger;
+        private readonly IIdGenerator _idGen;
+
+        public LobbyHub(ILogger<LobbyHub> logger, IIdGenerator idGen)
         {
             _logger = logger;
+            _idGen = idGen;
         }
 
         public async Task<ActionResult> CreateLobby()
@@ -29,7 +33,10 @@ namespace Server.API.Hubs
             }
 
             _logger.LogDebug("Start generation of random lobby ID.");
-            var lobbyId = IDGenerator.GenerateRandomLobbyID();
+            var lobbyId = _idGen.GenerateRandomLobbyId();
+
+            // TODO: ADD Auth, that ID doesnt already exist.
+
             _logger.LogDebug("Random lobby ID {LobbyId} generated.", lobbyId);
 
             var lobby = new Lobby(lobbyId, Context.ConnectionId);
@@ -57,6 +64,11 @@ namespace Server.API.Hubs
             if (lobbies.TryGetValue(lobbyId, out Lobby? lobby))
             {
                 var user = new ConnectedUserDTO(username, Context.ConnectionId);
+
+                foreach (var member in lobby.Members)
+                {
+                    await Clients.Caller.SendAsync("UserJoinedLobby", member);
+                }
 
                 lobby.Members.Add(user);
                 await Clients.Group(lobbyId).SendAsync("UserJoinedLobby", user);
@@ -137,10 +149,6 @@ namespace Server.API.Hubs
             {
                 _logger.LogError(exception, "Error on disconnect by {UserName}.", Context.User?.Identity?.Name);
             }
-            else
-            {
-                _logger.LogInformation("{UserName} disconnected.", Context.User?.Identity?.Name);
-            }
 
             var username = Context.User?.Identity?.Name;
             var user = new ConnectedUserDTO(username, Context.ConnectionId);
@@ -148,18 +156,27 @@ namespace Server.API.Hubs
             var lobby = lobbies.FirstOrDefault(x => x.Value.Members.Contains(user)).Value;
             if (lobby != null)
             {
+                // If host disconnects, close lobby and remove all members.
                 if (lobby.HostConnectionId == Context.ConnectionId)
                 {
+                    await Clients.Group(lobby.LobbyId).SendAsync("LobbyClosed");
+
                     foreach(var member in lobby.Members)
                     {
-                        await Clients.Client(member.ConnectionId).SendAsync("LobbyClosed");
-
                         await Groups.RemoveFromGroupAsync(member.ConnectionId, lobby.LobbyId);
-                        lobbies.Remove(lobby.LobbyId);
                     }
+
+                    lobbies.Remove(lobby.LobbyId);
                 }
-                await LeaveLobby(lobby.LobbyId);
+                else
+                {
+                    await Clients.Group(lobby.LobbyId).SendAsync("UserLeftLobby", user);
+                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobby.LobbyId);
+                    lobby.Members.Remove(user);
+                    _logger.LogInformation("{UserName} successfully left lobby {LobbyId}.", username, lobby.LobbyId);
+                }
             }
+            _logger.LogError(exception, "Successfully disconnected {UserName}.", username);
             await base.OnDisconnectedAsync(exception);
         }
     }

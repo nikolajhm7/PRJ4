@@ -11,6 +11,7 @@ using Client.UI.Models;
 using Client.UI.Services;
 using System.Diagnostics;
 using Client.UI.DTO;
+using Client.UI.Services;
 
 
 
@@ -21,12 +22,13 @@ namespace Client.UI.ViewModels
     public partial class LobbyViewModel : ObservableObject
     {
         private readonly LobbyService _lobbyService;
+        private readonly NavigationService _navigationService;
 
         [ObservableProperty]
-        private int lobbyId; //test
+        private string ?lobbyId;
 
         [ObservableProperty]
-        private string image;
+        private string ?image;
 
         [ObservableProperty]
         private Lobby lobby = new Lobby();
@@ -34,15 +36,13 @@ namespace Client.UI.ViewModels
         public LobbyViewModel(LobbyService lobbyService)
         {
             _lobbyService = lobbyService;
-
-            Debug.WriteLine("Initializing lobby");
-            InitializeLobby();
+            _navigationService = new NavigationService();
 
             // Example initialization, replace with actual dynamic data loading
-            Lobby.PlayerNames.Add("Player 1");
-            Lobby.PlayerNames.Add("Player 2");
-            Lobby.PlayerNames.Add("Player 3");
-            Lobby.LobbyId = "12345"; // Example Lobby ID
+            if(lobbyId != null)
+                Lobby.LobbyId = lobbyId; // Example Lobby ID
+            else
+                Lobby.LobbyId = "00000"; // Example Lobby ID
             System.Console.WriteLine(Image);
 
             // Subscribe to events
@@ -60,12 +60,6 @@ namespace Client.UI.ViewModels
             Lobby.PlayerNames.Remove(user.Username);
         }
 
-        private async void InitializeLobby()
-        {
-            var Message = await this._lobbyService.CreateLobbyAsync();
-            HandleActionResult(Message);
-        }
-
 
         [RelayCommand]
         public async Task TestAddPlayer()
@@ -76,7 +70,7 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task GoBack()
         {
-            await Shell.Current.GoToAsync("..");
+            await _navigationService.NavigateBack();
         }
 
         //Handle result of different functions, and error log if neccesary:

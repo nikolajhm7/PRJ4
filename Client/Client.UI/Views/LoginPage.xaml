@@ -8,8 +8,8 @@
              Title="LoginPage">
 
         <VerticalStackLayout
-            Padding="30,0"
-            Spacing="25">
+            Padding="20,0"
+            Spacing="10">
             
             <Label
                 Text="Welcome to PartyPlayPalace!"
@@ -39,6 +39,12 @@
                 Text="Make a new user" 
                 HorizontalOptions="Fill"
                 Command="{Binding GoToNewUserCommand}"/>
+
+            <Button
+                x:Name="GuestJoinBtn"
+                Text="Join as Guest" 
+                HorizontalOptions="Fill"
+                Command="{Binding JoinAsGuestCommand}"/>
     </VerticalStackLayout>
 
 </ContentPage>

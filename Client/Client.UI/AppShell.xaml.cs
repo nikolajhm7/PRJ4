@@ -7,6 +7,7 @@ namespace Client.UI
         public AppShell()
         {
             InitializeComponent();
+            Routing.RegisterRoute(nameof(LoadingPage), typeof(LoadingPage));
             Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
             Routing.RegisterRoute(nameof(NewUserPage), typeof(NewUserPage));
             Routing.RegisterRoute(nameof(PlatformPage), typeof(PlatformPage));

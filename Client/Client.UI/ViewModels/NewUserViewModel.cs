@@ -10,6 +10,9 @@ using Client.UI.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Maui.Controls;
+using Client.UI.Services;
+using Client.UI.Views;
 
 namespace Client.UI.ViewModels
 {
@@ -17,10 +20,12 @@ namespace Client.UI.ViewModels
     {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
+        private readonly NavigationService _navigationService;
         public NewUserViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
             _configuration = configuration;
+            _navigationService = new NavigationService();
         }
 
 
@@ -56,11 +61,17 @@ namespace Client.UI.ViewModels
         }
 
         [ObservableProperty]
-        string _username;
+        string _username = "Test123";
         [ObservableProperty]
-        string _password;
+        string _password = "Test123Test123";
         [ObservableProperty]
-        string _email;
+        string _email = "Test@123.com";
+
+        [RelayCommand]
+        public async Task GoBack()
+        {
+            await _navigationService.NavigateBack();
+        }
 
         [RelayCommand]
         public async Task MakeNewUser()
@@ -85,7 +96,7 @@ namespace Client.UI.ViewModels
             else if (await Check(_username, _password, _email))
             {
                 await Shell.Current.DisplayAlert("Succses", $"{Username} was created","OK");
-                await Shell.Current.GoToAsync("LoginPage");
+                await _navigationService.NavigateToPage(nameof(LoginPage));
                 return;
             }
         }

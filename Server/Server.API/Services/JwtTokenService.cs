@@ -1,17 +1,39 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Server.API.Repository;
+using Server.API.Repository.Interfaces;
+using Server.API.Services.Interfaces;
 
 namespace Server.API.Services;
 
-public class JwtTokenService
+public class JwtTokenService : IJwtTokenService
 {
     private readonly IConfiguration _configuration;
+    private readonly ITokenRepository _tokenRepository;
+    private readonly ITimeService _timeService;
 
-    public JwtTokenService(IConfiguration configuration)
+    public JwtTokenService(IConfiguration configuration, ITokenRepository tokenRepository, ITimeService timeService)
     {
         _configuration = configuration;
+        _tokenRepository = tokenRepository;
+        _timeService = timeService;
+    }
+
+    public bool IsGuest(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var securityToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+        return securityToken?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Role)?.Value == "Guest";
+    }
+    
+    public string GetUserNameFromToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var securityToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+        return securityToken?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name)?.Value;
     }
 
     public string GenerateToken(string userName, bool isGuest = false)
@@ -34,10 +56,46 @@ public class JwtTokenService
             issuer: jwtIssuer,
             audience: jwtAudience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(30),
+            expires: _timeService.UtcNow.AddMinutes(30),
             signingCredentials: signingCredentials
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+    
+    public string GenerateRefreshToken(string userName)
+    {
+        var randomNumber = new byte[32];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(randomNumber);
+            var refreshToken = Convert.ToBase64String(randomNumber);
+            _tokenRepository.SaveRefreshToken(userName, refreshToken, DateTime.UtcNow.AddDays(7));
+            return refreshToken;
+        }
+    }
+
+    public bool ValidateRefreshToken(string userName, string refreshToken)
+    {
+        return _tokenRepository.GetRefreshToken(userName) == refreshToken && _tokenRepository.IsActive(userName);
+    }
+    
+    public bool ValidateUsername(string token, string userName)
+    {
+        return GetUserNameFromToken(token) == userName;
+    }
+
+    public string GetTokenStringFromHttpContext(HttpContext context)
+    {
+        return context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+    }
+
+    public bool IsTokenExpiring(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var securityToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+        var timeToExpire = securityToken?.ValidTo - _timeService.UtcNow;
+        return timeToExpire?.TotalMinutes < 15;
+    }
+    
 }

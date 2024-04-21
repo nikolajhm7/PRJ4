@@ -1,11 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Server.API.Data.Models
+namespace Server.API.Models;
+
+public class Game
 {
-    public class Game
-    {
-        public int GameId { get; set; }
-        public string Name { get; set;}
-    }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int GameId { get; set; }
+    public string Name { get; set;}
+    public virtual List<UserGame> UserGames { get; set; } = new List<UserGame>();
 }
+
