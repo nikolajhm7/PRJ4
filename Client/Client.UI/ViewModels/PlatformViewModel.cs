@@ -81,6 +81,12 @@ namespace Client.UI.ViewModels
         }
 
         [RelayCommand]
+        async Task GoToSettings()
+        {
+            await _navigationService.NavigateToPage(nameof(SettingsPage));
+        }
+
+        [RelayCommand]
         async Task GoToLobby(string s)
         {
             var response= await _lobbyService.CreateLobbyAsync();

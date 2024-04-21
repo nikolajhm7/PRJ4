@@ -10,7 +10,8 @@
 
     <Grid
         RowSpacing="5"
-        Padding="30,0"
+        ColumnSpacing="5"
+        Padding="20,0"
         RowDefinitions="*,*,*,*,*,*"
         ColumnDefinitions="*,*,*,*"
         >
@@ -19,24 +20,31 @@
             Text="{Binding Username}"
             Style="{StaticResource SubHeadline}"
             Grid.Row="0"
-            Grid.Column="0"
-            Grid.ColumnSpan="1"
+            Grid.Column="1"
             HorizontalOptions="Fill"
             VerticalOptions="Center"
         />
-        <Label 
-            Text="{Binding Source={x:Static local:User.Instance}, Path=Username}" />
 
         <Image
             Source="{Binding Avatar}"
             Aspect="AspectFit"
             Grid.Column="2"
             Grid.Row="0"/>
+
         <Button
             Text="Log ud"
             Command="{Binding LogOutCommand}"
-            Grid.Row="0"
-            Grid.Column="3"
+            Grid.Row="4"
+            Grid.Column="2"
+            WidthRequest="100"
+            BackgroundColor="Bisque"
+        />
+
+        <Button
+            Text="Settings"
+            Command="{Binding GoToSettingsCommand}"
+            Grid.Row="3"
+            Grid.Column="2"
             WidthRequest="100"
             BackgroundColor="Bisque"
         />
@@ -61,8 +69,8 @@
         />
         <Button
             Text="Back"
-            Grid.Row="4"
-            Grid.Column="3"
+            Grid.Row="3"
+            Grid.Column="1"
             WidthRequest="100"
             BackgroundColor="Bisque"
             IsVisible="{Binding GamesShowing}"

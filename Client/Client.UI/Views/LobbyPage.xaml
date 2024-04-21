@@ -5,7 +5,7 @@
              x:Class="Client.UI.Views.LobbyPage"
              x:DataType="viewModels:LobbyViewModel"
              Title="LobbyPage">
-    <VerticalStackLayout Spacing="20" Padding="25">
+    <VerticalStackLayout Spacing="10" Padding="20,0">
 
         <!-- Overskrift med game ID -->
         <Frame CornerRadius="10" Padding="10" HorizontalOptions="FillAndExpand" BackgroundColor="#2196F3">

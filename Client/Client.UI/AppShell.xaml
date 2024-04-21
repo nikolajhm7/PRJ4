@@ -9,13 +9,14 @@
     Title="Client.UI">
 
     <ShellContent
+        Title="PlatformPage"
+        ContentTemplate="{DataTemplate views:PlatformPage}"
+        Route="PlatformPage" />
+
+    <ShellContent
         Title="LoginPage"
         ContentTemplate="{DataTemplate views:LoginPage}"
         Route="LoginPage" />
 
-    <ShellContent
-        Title="LobbyPage"
-        ContentTemplate="{DataTemplate views:LobbyPage}"
-        Route="LobbyPage" />
 
 </Shell>

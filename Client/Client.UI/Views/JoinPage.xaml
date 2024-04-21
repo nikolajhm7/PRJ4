@@ -5,7 +5,9 @@
              x:Class="Client.UI.Views.JoinPage">
 
 
-    <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center"
+                 Padding="10"
+                 Spacing="20,0">
         <Entry Placeholder="Enter LobbyId"
             Text="{Binding LobbyId}"/>
         <Button Text="Join"
@@ -15,5 +17,5 @@
             Text="Back"
         HorizontalOptions="Fill"
         Command="{Binding GoBackCommand}"/>
-    </StackLayout>
+    </VerticalStackLayout>
 </ContentPage>
