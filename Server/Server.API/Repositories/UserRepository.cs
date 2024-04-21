@@ -10,12 +10,10 @@ namespace Server.API.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<User> _userManager;
 
-        public UserRepository(ApplicationDbContext dbContext, UserManager<User> userManager)
+        public UserRepository(UserManager<User> userManager)
         {
-            _dbContext = dbContext;
             _userManager = userManager;
         }
 
@@ -24,9 +22,9 @@ namespace Server.API.Repositories
             return await _userManager.FindByNameAsync(userName);
         }
         
-        public async Task<IdentityResult> AddUser(User user)
+        public async Task<IdentityResult> AddUser(User user, string password)
         {
-            return await _userManager.CreateAsync(user);
+            return await _userManager.CreateAsync(user, password);
         }
         
         public async Task<IdentityResult> RemoveUser(User user)

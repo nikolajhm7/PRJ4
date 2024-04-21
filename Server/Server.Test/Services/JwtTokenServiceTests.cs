@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using NSubstitute;
 
 namespace Server.Test.Services;
@@ -75,4 +76,27 @@ public class JwtTokenServiceTests : TestBase
         Assert.That(result, Is.True);
     }
     
+    [Test]
+    public void ValidateRefreshToken_ShouldReturnFalse_IfTokenIsInvalid()
+    {
+        var userName = "User";
+        var refreshToken = JwtTokenService.GenerateRefreshToken(userName);
+        TokenRepository.GetRefreshToken(userName).Returns(refreshToken);
+        TokenRepository.IsActive(userName).Returns(false);
+
+        var result = JwtTokenService.ValidateRefreshToken(userName, refreshToken);
+
+        Assert.That(result, Is.False);
+    }
+
+    [Test]
+    public void GetTokenStringFromHttpContext_ShouldReturnTokenString_IfTokenIsInHeader()
+    {
+        var token = JwtTokenService.GenerateToken("User", false);
+        var httpContext = Substitute.For<HttpContext>();
+        httpContext.Request.Headers["Authorization"] = "Bearer " + token;
+        var result = JwtTokenService.GetTokenStringFromHttpContext(httpContext);
+
+        Assert.That(result, Is.EqualTo(token));
+    }
 }

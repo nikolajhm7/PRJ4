@@ -24,6 +24,7 @@ using Microsoft.Maui.Networking;
 using Microsoft.Maui.Storage;
 using Newtonsoft.Json;
 using Serilog;
+using Client.Libary;
 
 namespace Client.UI
 {
@@ -57,7 +58,9 @@ namespace Client.UI
 
             builder.Configuration.AddConfiguration(configuration);
             
-            builder.Services.AddSingleton<AuthenticationService>();
+            builder.Services.AddTransient<LoadingPage>();
+            builder.Services.AddTransient<LoadingViewModel>();
+
             builder.Services.AddSingleton<IPreferenceManager, PreferenceManager>();
 
             builder.Services.AddTransient<PlatformViewModel>();
@@ -84,6 +87,9 @@ namespace Client.UI
             builder.Services.AddSingleton<LobbyService>();
             builder.Services.AddSingleton<FriendsService>();
 
+            builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
+            builder.Services.AddSingleton<IApiService, ApiService>();
+
             builder.Services.AddTransient<AuthenticationHeaderHandler>();
             builder.Services.AddHttpClient("ApiHttpClient")
                 .AddHttpMessageHandler<AuthenticationHeaderHandler>();
@@ -94,17 +100,17 @@ namespace Client.UI
 
             var app = builder.Build();
             
-            var authenticationService = app.Services.GetRequiredService<AuthenticationService>();
+            var jwtTokenService = app.Services.GetRequiredService<JwtTokenService>();
             
-            Task.Run(() => UploadLogsAsync(configuration, authenticationService));
+            Task.Run(() => UploadLogsAsync(configuration, jwtTokenService));
 
             return app;
         }
 
-        public static async Task UploadLogsAsync(IConfiguration configuration, AuthenticationService authenticationService)
+        public static async Task UploadLogsAsync(IConfiguration configuration, IJwtTokenService jwtTokenService)
         {
             // Tjek om enheden har internetadgang og er på Wi-Fi
-            if (!IsNetworkAvailable() && !await authenticationService.IsUserAuthenticated())
+            if (!IsNetworkAvailable() && !await jwtTokenService.IsAuthenticated())
             {
                 return;
             }

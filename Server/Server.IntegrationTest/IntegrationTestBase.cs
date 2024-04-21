@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Server.API.Data;
 using Server.API.Repository.Interfaces;
@@ -20,6 +23,8 @@ public class IntegrationTestBase
     [SetUp]
     public virtual void SetUp()
     {
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Testing");
+
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: "TestDb")
             .Options;
@@ -40,10 +45,38 @@ public class IntegrationTestBase
     [TearDown]
     public virtual void TearDown()
     {
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", null);
+
         if (Context != null)
         {
             Context.Database.EnsureDeleted();
             Context.Dispose();
         }
+    }
+}
+
+public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
+{
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.ConfigureServices(services =>
+        {
+            // Find den eksisterende DbContext registrering og fjern den
+            var descriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+
+            if (descriptor != null)
+            {
+                services.Remove(descriptor);
+            }
+
+            // Anvend den allerede oprettede DbContext konfiguration
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseInMemoryDatabase("TestDb");  // Brug samme navn som i IntegrationTestBase for konsistens
+            });
+
+            // Tilføj yderligere mock services eller ændringer til din konfiguration her hvis nødvendigt
+        });
     }
 }

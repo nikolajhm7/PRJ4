@@ -20,6 +20,8 @@ public class TestBase
     [SetUp]
     public virtual void SetUp()
     {
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Testing");
+
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: "TestDb")
             .Options;
@@ -29,7 +31,7 @@ public class TestBase
         TokenRepository = Substitute.For<ITokenRepository>();
         TimeService = Substitute.For<ITimeService>();
         TimeService.UtcNow.Returns(DateTime.Now);
-        JwtTokenService = new JwtTokenService(Configuration, TokenRepository, TimeService);
+        JwtTokenService = Substitute.For<JwtTokenService>(Configuration, TokenRepository, TimeService);
 
         // Setup konfigurationen
         Configuration["Jwt:Key"].Returns("verysecretkeyverysecretkeyverysecretkey");
@@ -53,6 +55,8 @@ public class TestBase
     [TearDown]
     public virtual void TearDown()
     {
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", null);
+
         if (Context != null)
         {
             Context.Database.EnsureDeleted();

@@ -13,5 +13,5 @@ public class User : IdentityUser
     public virtual List<Friendship> Inviters { get; set; }
     // List of users who where invited to the "friendship"
     public virtual List<Friendship> Invitees { get; set; }
-    public virtual List<Game> UserGames { get; set; } = new List<Game>();
+    public virtual List<UserGame> UserGames { get; set; } = new List<UserGame>();
 }

@@ -10,8 +10,6 @@ using Server.API.Data;
 using Server.API.Models;
 using Server.API.Hubs;
 using Serilog;
-using Serilog.Core;
-using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
 using Server.API.Middleware;
 using Server.API.Services;
@@ -21,8 +19,6 @@ using Server.API.Repository;
 using Server.API.Repository.Interfaces;
 using Server.API.Services.Interfaces;
 using Server.API.Repositories.Interfaces;
-using Server.API.Repositories;
-
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMemoryCache();
@@ -90,15 +86,19 @@ builder.Services.AddSignalR();
 //logging
 builder.Host.UseSerilog((ctx, lc) =>
 {
-    lc.ReadFrom.Configuration(ctx.Configuration);
-    lc.WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30);
-    lc.WriteTo.MSSqlServer(
-        connectionString: ctx.Configuration.GetConnectionString("DefaultConnection"),
-        sinkOptions: new MSSqlServerSinkOptions { TableName = "LogEvents", AutoCreateSqlTable = true }
-    );
-    lc.WriteTo.Seq("http://localhost:5341"); // Erstat med den faktiske adresse til din Seq server
-    lc.Enrich.WithMachineName();
-    lc.Enrich.WithThreadId();
+    // Aktiver kun Serilog i bestemte miljøer
+    if (ctx.HostingEnvironment.IsDevelopment() || ctx.HostingEnvironment.IsProduction())
+    {
+        lc.ReadFrom.Configuration(ctx.Configuration);
+        lc.WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30);
+        lc.WriteTo.MSSqlServer(
+            connectionString: ctx.Configuration.GetConnectionString("DefaultConnection"),
+            sinkOptions: new MSSqlServerSinkOptions { TableName = "LogEvents", AutoCreateSqlTable = true }
+        );
+        lc.WriteTo.Seq("http://localhost:5341"); // Erstat med den faktiske adresse til din Seq server
+        lc.Enrich.WithMachineName();
+        lc.Enrich.WithThreadId();
+    }
 });
 
 addJWTAuthentication(builder);
@@ -136,9 +136,15 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var dbContext = services.GetRequiredService<ApplicationDbContext>();
-    await dbContext.DeleteOldLogEntriesAsync();
+    var env = services.GetRequiredService<IWebHostEnvironment>();
+    
+    if (!env.IsEnvironment("Testing"))
+    {
+        var dbContext = services.GetRequiredService<ApplicationDbContext>();
+        await dbContext.DeleteOldLogEntriesAsync();
+    }
 }
+
 
 app.Run();
 
@@ -249,6 +255,8 @@ void ConfigureServices(IServiceCollection services)
     services.AddScoped<ITimeService, TimeService>();
     services.AddScoped<IIdGenerator, IdGenerator>();
     services.AddScoped<IFriendsRepository, FriendsRepository>();
+    services.AddScoped<IUserRepository, UserRepository>();
+    services.AddScoped<IGameRepository, GameRepository>();
 }
 
 

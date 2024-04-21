@@ -8,28 +8,13 @@ namespace Client.UI
     {
         
         public IServiceProvider ServiceProvider { get; }
-        //private static LoginPage _loginPage;
         public App(IServiceProvider serviceProvider)
         {
             InitializeComponent();
             ServiceProvider = serviceProvider;
-            //_loginPage = loginPage;
-            
+
             MainPage = new AppShell();
-
             
         }
-        /*
-        protected override async void OnStart()
-        {
-            base.OnStart();
-            await MainPage.Navigation.PushModalAsync(_loginPage);
-        }
-
-        public static async Task ShowLoginPage()
-        {
-            // Metode til at vise LoginPage fra hvor som helst i appen
-            await Current.MainPage.Navigation.PushModalAsync(_loginPage);
-        }*/
     }
 }

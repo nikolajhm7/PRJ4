@@ -20,7 +20,7 @@ public class AuthorizationTests : IntegrationTestBase
     [SetUp]
     public void SetUp()
     {
-        _factory = new WebApplicationFactory<Program>();
+        _factory = new CustomWebApplicationFactory<Program>();
         _client = _factory.CreateClient();
        
     }
