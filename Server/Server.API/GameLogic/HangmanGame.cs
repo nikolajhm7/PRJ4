@@ -83,6 +83,7 @@ namespace Server.API.GameLogic
             return secretWord.Contains(letter);
         }
 
+        // Method to check if the game is over
         private bool IsGameOver(out bool isWin, GameParameters maxIncorrectGuess)
         {
             isWin = !secretWord.Any(c => !guessedLetters.Contains(c));
@@ -90,6 +91,7 @@ namespace Server.API.GameLogic
 
         }
 
+        // Method to get the current state of the guessed word
         private string GetGuessedWord()
         {
             string guessedWord = "";
@@ -107,6 +109,7 @@ namespace Server.API.GameLogic
             return guessedWord;
         }
 
+        // Method to get the count of incorrect guesses
         private int GetIncorrectGuessCount()
         {
             int count = 0;

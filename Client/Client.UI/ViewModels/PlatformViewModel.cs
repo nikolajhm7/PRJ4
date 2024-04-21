@@ -92,7 +92,7 @@ namespace Client.UI.ViewModels
             var response= await _lobbyService.CreateLobbyAsync();
             if (response.Success)
             {
-                await Shell.Current.GoToAsync("//LobbyPage?Image={s}&LobbyId={response.Msg}");
+                await Shell.Current.GoToAsync($"//LobbyPage?Image={s}&LobbyId={response.Msg}");
             }
             else
             {
