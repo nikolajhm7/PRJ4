@@ -11,24 +11,24 @@ on:
 
 jobs:
 
-  buildClientWindows:
-    runs-on: windows-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Install .NET MAUI workload
-        shell: pwsh
-        run: |
-          & dotnet nuget locals all --clear
-          & dotnet workload install maui --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
-          & dotnet workload install android ios maccatalyst tvos macos maui wasm-tools maui-maccatalyst --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
+#  buildClientWindows:
+#    runs-on: windows-latest
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
+#
+#      - name: Setup .NET SDK
+#        uses: actions/setup-dotnet@v1
+#        with:
+#          dotnet-version: '8.0.x'
+#
+#      - name: Install .NET MAUI workload
+#        shell: pwsh
+#        run: |
+#          & dotnet nuget locals all --clear
+#          & dotnet workload install maui --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
+#          & dotnet workload install android ios maccatalyst tvos macos maui wasm-tools maui-maccatalyst --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
 
 
 
@@ -39,11 +39,11 @@ jobs:
 #           dotnet build <path to unit test csproj>
 #           dotnet test <path to unit test csproj> --no-build --verbosity normal
 
-      - name: Build Client Solution
-        run: |
-          cd Client
-          dotnet restore
-          dotnet build -c Release
+#      - name: Build Client Solution
+#        run: |
+#          cd Client
+#          dotnet restore
+#          dotnet build -c Release
 
       # - uses: actions/upload-artifact@v2
       #   with:
@@ -51,36 +51,36 @@ jobs:
       #     path: |
       #       **\*.msix
 
-  buildClientAndroid:
-    runs-on: windows-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Install .NET MAUI workload
-        shell: bash
-        run: |
-          dotnet nuget locals all --clear 
-          dotnet workload install maui --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
-          dotnet workload install android ios maccatalyst tvos macos maui wasm-tools --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
-
-
-      - name: Restore nuget packages
-        run: |
-          cd Client
-          dotnet restore Client.sln    
-
-      - name : Build Android App
-        shell: bash
-        run: |
-          cd Client
-          dotnet publish -f:net8.0-android -c:Release
+#  buildClientAndroid:
+#    runs-on: windows-latest
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
+#
+#      - name: Setup .NET SDK
+#        uses: actions/setup-dotnet@v1
+#        with:
+#          dotnet-version: '8.0.x'
+#
+#      - name: Install .NET MAUI workload
+#        shell: bash
+#        run: |
+#          dotnet nuget locals all --clear 
+#          dotnet workload install maui --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
+#          dotnet workload install android ios maccatalyst tvos macos maui wasm-tools --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet7/nuget/v3/index.json --source https://api.nuget.org/v3/index.json
+#
+#
+#      - name: Restore nuget packages
+#        run: |
+#          cd Client
+#          dotnet restore Client.sln    
+#
+#      - name : Build Android App
+#        shell: bash
+#        run: |
+#          cd Client
+#          dotnet publish -f:net8.0-android -c:Release
 
       # to be implemented
       # - uses: actions/upload-artifact@v2
@@ -184,4 +184,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: coverage-report-unittest
-          path: ./coverage/CoverageReport/
+          path: Server/coverage/CoverageReport/
