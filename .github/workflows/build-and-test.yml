@@ -155,7 +155,7 @@ jobs:
   #         cd Server
   #         dotnet test --collect:"XPlat Code Coverage" --logger:"junit;MethodFormat=Class;FailureBodyFormat=Verbose"
 
-  unittest-server:
+    unittest-server:
     needs: buildServer
     runs-on: ubuntu-latest
 
@@ -163,28 +163,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Add steps to set up .NET SDK and other necessary configurations
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x'
 
-      # Run unit tests with coverage
       - name: Run Unit Tests with Coverage
         run: |
           cd Server
-          dotnet test Server.Test/Server.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-          
+          dotnet test Server.Test/Server.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./TestResults/Coverage/
 
-      # Generate coverage report
+      - name: Install ReportGenerator Tool
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+
       - name: Generate Coverage Report
         run: |
-          dotnet tool install --global dotnet-reportgenerator-globaltool
-          reportgenerator "-reports:Server/**/coverage.opencover.xml" "-targetdir:coverage" -reporttypes:Html
+          reportgenerator "-reports:Server/TestResults/Coverage/*.cobertura.xml" "-targetdir:Server/TestResults/CoverageReport" -reporttypes:Html
 
-      # Upload coverage report as artifact
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v2
         with:
-          name: coverage-report
-          path: coverage
-  
+          name: coverage-report-unittest
+          path: Server/TestResults/CoverageReport/
+
   integrationtest-server:
     needs: buildServer
     runs-on: ubuntu-latest
@@ -193,21 +194,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-        # Run integration tests with coverage
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x'
+
       - name: Run Integration Tests with Coverage
         run: |
           cd Server
-          dotnet test Server.IntegrationTests/Server.IntegrationTests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-                # Generate coverage report
-                
+          dotnet test Server.IntegrationTests/Server.IntegrationTests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./TestResults/Coverage/
+
       - name: Generate Coverage Report
         run: |
-          dotnet tool install --global dotnet-reportgenerator-globaltool
-          reportgenerator "-reports:Server/**/coverage.opencover.xml" "-targetdir:coverage" -reporttypes:Html
+          reportgenerator "-reports:Server/TestResults/Coverage/*.cobertura.xml" "-targetdir:Server/TestResults/CoverageReport" -reporttypes:Html
 
-      # Upload coverage report as artifact
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v2
         with:
-          name: coverage-report
-          path: coverage
+          name: coverage-report-integrationtest
+          path: Server/TestResults/CoverageReport/
