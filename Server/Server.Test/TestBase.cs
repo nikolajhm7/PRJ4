@@ -20,6 +20,8 @@ public class TestBase
     [SetUp]
     public virtual void SetUp()
     {
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Testing");
+
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: "TestDb")
             .Options;
@@ -53,6 +55,8 @@ public class TestBase
     [TearDown]
     public virtual void TearDown()
     {
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", null);
+
         if (Context != null)
         {
             Context.Database.EnsureDeleted();

@@ -86,15 +86,19 @@ builder.Services.AddSignalR();
 //logging
 builder.Host.UseSerilog((ctx, lc) =>
 {
-    lc.ReadFrom.Configuration(ctx.Configuration);
-    lc.WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30);
-    lc.WriteTo.MSSqlServer(
-        connectionString: ctx.Configuration.GetConnectionString("DefaultConnection"),
-        sinkOptions: new MSSqlServerSinkOptions { TableName = "LogEvents", AutoCreateSqlTable = true }
-    );
-    lc.WriteTo.Seq("http://localhost:5341"); // Erstat med den faktiske adresse til din Seq server
-    lc.Enrich.WithMachineName();
-    lc.Enrich.WithThreadId();
+    // Aktiver kun Serilog i bestemte miljøer
+    if (ctx.HostingEnvironment.IsDevelopment() || ctx.HostingEnvironment.IsProduction())
+    {
+        lc.ReadFrom.Configuration(ctx.Configuration);
+        lc.WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30);
+        lc.WriteTo.MSSqlServer(
+            connectionString: ctx.Configuration.GetConnectionString("DefaultConnection"),
+            sinkOptions: new MSSqlServerSinkOptions { TableName = "LogEvents", AutoCreateSqlTable = true }
+        );
+        lc.WriteTo.Seq("http://localhost:5341"); // Erstat med den faktiske adresse til din Seq server
+        lc.Enrich.WithMachineName();
+        lc.Enrich.WithThreadId();
+    }
 });
 
 addJWTAuthentication(builder);
@@ -132,9 +136,15 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var dbContext = services.GetRequiredService<ApplicationDbContext>();
-    await dbContext.DeleteOldLogEntriesAsync();
+    var env = services.GetRequiredService<IWebHostEnvironment>();
+    
+    if (!env.IsEnvironment("Testing"))
+    {
+        var dbContext = services.GetRequiredService<ApplicationDbContext>();
+        await dbContext.DeleteOldLogEntriesAsync();
+    }
 }
+
 
 app.Run();
 
