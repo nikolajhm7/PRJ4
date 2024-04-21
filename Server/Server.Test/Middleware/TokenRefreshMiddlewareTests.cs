@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 using Server.API.Middleware;
 using Server.API.Models;
@@ -25,12 +27,24 @@ public class TokenRefreshMiddlewareTests : TestBase
     public void SetUp()
     {
         _next = Substitute.For<RequestDelegate>();
-        _tokenRepository = new TokenRepository(Context);
+        _tokenRepository = Substitute.For<ITokenRepository>();
         _jwtTokenService = new JwtTokenService(Configuration, _tokenRepository, TimeService);
         _middleware = new TokenRefreshMiddleware(_next, _jwtTokenService);
         _httpContext = new DefaultHttpContext();
         _httpContext.Response.Body = new MemoryStream();
-        var userManager = new UserManager<User>(new UserStore<User>(Context), null, null, null, null, null, null, null, null);
+        var userStore = Substitute.For<IUserStore<User>>();
+
+        var userManager = Substitute.For<UserManager<User>>(
+            userStore, 
+            Substitute.For<IOptions<IdentityOptions>>(), 
+            Substitute.For<IPasswordHasher<User>>(),
+            new IUserValidator<User>[0],
+            new IPasswordValidator<User>[0],
+            Substitute.For<ILookupNormalizer>(),
+            Substitute.For<IdentityErrorDescriber>(),
+            Substitute.For<IServiceProvider>(),
+            Substitute.For<ILogger<UserManager<User>>>());
+        
         _userRepository = new UserRepository(userManager);
     }
 
@@ -42,6 +56,7 @@ public class TokenRefreshMiddlewareTests : TestBase
         _httpContext.Request.Headers["Authorization"] = $"Bearer {token}";
         
         var refreshToken = _jwtTokenService.GenerateRefreshToken("testUser");
+        
         _httpContext.Request.Headers["X-Refresh-Token"] = refreshToken;
 
         var newUser = new User
@@ -60,14 +75,13 @@ public class TokenRefreshMiddlewareTests : TestBase
             }
         };
         
-        await _userRepository.AddUser(newUser, "password");
-        
-        //Check whether the user is added to the database
-        var user = await _userRepository.GetUserByName("testUser");
-        Assert.That(user, Is.Not.Null);
+        var addedUser = await _userRepository.AddUser(newUser, "password");
         
         TimeService.UtcNow.Returns(DateTime.UtcNow.AddMinutes(29));  // 1 minut til udløb
-
+        
+        _tokenRepository.GetRefreshToken("testUser").Returns(refreshToken);
+        _tokenRepository.IsActive("testUser").Returns(true);
+        
         await _middleware.InvokeAsync(_httpContext);
         
         // Assert

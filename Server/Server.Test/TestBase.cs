@@ -29,7 +29,7 @@ public class TestBase
         TokenRepository = Substitute.For<ITokenRepository>();
         TimeService = Substitute.For<ITimeService>();
         TimeService.UtcNow.Returns(DateTime.Now);
-        JwtTokenService = new JwtTokenService(Configuration, TokenRepository, TimeService);
+        JwtTokenService = Substitute.For<JwtTokenService>(Configuration, TokenRepository, TimeService);
 
         // Setup konfigurationen
         Configuration["Jwt:Key"].Returns("verysecretkeyverysecretkeyverysecretkey");
