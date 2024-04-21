@@ -5,6 +5,7 @@ using Client.Libary.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 
+namespace Client.Test;
 public class ApiServiceTests
 {
     private ApiService _apiService;
