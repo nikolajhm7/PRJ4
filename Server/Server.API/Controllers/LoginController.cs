@@ -31,7 +31,7 @@ public class LoginController : ControllerBase
         var retryLimit = 5;
         var lockoutTime = TimeSpan.FromMinutes(15);
         var cacheKey = $"login_attempts_for_{loginDto.UserName}";
-        
+
         if (_memoryCache.TryGetValue(cacheKey, out int attempts))
         {
             if (attempts >= retryLimit)
@@ -40,7 +40,7 @@ public class LoginController : ControllerBase
                 return StatusCode(StatusCodes.Status429TooManyRequests, "Too many login attempts. Please try again later.");
             }
         }
-        
+
         var user = await _userRepository.GetUserByName(loginDto.UserName);
 
         if (user == null)
@@ -56,16 +56,16 @@ public class LoginController : ControllerBase
             _logger.LogWarning("Incorrect password attempt for user: {UserName}", loginDto.UserName);
             return Unauthorized("Wrong username or password");
         }
-        
+
         var token = _jwtTokenService.GenerateToken(user.UserName);
         var refreshToken = _jwtTokenService.GenerateRefreshToken(user.UserName);
-        
+
         _logger.LogInformation("User {UserName} logged in successfully.", user.UserName);
-        
+
         _memoryCache.Remove(cacheKey);
-        
+
         return StatusCode(StatusCodes.Status200OK, new { Token = token, RefreshToken = refreshToken });
-        
+
     }
 
     [HttpPost("login-as-guest")]
@@ -77,7 +77,7 @@ public class LoginController : ControllerBase
             return BadRequest("Guest name is required.");
         }
 
-        string pattern = @"^[A-Za-z0-9]{2,20}$";        
+        string pattern = @"^[A-Za-z0-9]{2,20}$";
 
         if (!Regex.IsMatch(model.GuestName, pattern))
         {

@@ -14,7 +14,7 @@
         Route="Loading" />
 
     <ShellContent
-        Title="Platorm"
+        Title="Platform"
         ContentTemplate="{DataTemplate views:PlatformPage}"
         Route="PlatformPage" />
     

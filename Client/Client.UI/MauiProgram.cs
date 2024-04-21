@@ -57,7 +57,7 @@ namespace Client.UI
                 .Build();
 
             builder.Configuration.AddConfiguration(configuration);
-            
+
             builder.Services.AddTransient<LoadingPage>();
             builder.Services.AddTransient<LoadingViewModel>();
 
@@ -100,8 +100,10 @@ namespace Client.UI
 
             var app = builder.Build();
             
-            var jwtTokenService = app.Services.GetRequiredService<JwtTokenService>();
-            
+            //var jwtTokenService = app.Services.GetRequiredService<JwtTokenService>();
+            var jwtTokenService = (JwtTokenService)app.Services.GetRequiredService<IJwtTokenService>();
+
+
             Task.Run(() => UploadLogsAsync(configuration, jwtTokenService));
 
             return app;
