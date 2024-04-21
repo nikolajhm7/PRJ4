@@ -99,9 +99,9 @@ namespace Client.UI
             #endif
 
             var app = builder.Build();
-            
-            var jwtTokenService = app.Services.GetRequiredService<JwtTokenService>();
-            
+
+            var jwtTokenService = app.Services.GetRequiredService<IJwtTokenService>();
+
             Task.Run(() => UploadLogsAsync(configuration, jwtTokenService));
 
             return app;
