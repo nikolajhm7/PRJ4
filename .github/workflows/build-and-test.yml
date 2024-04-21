@@ -155,7 +155,7 @@ jobs:
   #         cd Server
   #         dotnet test --collect:"XPlat Code Coverage" --logger:"junit;MethodFormat=Class;FailureBodyFormat=Verbose"
 
-    unittest-server:
+  unittest-server:
     needs: buildServer
     runs-on: ubuntu-latest
 
