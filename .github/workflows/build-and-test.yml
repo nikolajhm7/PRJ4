@@ -178,8 +178,8 @@ jobs:
 
       - name: Generate Coverage Report
         run: |
-          reportgenerator "-reports:./coverage/*.cobertura.xml" "-targetdir:./coverage/CoverageReport" "-reporttypes:Html"
-
+          reportgenerator "-reports:Server/coverage/*.cobertura.xml" "-targetdir:Server/coverage/CoverageReport" "-reporttypes:Html"
+      
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v2
         with:
