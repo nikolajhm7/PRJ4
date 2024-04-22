@@ -3,10 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Client.UI.Views.GamePage"
              Title="GamePage">
-    <VerticalStackLayout>
+    <VerticalStackLayout
+        Spacing="25"
+        Padding="30,0"
+        VerticalOptions="Center">
         <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
+            x:Name="secretWord"
+            FontSize="18"
+            HorizontalOptions="Center"/>
+        <Button
+            x:Name="startButton"
+            Text="Start"
+            Clicked="StartGame"
             HorizontalOptions="Center" />
     </VerticalStackLayout>
 </ContentPage>

@@ -125,7 +125,7 @@ app.UseAuthorization();
 
 ConfigureMiddleware(app);
 
-//app.MapHub<HangmanHub>("HangmanGame");
+app.MapHub<HangmanHub>("/HangmanGame");
 
 app.UseEndpoints(endpoints =>
 {

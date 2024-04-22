@@ -7,7 +7,7 @@
 
     <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center"
                  Padding="10"
-                 Spacing="20,0">
+                 Spacing="20">
         <Entry Placeholder="Enter LobbyId"
             Text="{Binding LobbyId}"/>
         <Button Text="Join"
