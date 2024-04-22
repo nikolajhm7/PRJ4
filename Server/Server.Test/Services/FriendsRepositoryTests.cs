@@ -91,7 +91,7 @@ public class FriendsRepositoryTests : TestBase
     }
     
     [Test]
-    public void GetFriendsOf_ReturnsCorrectFriends()
+    public async Task GetFriendsOf_ReturnsCorrectFriends()
     {
         // Arrange
         var user1 = new User { Id = "user1", UserName = "User1" };
@@ -102,11 +102,11 @@ public class FriendsRepositoryTests : TestBase
         Context.SaveChanges();
 
         // Act
-        var friends = _friendsRepository.GetFriendsOf(user1);
+        var friends = await _friendsRepository.GetFriendsOf(user1.Id);
 
         // Assert
         Assert.That(friends.Count, Is.EqualTo(1));
-        Assert.That(friends[0].Name, Is.EqualTo(user2.UserName));
+        Assert.That(friends[0].FriendId, Is.EqualTo(user2.Id));
         Assert.That(friends[0].FriendsSince, Is.EqualTo(friendship.date));
     }
 
@@ -170,7 +170,7 @@ public class FriendsRepositoryTests : TestBase
 
     
     [Test]
-    public void GetFriendsOf_ReturnsFriendsForBothFriends1AndFriends2()
+    public async Task GetFriendsOf_ReturnsFriendsForBothFriends1AndFriends2()
     {
         // Arrange
         var user1 = new User { Id = "user1", UserName = "User1" };
@@ -183,7 +183,7 @@ public class FriendsRepositoryTests : TestBase
         Context.SaveChanges();
 
         // Act
-        var friends = _friendsRepository.GetFriendsOf(user1.Id);
+        var friends = await _friendsRepository.GetFriendsOf(user1.Id);
 
         // Assert
         Assert.That(friends.Count, Is.EqualTo(2));
