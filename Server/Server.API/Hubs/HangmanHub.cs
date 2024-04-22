@@ -14,6 +14,13 @@ namespace Server.API.Hubs
             this.hangmanGame = hangmanGame;
         }
 
+        // Chat-function for test?
+        public async Task SendMessage(string message)
+        {
+            Console.WriteLine(message);
+            await Clients.All.SendAsync("ReceiveMessage", message);
+        }
+
         // Method to start the game
         public async Task StartGame(GameParameters category)
         {

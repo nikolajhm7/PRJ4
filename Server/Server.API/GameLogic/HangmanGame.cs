@@ -28,6 +28,13 @@ namespace Server.API.GameLogic
         // Method to start a new game with the specified parameters
         public async Task StartGame(GameParameters parameters)
         {
+            // Define word categories
+            Dictionary<string, List<string>> wordCategories = new Dictionary<string, List<string>>();
+            wordCategories.Add("Animals", new List<string> { "dog", "cat", "elephant", "tiger", "lion" });
+            wordCategories.Add("Fruits", new List<string> { "apple", "banana", "orange", "grape", "strawberry" });
+            wordCategories.Add("Sports", new List<string> { "football", "basketball", "tennis", "volleyball", "swimming" });
+            wordCategories.Add("Countries", new List<string> { "usa", "canada", "france", "germany", "japan" });
+
             if (!wordCategories.ContainsKey(parameters.WordToGuess))
             {
                 await hubContext.Clients.Client(parameters.Players.First()).SendAsync("InvalidCategory");
