@@ -16,7 +16,7 @@ namespace Client.UI.Views
             BindingContext = vm;
 
             _connection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:5008/HangmanGame")
+                .WithUrl("http://localhost:5008/hubs/hangmanhub")
                 .Build();
 
             _connection.On<string>("InvalidCategory", (message) =>
