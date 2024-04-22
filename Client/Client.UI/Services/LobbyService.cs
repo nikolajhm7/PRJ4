@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Client.UI.DTO;
 using Client.UI.Models;
 using Microsoft.Extensions.Configuration;
+using Client.UI.Services.Interfaces;
 
 namespace Client.UI.Services
 {
-    public class LobbyService : ConnectionService
+    public class LobbyService : ConnectionService, ILobbyService
     {
 
         public event Action<ConnectedUserDTO>? UserJoinedLobbyEvent;

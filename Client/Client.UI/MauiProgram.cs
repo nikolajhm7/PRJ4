@@ -16,6 +16,7 @@ using Client.UI.Views;
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
 using Client.UI.Services;
+using Client.UI.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.Controls.Hosting;
@@ -84,8 +85,8 @@ namespace Client.UI
             builder.Services.AddTransient<NewUserPage>();
             builder.Services.AddTransient<NewUserViewModel>();
 
-            builder.Services.AddSingleton<LobbyService>();
-            builder.Services.AddSingleton<FriendsService>();
+            builder.Services.AddSingleton<ILobbyService, LobbyService>();
+            builder.Services.AddSingleton<IFriendsService, FriendsService>();
 
             builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
             builder.Services.AddSingleton<IApiService, ApiService>();
