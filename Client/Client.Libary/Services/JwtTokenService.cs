@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Storage;
 
-namespace Client.Libary;
+namespace Client.Libary.Services;
 
 public class JwtTokenService : IJwtTokenService
 {

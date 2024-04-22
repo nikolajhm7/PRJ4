@@ -1,20 +1,11 @@
-using System;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Client.Libary.Interfaces;
 using Client.UI.Views;
-using Microsoft.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Maui.Controls;
-using Client.UI.Models;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Client.UI.Services;
-using Client.UI.Views;
+using Client.Libary.Services;
 
 namespace Client.UI.ViewModels;
 

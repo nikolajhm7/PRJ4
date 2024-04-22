@@ -1,4 +1,4 @@
-﻿namespace Client.UI.DTO
+﻿namespace Client.Libary.DTO
 {
     public class ConnectedUserDTO(string username, string connectionId)
     {

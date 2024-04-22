@@ -9,15 +9,13 @@ using System.Threading.Tasks;
 using Microsoft.Maui.Storage;
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
-using Client.UI.Models;
+using Client.Libary.Models;
 
 
-namespace Client.UI.Services
+namespace Client.Libary.Services
 {
     public abstract class ConnectionService : IConnectionService
     {
-        //public record ActionResult(bool Success, string? Msg);
-        //public record ActionResult<T>(bool Success, string? Msg, T? Value);
 
         private readonly HubConnection _hubConnection;
         public bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;

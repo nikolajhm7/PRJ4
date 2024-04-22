@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using Client.UI.Models;
-using System.Threading.Tasks;
-using System.Windows.Input;
-
+﻿using System.Collections.ObjectModel;
+using Client.Libary.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Controls;
-using Client.UI.Services;
+using Client.Libary.Services;
 using Client.UI.Views;
 
 namespace Client.UI.ViewModels
@@ -28,7 +18,7 @@ namespace Client.UI.ViewModels
         [ObservableProperty]
         private string _avatar;
 
-        private readonly LobbyService _lobbyService;
+        private readonly ILobbyService _lobbyService;
 
         private readonly NavigationService _navigationService;
 
@@ -40,7 +30,7 @@ namespace Client.UI.ViewModels
         }
 
         private int gameCounter = 0;
-        public PlatformViewModel(LobbyService lobbyService)
+        public PlatformViewModel(ILobbyService lobbyService)
         {
             _username = User.Instance.Username;
             _avatar = User.Instance.avatar;
@@ -89,7 +79,7 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task GoToLobby(string s)
         {
-            var response= await _lobbyService.CreateLobbyAsync();
+            var response = await _lobbyService.CreateLobbyAsync();
             if (response.Success)
             {
                 await Shell.Current.GoToAsync($"//LobbyPage?Image={s}&LobbyId={response.Msg}");

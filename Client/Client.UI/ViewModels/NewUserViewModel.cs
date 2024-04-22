@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Client.UI.Models;
+﻿using System.Net.Http.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Maui.Controls;
-using Client.UI.Services;
+using Client.Libary.Services;
 using Client.UI.Views;
 
 namespace Client.UI.ViewModels

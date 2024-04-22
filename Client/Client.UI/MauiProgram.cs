@@ -1,28 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using Client.Libary.Interfaces;
-using Client.UI.DTO;
+using Client.Libary.DTO;
 using Client.UI.Managers;
 using Client.UI.ViewModels;
 using Client.UI.Views;
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
-using Client.UI.Services;
-using Client.UI.Services.Interfaces;
+using Client.Libary.Services;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Maui.Controls.Hosting;
-using Microsoft.Maui.Hosting;
-using Microsoft.Maui.Networking;
-using Microsoft.Maui.Storage;
 using Newtonsoft.Json;
 using Serilog;
 using Client.Libary;
@@ -91,9 +77,7 @@ namespace Client.UI
             builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
             builder.Services.AddSingleton<IApiService, ApiService>();
 
-            builder.Services.AddTransient<AuthenticationHeaderHandler>();
-            builder.Services.AddHttpClient("ApiHttpClient")
-                .AddHttpMessageHandler<AuthenticationHeaderHandler>();
+            builder.Services.AddHttpClient("ApiHttpClient");
 
             #if DEBUG
                 builder.Logging.AddDebug();
@@ -209,17 +193,4 @@ namespace Client.UI
 
     }
     
-    public class AuthenticationHeaderHandler : DelegatingHandler
-    {
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            var token = await SecureStorage.GetAsync("auth_token");
-            if (!string.IsNullOrWhiteSpace(token))
-            {
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            }
-
-            return await base.SendAsync(request, cancellationToken);
-        }
-    }
 }

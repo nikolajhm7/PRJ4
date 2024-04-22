@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.UI.Models
+namespace Client.Libary.Models
 {
     public class User
     {
