@@ -16,15 +16,13 @@ namespace Server.API.Controllers;
 [Route("games/[controller]")]
 public class GameController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ILogger<UserController> _logger;
+    private readonly ILogger<GameController> _logger;
     private readonly IUserRepository _userRepository;
     private readonly IGameRepository _gameRepository;
     private readonly IJwtTokenService _jwtTokenService;
     
-    public GameController(ApplicationDbContext context, ILogger<UserController> logger, IUserRepository userRepository, IGameRepository gameRepository, IJwtTokenService jwtTokenService)
+    public GameController(ILogger<GameController> logger, IUserRepository userRepository, IGameRepository gameRepository, IJwtTokenService jwtTokenService)
     {
-        _context = context;
         _logger = logger;
         _userRepository = userRepository;
         _gameRepository = gameRepository;
