@@ -95,6 +95,9 @@ namespace Client.UI
             builder.Services.AddHttpClient("ApiHttpClient")
                 .AddHttpMessageHandler<AuthenticationHeaderHandler>();
 
+            builder.Services.AddTransient<GamePage>();  // til game branch
+            builder.Services.AddTransient<GameViewModel>();
+
             #if DEBUG
                 builder.Logging.AddDebug();
             #endif

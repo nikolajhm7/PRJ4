@@ -8,7 +8,7 @@
     Shell.FlyoutBehavior="Disabled"
     Title="Client.UI">
 
-    <ShellContent
+    <!--<ShellContent
         Title="LoadingPage"
         ContentTemplate="{DataTemplate views:LoadingPage}"
         Route="Loading" />
@@ -41,6 +41,10 @@
     <ShellContent
         Title="Lobby"
         ContentTemplate="{DataTemplate views:LobbyPage}"
-        Route="LobbyPage" />
+        Route="LobbyPage" />-->
+    <ShellContent
+        Title="Game"
+        ContentTemplate="{DataTemplate views:GamePage}"
+        Route="GamePage" />
 
 </Shell>
