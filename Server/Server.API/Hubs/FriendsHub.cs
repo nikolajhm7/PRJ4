@@ -35,7 +35,7 @@ namespace Server.API.Hubs
 
             await Clients.User(otherUsername).SendAsync("NewFriendRequest", username);
 
-            _friendsRepository.AddFriendRequest(username, otherUsername);
+            await _friendsRepository.AddFriendRequest(username, otherUsername);
 
             return new ActionResult(true, null);
         }
@@ -53,7 +53,7 @@ namespace Server.API.Hubs
 
             await Clients.User(otherUsername).SendAsync("FriendRequestAccepted", username);
 
-            _friendsRepository.AcceptFriendRequest(username, otherUsername);
+            await _friendsRepository.AcceptFriendRequest(username, otherUsername);
 
             return new ActionResult(true, null);
         }
@@ -71,7 +71,7 @@ namespace Server.API.Hubs
 
             await Clients.User(otherUsername).SendAsync("FriendRemoved",username);
 
-            _friendsRepository.RemoveFriend(username, otherUsername);
+            await _friendsRepository.RemoveFriend(username, otherUsername);
 
             return new ActionResult(true, null);
         }
