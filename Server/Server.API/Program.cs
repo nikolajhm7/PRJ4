@@ -125,13 +125,15 @@ app.UseAuthorization();
 
 ConfigureMiddleware(app);
 
-app.MapHub<HangmanHub>("/HangmanGame");
+//app.MapHub<HangmanHub>("/HangmanGame");
+//app.MapHub<ChatAppHub>("/ChatAppHub");
 
 app.UseEndpoints(endpoints =>
 {
     _ = endpoints.MapHub<LobbyHub>(builder.Configuration["ConnectionSettings:LobbyEndpoint"]);
     _ = endpoints.MapHub<FriendsHub>(builder.Configuration["ConnectionSettings:FriendsEndpoint"]);
     _ = endpoints.MapHub<HangmanHub>(builder.Configuration["ConnectionSettings:HangmanEndpoint"]);
+    _ = endpoints.MapHub<ChatAppHub>(builder.Configuration["ConnectionSettings:ChatAppEndpoint"]);
 });
 
 app.MapControllers();

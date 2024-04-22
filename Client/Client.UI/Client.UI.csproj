@@ -80,6 +80,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Views\ChatAppPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\GamePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -107,6 +110,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\ChatAppPage.xaml.cs">
+	    <DependentUpon>ChatAppPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\LoginPage.xaml.cs">
 	    <DependentUpon>LoginPage.xaml</DependentUpon>
 	    <SubType>Code</SubType>

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
              x:Class="Client.UI.Views.GamePage"
+             x:DataType="viewModels:GameViewModel"
              Title="GamePage">
     <VerticalStackLayout
         Spacing="25"
@@ -14,7 +16,19 @@
         <Button
             x:Name="startButton"
             Text="Start"
-            Clicked="StartGame"
+            HorizontalOptions="Center" />
+        <Label 
+            x:Name="chatMessages"
+            FontSize="18"
+            HorizontalOptions="Center"/>
+        <Entry
+            x:Name="myChatMessage"
+            Placeholder="Enter message"
+            FontSize="18"
+            HorizontalOptions="Center"/>
+        <Button
+            x:Name="sendButton"
+            Text="Send"
             HorizontalOptions="Center" />
     </VerticalStackLayout>
 </ContentPage>

@@ -4,14 +4,13 @@ using Microsoft.Maui.Controls;
 
 namespace Client.UI.Views
 {
-    public partial class GamePage : ContentPage
+    public partial class ChatAppPage : ContentPage
     {
-
-        public GamePage(GameViewModel vm)
+        public ChatAppPage(ChatAppViewModel vm)
         {
             InitializeComponent();
             BindingContext = vm;
         }
-        
     }
+
 }
