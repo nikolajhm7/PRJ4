@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
+using Client.UI.DTO;
 
 namespace Client.UI.Services
 {
@@ -45,6 +46,11 @@ namespace Client.UI.Services
         public async Task<ActionResult> InviteFriend(string username)
         {
             return await InvokeAsync("InviteFriend", username);
+        }
+
+        public async Task<ActionResult<List<FriendDTO>>> GetFriends(bool getInvites)
+        {
+            return await InvokeAsync<List<FriendDTO>>("GetFriends", getInvites);
         }
     }
 }

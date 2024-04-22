@@ -16,6 +16,8 @@ namespace Client.UI.Services
     public abstract class ConnectionService
     {
         public record ActionResult(bool Success, string? Msg);
+        public record ActionResult<T>(bool Success, string? Msg, T? Value);
+
         private readonly HubConnection _hubConnection;
         public bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
 
@@ -89,6 +91,21 @@ namespace Client.UI.Services
             else
             {
                 return new ActionResult(false, "No connection to server.");
+            }
+        }
+
+        public async Task<ActionResult<T>> InvokeAsync<T>(string methodName, params object[] args)
+        {
+            await ConnectAsync();
+
+            if (IsConnected)
+            {
+                return await _hubConnection.InvokeAsync<ActionResult<T>>(methodName, args);
+            }
+            else
+            {   
+                ActionResult<T> actionResult = new(false, "No connection to server.", default(T));
+                return actionResult;
             }
         }
 

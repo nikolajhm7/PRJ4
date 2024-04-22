@@ -12,6 +12,7 @@ namespace Server.API.Hubs
     public class FriendsHub : Hub
     {
         public record ActionResult(bool Success, string? Msg);
+        public record ActionResult<T>(bool Success, string? Msg, T? Value);
 
         private readonly ILogger<FriendsHub> _logger;
         private readonly IFriendsRepository _friendsRepository;
@@ -66,7 +67,7 @@ namespace Server.API.Hubs
                 return new ActionResult(false, "Authentication context is not available.");
             }
 
-            _logger.LogInformation("{User} removed {Friend} from friendslist.", username, otherUsername);
+            _logger.LogInformation("{User} removed {Friend} from friends list.", username, otherUsername);
 
             await Clients.User(otherUsername).SendAsync("FriendRemoved",username);
 
@@ -88,6 +89,21 @@ namespace Server.API.Hubs
 
             await Clients.User(otherUsername).SendAsync("NewGameInvite", username);
             return new ActionResult(true, null);
+        }
+
+        public async Task<ActionResult<List<FriendDTO>>> GetFriends(bool getInvites)
+        {
+            var username = Context.User?.Identity?.Name;
+            if (username == null)
+            {
+                _logger.LogWarning("Context.User or Context.User.Identity is null.");
+                return new ActionResult<List<FriendDTO>>(false, "Authentication context is not available.", []);
+            }
+
+            _logger.LogInformation("Requesting all friends of {User}.", username);
+
+            var friends = await _friendsRepository.GetFriendsOf(username, getInvites);
+            return new ActionResult<List<FriendDTO>>(true, null, friends);
         }
     }
 }

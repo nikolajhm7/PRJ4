@@ -1,7 +1,7 @@
 ﻿using Server.API.Services;
 using NSubstitute;
 
-namespace Server.Test
+namespace Server.Test.Services
 {
 
 
@@ -16,7 +16,7 @@ namespace Server.Test
             _uut = new IdGenerator();
         }
 
-            [Test]
+        [Test]
         public void GenerateRandomLobbyID_ReturnsSixDigitString()
         {
             var id = _uut.GenerateRandomLobbyId();

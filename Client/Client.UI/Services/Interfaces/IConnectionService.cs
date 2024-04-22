@@ -14,6 +14,7 @@ namespace Client.UI.Services
         Task ConnectAsync();
         Task DisconnectAsync();
         Task<ActionResult> InvokeAsync(string methodName, params object[] args);
+        Task<T> InvokeAsync<T>(string methodName, params object[] args);
         void On<T>(string methodName, Action<T> handler);
         void On(string methodName, Action handler);
     }

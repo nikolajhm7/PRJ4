@@ -8,7 +8,7 @@ using Server.API.Models;
 using Microsoft.AspNetCore.Http;
 using Server.API.Services.Interfaces;
 
-namespace Server.Test
+namespace Server.Test.Hubs
 {
     [TestFixture]
     public class LobbyHubTests
