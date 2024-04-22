@@ -3,10 +3,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using Client.UI.DTO;
+using Client.UI.Services.Interfaces;
+using Client.UI.Models;
 
 namespace Client.UI.Services
 {
-    public class FriendsService : ConnectionService
+    public class FriendsService : ConnectionService, IFriendsService
     {
         public event Action<string>? NewFriendRequestEvent;
         public event Action<string>? FriendRequestAcceptedEvent;

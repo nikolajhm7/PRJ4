@@ -74,7 +74,7 @@ namespace Client.UI.ViewModels
         }
 
         //Handle result of different functions, and error log if neccesary:
-        private void HandleActionResult(ConnectionService.ActionResult message)
+        private void HandleActionResult(ActionResult message)
         {
             if (!message.Success)
             {

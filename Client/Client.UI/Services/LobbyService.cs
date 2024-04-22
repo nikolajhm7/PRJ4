@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Client.UI.DTO;
+using Client.UI.Models;
 using Microsoft.Extensions.Configuration;
 
 namespace Client.UI.Services
