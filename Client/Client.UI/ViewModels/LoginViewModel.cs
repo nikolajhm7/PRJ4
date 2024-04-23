@@ -21,8 +21,8 @@ public partial class LoginViewModel : ObservableObject
     
     private IJwtTokenService _jwtTokenService;
     
-    private readonly IPreferenceManager _preferenceManager;
-    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger, IJwtTokenService jwtTokenService)
+    private IPreferenceManager _preferenceManager;
+    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger, IJwtTokenService jwtTokenService, IPreferenceManager preferenceManager)
     {
         _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
         
@@ -33,6 +33,8 @@ public partial class LoginViewModel : ObservableObject
         _logger = logger;
         
         _jwtTokenService = jwtTokenService;
+        
+        _preferenceManager = preferenceManager;
 
         IsAlreadyAuthenticated();
     }
