@@ -5,17 +5,72 @@
              x:Class="Client.UI.Views.GamePage"
              x:DataType="viewModels:GameViewModel"
              Title="GamePage">
-    <VerticalStackLayout
-        Spacing="25"
-        Padding="30,0"
-        VerticalOptions="Center">
-        <Label 
-            x:Name="secretWord"
-            FontSize="18"
-            HorizontalOptions="Center"/>
-        <Button
-            x:Name="startButton"
-            Text="Start"
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+    <ContentPage.Content>
+        <StackLayout Padding="20">
+            <!-- Guessed word -->
+            <Label Text="{Binding GuessedWord}" FontSize="24" HorizontalOptions="Center" />
+
+            <!-- Hangman drawing -->
+            <Image Source="hangman_0.png" HorizontalOptions="Center" />
+
+            <!-- Start button -->
+            <Button Text="Start Game" Command="{Binding StartGameCommand}" HorizontalOptions="Center" Margin="0,20,0,0" />
+
+            <!-- Keyboard layout -->
+            <Grid Margin="0,20,0,0" RowSpacing="10" ColumnSpacing="10" HorizontalOptions="CenterAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Vowels -->
+                <Button Text="A" Grid.Row="0" Grid.Column="0" />
+                <Button Text="E" Grid.Row="0" Grid.Column="1" />
+                <Button Text="I" Grid.Row="0" Grid.Column="2" />
+                <Button Text="O" Grid.Row="0" Grid.Column="3" />
+                <Button Text="U" Grid.Row="0" Grid.Column="4" />
+
+                <!-- Consonants -->
+                <Button Text="Q" Grid.Row="1" Grid.Column="0" />
+                <Button Text="W" Grid.Row="1" Grid.Column="1" />
+                <Button Text="R" Grid.Row="1" Grid.Column="2" />
+                <Button Text="T" Grid.Row="1" Grid.Column="3" />
+                <Button Text="Y" Grid.Row="1" Grid.Column="4" />
+                <Button Text="P" Grid.Row="1" Grid.Column="5" />
+
+                <Button Text="S" Grid.Row="2" Grid.Column="0" />
+                <Button Text="D" Grid.Row="2" Grid.Column="1" />
+                <Button Text="F" Grid.Row="2" Grid.Column="2" />
+                <Button Text="G" Grid.Row="2" Grid.Column="3" />
+                <Button Text="H" Grid.Row="2" Grid.Column="4" />
+                <Button Text="J" Grid.Row="2" Grid.Column="5" />
+
+                <Button Text="K" Grid.Row="3" Grid.Column="0" />
+                <Button Text="L" Grid.Row="3" Grid.Column="1" />
+                <Button Text="Z" Grid.Row="3" Grid.Column="2" />
+                <Button Text="X" Grid.Row="3" Grid.Column="3" />
+                <Button Text="C" Grid.Row="3" Grid.Column="4" />
+                <Button Text="V" Grid.Row="3" Grid.Column="5" />
+                <Button Text="B" Grid.Row="3" Grid.Column="6" />
+                <Button Text="N" Grid.Row="3" Grid.Column="7" />
+                <Button Text="M" Grid.Row="3" Grid.Column="8" />
+
+            </Grid>
+
+        </StackLayout>
+    </ContentPage.Content>
 </ContentPage>

@@ -42,14 +42,14 @@
         Title="Lobby"
         ContentTemplate="{DataTemplate views:LobbyPage}"
         Route="LobbyPage" />-->
-    <!--<ShellContent
+    <ShellContent
         Title="Game"
         ContentTemplate="{DataTemplate views:GamePage}"
-        Route="GamePage" />-->
-    <ShellContent
+        Route="GamePage" />
+    <!--<ShellContent
         Title="ChatApp"
         ContentTemplate="{DataTemplate views:ChatAppPage}"
-        Route="ChatAppPage" />
+        Route="ChatAppPage" />-->
 
 
 

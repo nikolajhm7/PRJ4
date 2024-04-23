@@ -15,19 +15,6 @@ namespace Client.UI.ViewModels
     public partial class GameViewModel : ObservableObject
     {
         private readonly HubConnection _connection;
-
-        [ObservableProperty]
-        string _name;
-
-        [ObservableProperty]
-        string _message;
-
-        [ObservableProperty]
-        ObservableCollection<string> _messages;
-
-        [ObservableProperty]
-        bool _isConnected;
-
         public GameViewModel()
         {
             _connection = new HubConnectionBuilder()
@@ -70,6 +57,9 @@ namespace Client.UI.ViewModels
                 }
             });
         }
+
+        public object GuessedWord { get; }
+        public object StartGameCommand { get; }
 
         private async void StartGame(object sender, EventArgs e)
         {
