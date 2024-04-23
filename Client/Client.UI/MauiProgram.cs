@@ -48,8 +48,6 @@ namespace Client.UI
             builder.Services.AddTransient<LoadingPage>();
             builder.Services.AddTransient<LoadingViewModel>();
 
-            builder.Services.AddSingleton<IPreferenceManager, PreferenceManager>();
-
             builder.Services.AddTransient<PlatformViewModel>();
             builder.Services.AddTransient<PlatformPage>();
 
@@ -75,6 +73,8 @@ namespace Client.UI
             builder.Services.AddSingleton<IFriendsService, FriendsService>();
 
             builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
+            
+            builder.Services.AddSingleton<IPreferenceManager, PreferenceManager>();
             builder.Services.AddSingleton<IApiService, ApiService>();
 
             builder.Services.AddHttpClient("ApiHttpClient");
