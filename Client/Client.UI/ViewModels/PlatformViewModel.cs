@@ -79,7 +79,8 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task GoToLobby(string s)
         {
-            var response = await _lobbyService.CreateLobbyAsync();
+            int someint = 1;
+            var response = await _lobbyService.CreateLobbyAsync(someint);
             if (response.Success)
             {
                 await Shell.Current.GoToAsync($"//LobbyPage?Image={s}&LobbyId={response.Msg}");
