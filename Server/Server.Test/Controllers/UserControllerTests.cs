@@ -1,55 +1,99 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using Server.API.Models;
 using Server.API.Controllers;
 using Server.API.Data;
 using Server.API.DTO;
 using NSubstitute;
+using Server.API.Repository.Interfaces;
 
 namespace Server.Test;
 
-[TestFixture]
-public class UserControllerTests : TestBase
+public class UserControllerTests
 {
-    private UserManager<User>? _subUserManager;
-    private ILogger<UserController>? _subLogger;
+    private UserController _controller;
+    private IUserRepository _userRepository;
+    private ILogger<UserController> _logger;
 
     [SetUp]
     public void Setup()
     {
-        var subUser = Substitute.For<IUserStore<User>>();
-        _subUserManager = Substitute.For<UserManager<User>>(subUser, null, null, null, null, null, null, null, null);
-        _subLogger = Substitute.For<ILogger<UserController>>();
+        _userRepository = Substitute.For<IUserRepository>();
+        _logger = Substitute.For<ILogger<UserController>>();
 
-        // Konfigurerer substitute til at returnere success, når CreateAsync kaldes
-        _subUserManager.CreateAsync(Arg.Any<User>(), Arg.Any<string>())
-            .Returns(Task.FromResult(IdentityResult.Success));
+        _controller = new UserController(_logger, _userRepository)
+        {
+            ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext()
+            }
+        };
+    }
+    
+    [Test]
+    public async Task MakeNewUser_ReturnsBadRequest_WhenModelValidationFails()
+    {
+        _controller.ModelState.AddModelError("UserName", "Username is required");
+
+        var result = await _controller.MakeNewUser(new RegisterDto()) as BadRequestObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        
+        var errorResponse = JObject.FromObject(result.Value);
+        var errors = errorResponse["errors"].ToObject<List<string>>();
+        
+        Assert.That(errors, Is.Not.Null);
+        Assert.That(errors, Has.Count.EqualTo(1));
+        Assert.That(errors, Does.Contain("Username is required"));
     }
 
-    /*[Test]
-    public async Task MakeNewUser_CreatesUser_ReturnsOk()
+    [Test]
+    public async Task MakeNewUser_ReturnsBadRequest_WhenUserCreationFails()
+    {
+        var registerDto = new RegisterDto { UserName = "testUser", Email = "test@example.com", Password = "Password123!" };
+        var identityErrors = new List<IdentityError> { new IdentityError { Description = "Email already exists." } };
+        _userRepository.AddUser(Arg.Any<User>(), Arg.Any<string>()).Returns(IdentityResult.Failed(identityErrors.ToArray()));
+
+        var result = await _controller.MakeNewUser(registerDto) as BadRequestObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        
+        var errorResponse = JObject.FromObject(result.Value);
+        var errors = errorResponse["errors"].ToObject<List<string>>();
+        
+        Assert.That(errors, Is.Not.Null);
+        Assert.That(errors, Has.Count.EqualTo(1));
+        Assert.That(errors, Does.Contain("Email already exists."));
+    }
+
+    [Test]
+    public async Task MakeNewUser_ReturnsOk_WhenUserIsCreatedSuccessfully()
     {
         // Arrange
-        var controller = new UserController(Context!, _subUserManager!, _subLogger!);
-        var newUser = new RegisterDto { UserName = "testUser", Email = "test@example.com", Password = "Password123!" };
+        var registerDto = new RegisterDto { UserName = "testUser", Email = "test@example.com", Password = "Password123!" };
+        _userRepository.AddUser(Arg.Any<User>(), Arg.Any<string>()).Returns(IdentityResult.Success);
 
         // Act
-        var result = await controller.MakeNewUser(newUser);
+        var actionResult = await _controller.MakeNewUser(registerDto);
+        var okResult = actionResult as OkObjectResult;
 
         // Assert
-        Assert.That(result, Is.InstanceOf<OkObjectResult>());
-        _subUserManager?.Received(1).CreateAsync(Arg.Any<User>(), Arg.Any<string>());
-    }*/
+        Assert.That(okResult, Is.Not.Null);
 
-    [TearDown]
-    public void TearDown()
-    {
-        if (_subUserManager is IDisposable disposableManager)
-        {
-            disposableManager.Dispose();
-        }
+        // Opretter et anonymt objekt, der matcher strukturen af det objekt, der returneres af handlingen
+        var errorResponse = JObject.FromObject(okResult.Value);
+
+        // Tilgå 'message' property og udfør assertion
+        var messageProperty = errorResponse["message"].ToObject<string>();
+        Assert.That(messageProperty, Is.Not.Null);
+        Assert.That(messageProperty, Does.Contain("User created successfully"));
+        
     }
+
+
 
 }

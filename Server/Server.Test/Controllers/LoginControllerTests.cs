@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -94,6 +95,89 @@ public class LoginControllerTests : TestBase
 
         ValidateJwtTokenStructure(token);
         ValidateRefreshTokenStructure(refreshToken);
+    }
+    
+    [Test]
+    public async Task Login_TooManyAttempts_ReturnsTooManyRequests()
+    {
+        // Arrange
+        var loginDto = new LoginDto { UserName = "lockedUser", Password = "anyPassword" };
+        var cacheKey = $"login_attempts_for_{loginDto.UserName}";
+        _memoryCache.TryGetValue(cacheKey, out int _).Returns(x =>
+        {
+            x[1] = 5;  // Simulate 5 failed attempts already in cache
+            return true;
+        });
+
+        // Act
+        var result = await _controller.Login(loginDto);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<ObjectResult>());
+        var objectResult = result as ObjectResult;
+        Assert.That(objectResult.StatusCode, Is.EqualTo(StatusCodes.Status429TooManyRequests));
+    }
+    
+    [Test]
+    public void LoginAsGuest_InvalidGuestName_ReturnsBadRequest()
+    {
+        // Arrange
+        var guestLoginDto = new GuestLoginDTO { GuestName = "Invalid Name!" };
+
+        // Act
+        var result = _controller.LoginAsGuest(guestLoginDto);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
+    
+    [Test]
+    public void LoginAsGuest_EmptyGuestName_ReturnsBadRequest()
+    {
+        // Arrange
+        var guestLoginDto = new GuestLoginDTO { GuestName = "" };
+
+        // Act
+        var result = _controller.LoginAsGuest(guestLoginDto);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
+    
+    [Test]
+    public async Task Login_WithWrongPassword_ReturnsUnauthorized()
+    {
+        // Arrange
+        var loginDto = new LoginDto { UserName = "testUser", Password = "wrongPassword" };
+        var user = new User { UserName = loginDto.UserName };
+        _userRepository.GetUserByName(loginDto.UserName).Returns(Task.FromResult(user));
+        _userRepository.UserCheckPassword(user, loginDto.Password).Returns(Task.FromResult(false));
+
+        // Act
+        var result = await _controller!.Login(loginDto);
+
+        Assert.That(result, Is.InstanceOf<UnauthorizedObjectResult>());
+    }
+    
+    [Test]
+    public async Task Login_CacheKeyIsSetAttemptsNotExceeded()
+    {
+        // Arrange
+        var loginDto = new LoginDto { UserName = "lockedUser", Password = "anyPassword" };
+        var cacheKey = $"login_attempts_for_{loginDto.UserName}";
+        _memoryCache.TryGetValue(cacheKey, out int _).Returns(x =>
+        {
+            x[1] = 1;  // Simulate 1 failed attempt already in cache
+            return true;
+        });
+
+        // Act
+        var result = await _controller.Login(loginDto);
+        
+        // Assert
+        Assert.That(result, Is.InstanceOf<ObjectResult>());
+        var objectResult = result as ObjectResult;
+        Assert.That(objectResult.StatusCode, Is.Not.EqualTo(StatusCodes.Status429TooManyRequests));
     }
     
     [TearDown]

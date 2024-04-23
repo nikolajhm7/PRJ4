@@ -4,6 +4,7 @@ using Server.API.GameLogic;
 
 namespace Server.API.Hubs
 {
+    /*
     public class HangmanHub : Hub
     {
         private readonly HangmanGame hangmanGame;
@@ -58,5 +59,5 @@ namespace Server.API.Hubs
         //    base.OnDisconnected(exception);
         //}
 
-    }
+    }*/
 }

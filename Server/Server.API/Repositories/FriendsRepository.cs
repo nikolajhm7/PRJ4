@@ -18,12 +18,12 @@ namespace Server.API.Repositories
 
         public async Task AddFriendRequest(string userId, string friendId)
         {
-            if(userId == friendId) return;
+            if (userId == friendId) return;
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             var friend = await _context.Users.FirstOrDefaultAsync(u => u.Id == friendId);
 
-            if(user == null || friend == null) return;
+            if (user == null || friend == null) return;
 
             var friendRequest = new Friendship
             {
@@ -41,10 +41,18 @@ namespace Server.API.Repositories
 
         public async Task AcceptFriendRequest(string userId, string friendId)
         {
-            var friendship = await _context.Friendships.Where(f => f.User2Id == userId && f.User1Id == friendId).FirstOrDefaultAsync();
+            var friendship = await _context.Friendships.Where(f => f.User2Id == userId && f.User1Id == friendId)
+                .FirstOrDefaultAsync();
 
-            if (friendship == null) return;
-            if (friendship.Status != "Pending") return;
+            if (friendship == null)
+            {
+                throw new Exception("Friendship not found");
+            }
+
+            if (friendship.Status != "Pending")
+            {
+                throw new Exception("Friendship not pending");
+            }
 
             friendship.Status = "Accepted";
 
@@ -54,9 +62,14 @@ namespace Server.API.Repositories
 
         public async Task RemoveFriend(string userId, string friendId)
         {
-            var friendship = await _context.Friendships.Where(f => f.User2Id == userId && f.User1Id == friendId).FirstOrDefaultAsync();
-            friendship ??= await _context.Friendships.Where(f => f.User1Id == userId && f.User2Id == friendId).FirstOrDefaultAsync();
-            if (friendship == null) return;
+            var friendship = await _context.Friendships.Where(f => f.User2Id == userId && f.User1Id == friendId)
+                .FirstOrDefaultAsync();
+            friendship ??= await _context.Friendships.Where(f => f.User1Id == userId && f.User2Id == friendId)
+                .FirstOrDefaultAsync();
+            if (friendship == null)
+            {
+                throw new Exception("Friendship not found");
+            }
 
             _context.Friendships.Remove(friendship);
             await _context.SaveChangesAsync();
@@ -68,8 +81,10 @@ namespace Server.API.Repositories
             List<Friendship> friends2;
             if (!getInvites)
             {
-                friends = await _context.Friendships.Where(f => f.User1Id == userId && f.Status == "Accepted").ToListAsync();
-                friends2 = await _context.Friendships.Where(f => f.User2Id == userId && f.Status == "Accepted").ToListAsync();
+                friends = await _context.Friendships.Where(f => f.User1Id == userId && f.Status == "Accepted")
+                    .ToListAsync();
+                friends2 = await _context.Friendships.Where(f => f.User2Id == userId && f.Status == "Accepted")
+                    .ToListAsync();
             }
             else
             {
@@ -79,13 +94,14 @@ namespace Server.API.Repositories
 
             var friendDTOs = new List<FriendDTO>();
 
-            foreach(var friend in friends)
+            foreach (var f in friends)
             {
-                FriendDTO.FromFriendship(userId, friend);
+                friendDTOs.Add(FriendDTO.FromFriendship(userId, f));
             }
-            foreach(var friend in friends2)
+
+            foreach (var f in friends2)
             {
-                FriendDTO.FromFriendship(userId, friend);
+                friendDTOs.Add(FriendDTO.FromFriendship(userId, f));
             }
 
             return friendDTOs;

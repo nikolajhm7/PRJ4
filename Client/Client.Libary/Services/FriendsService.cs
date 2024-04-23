@@ -1,12 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.Configuration;
-using Client.UI.DTO;
-using Client.UI.Services.Interfaces;
-using Client.UI.Models;
+﻿using Microsoft.Extensions.Configuration;
+using Client.Libary.DTO;
+using Client.Libary.Models;
 
-namespace Client.UI.Services
+namespace Client.Libary.Services
 {
     public class FriendsService : ConnectionService, IFriendsService
     {

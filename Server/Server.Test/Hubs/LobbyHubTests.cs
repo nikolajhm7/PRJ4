@@ -53,7 +53,7 @@ namespace Server.Test.Hubs
             _context.ConnectionId.Returns("connection-id");
             _idGen.GenerateRandomLobbyId().Returns(lobbyId);
 
-            var result = await _uut.CreateLobby();
+            var result = await _uut.CreateLobby(1);
 
             Assert.That(lobbyId, Is.EqualTo(result.Msg));
             Assert.That(result.Success, Is.True);
@@ -65,7 +65,7 @@ namespace Server.Test.Hubs
         {
             _context.User?.Identity?.Name.Returns((string)null);
 
-            var result = await _uut.CreateLobby();
+            var result = await _uut.CreateLobby(1);
 
             Assert.That(result.Success, Is.False);
             Assert.That(result.Msg, Is.EqualTo("Authentication context is not available."));
@@ -89,7 +89,7 @@ namespace Server.Test.Hubs
             _context.User?.Identity?.Name.Returns(hostuser);
             _context.ConnectionId.Returns(hostconnection);
             _idGen.GenerateRandomLobbyId().Returns(lobbyId);
-            await _uut.CreateLobby();
+            await _uut.CreateLobby(1);
 
             _clients.ClearReceivedCalls();
             _groups.ClearReceivedCalls();
@@ -138,7 +138,7 @@ namespace Server.Test.Hubs
             _context.User?.Identity?.Name.Returns(hostuser);
             _context.ConnectionId.Returns(hostconnection);
             _idGen.GenerateRandomLobbyId().Returns(lobbyId);
-            await _uut.CreateLobby();
+            await _uut.CreateLobby(1);
 
             // Add user to lobby
             _context.User?.Identity?.Name.Returns(username);
@@ -184,7 +184,7 @@ namespace Server.Test.Hubs
             _context.User?.Identity?.Name.Returns(hostuser);
             _context.ConnectionId.Returns(hostconnection);
             _idGen.GenerateRandomLobbyId().Returns(lobbyId);
-            await _uut.CreateLobby();
+            await _uut.CreateLobby(1);
 
             // Act
             var result = await _uut.StartGame(lobbyId);
@@ -211,7 +211,7 @@ namespace Server.Test.Hubs
             _context.User?.Identity?.Name.Returns(hostuser);
             _context.ConnectionId.Returns(hostconnection);
             _idGen.GenerateRandomLobbyId().Returns(lobbyId);
-            await _uut.CreateLobby();
+            await _uut.CreateLobby(1);
 
             // User join lobby
             _context.User?.Identity?.Name.Returns(user);
@@ -252,7 +252,7 @@ namespace Server.Test.Hubs
             _context.User?.Identity?.Name.Returns(hostuser);
             _context.ConnectionId.Returns(hostconnection);
             _idGen.GenerateRandomLobbyId().Returns(lobbyId);
-            await _uut.CreateLobby();
+            await _uut.CreateLobby(1);
 
             // Add user to lobby
             _context.User?.Identity?.Name.Returns(username);
@@ -287,7 +287,7 @@ namespace Server.Test.Hubs
             _context.User?.Identity?.Name.Returns(hostuser);
             _context.ConnectionId.Returns(hostconnection);
             _idGen.GenerateRandomLobbyId().Returns(lobbyId);
-            await _uut.CreateLobby();
+            await _uut.CreateLobby(1);
 
             // Add user to lobby
             _context.User?.Identity?.Name.Returns(username);
@@ -315,7 +315,7 @@ namespace Server.Test.Hubs
         [TearDown]
         public void TearDown()
         {
-            _uut.lobbies.Clear();
+            //_uut.lobbies.Clear();
 
             _uut?.Dispose();
 

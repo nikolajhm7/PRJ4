@@ -37,6 +37,10 @@ public class TestBase
         Configuration["Jwt:Key"].Returns("verysecretkeyverysecretkeyverysecretkey");
         Configuration["Jwt:Issuer"].Returns("exampleIssuer");
         Configuration["Jwt:Audience"].Returns("exampleAudience");
+        
+        // For at sikre, at databasen er ren før hver test
+        Context.Database.EnsureDeleted();
+        Context.Database.EnsureCreated();
     }
     
     protected void ValidateJwtTokenStructure(string token)
