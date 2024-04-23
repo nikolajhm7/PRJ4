@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Client.UI.Models;
+using Client.Libary.Models;
 
-namespace Client.UI.Services
+namespace Client.Libary.Services
 {
     public interface IConnectionService
     {

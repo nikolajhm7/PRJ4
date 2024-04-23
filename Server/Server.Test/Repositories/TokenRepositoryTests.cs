@@ -12,81 +12,97 @@ public class TokenRepositoryTests : TestBase
     [SetUp]
     public override void SetUp()
     {
-        base.SetUp(); // This sets up the InMemory database
-
-        // Nu kan du direkte arbejde med Context, som har en InMemory database
-        Context.Users.AddRange(
-            new User { Id = "1", RefreshTokens = new List<RefreshToken>() },
-            new User { Id = "2", RefreshTokens = new List<RefreshToken>() }
-        );
-        Context.SaveChanges();
-
-        TokenRepository = new TokenRepository(Context);
+        base.SetUp();
     }
 
     [Test]
-    public void SaveRefreshToken_ShouldAddToken_IfUserExists()
+    public void SaveRefreshToken_SavesTokenToDatabase()
     {
-        string userId = "1";
-        string refreshToken = "newToken123";
+        // Arrange
+        var repository = new TokenRepository(Context);
+        string userId = "testUser";
+        string refreshToken = "testToken";
         DateTime expiryDate = DateTime.UtcNow.AddDays(7);
 
-        TokenRepository.SaveRefreshToken(userId, refreshToken, expiryDate);
+        // Forbered en bruger i databasen
+        Context.Users.Add(new User { Id = userId, RefreshTokens = new List<RefreshToken>() });
+        Context.SaveChanges();
 
-        User user = Context.Users.First(u => u.Id == userId);
-        RefreshToken addedToken = user.RefreshTokens.Last();
+        // Act
+        repository.SaveRefreshToken(userId, refreshToken, expiryDate);
 
-        Assert.That(user.RefreshTokens, Has.Count.EqualTo(1));
-        Assert.That(addedToken.Token, Is.EqualTo(refreshToken));
-        Assert.That(addedToken.Expires, Is.EqualTo(expiryDate));
+        // Assert
+        var user = Context.Users.Include(u => u.RefreshTokens).FirstOrDefault(u => u.Id == userId);
+        Assert.That(user.RefreshTokens, Is.Not.Null);
+        Assert.That(user.RefreshTokens, Is.Not.Empty);
+        Assert.That(user.RefreshTokens.Last().Token, Is.EqualTo(refreshToken));
+        Assert.That(user.RefreshTokens.Last().Expires, Is.EqualTo(expiryDate));
+    }
+    
+    [Test]
+    public void GetRefreshToken_ReturnsLatestToken()
+    {
+        // Arrange
+        var repository = new TokenRepository(Context);
+        string userId = "testUser";
+        var tokens = new List<RefreshToken>
+        {
+            new RefreshToken { Token = "oldToken", Created = DateTime.UtcNow.AddDays(-10) },
+            new RefreshToken { Token = "newToken", Created = DateTime.UtcNow }
+        };
+
+        Context.Users.Add(new User { Id = userId, RefreshTokens = tokens });
+        Context.SaveChanges();
+
+        // Act
+        var result = repository.GetRefreshToken(userId);
+
+        // Assert
+        Assert.That(result, Is.EqualTo("newToken"));
     }
 
     [Test]
-    public void GetRefreshToken_ShouldReturnLatestToken()
+    public void IsActive_ReturnsTrueIfTokenIsNotExpired()
     {
-        string userId = "1";
+        // Arrange
+        var repository = new TokenRepository(Context);
+        string userId = "testUser";
         var tokens = new List<RefreshToken>
         {
-            new RefreshToken { Token = "oldToken123", Created = DateTime.UtcNow.AddDays(-1) },
-            new RefreshToken { Token = "newToken123", Created = DateTime.UtcNow }
+            new RefreshToken { Token = "activeToken", Created = DateTime.UtcNow, Expires = DateTime.UtcNow.AddDays(1) } // Token udløber i fremtiden
         };
-        Context.Users.First(u => u.Id == userId).RefreshTokens.AddRange(tokens);
 
-        string result = TokenRepository.GetRefreshToken(userId);
+        Context.Users.Add(new User { Id = userId, RefreshTokens = tokens });
+        Context.SaveChanges();
 
-        Assert.That(result, Is.EqualTo("newToken123"));
+        // Act
+        bool isActive = repository.IsActive(userId);
+
+        // Assert
+        Assert.That(isActive, Is.True);
     }
 
     [Test]
-    public void IsActive_ShouldReturnTrue_IfTokenHasNotExpired()
+    public void IsActive_ReturnsFalseIfTokenIsExpired()
     {
-        string userId = "1";
+        // Arrange
+        var repository = new TokenRepository(Context);
+        string userId = "testUser";
         var tokens = new List<RefreshToken>
         {
-            new RefreshToken { Token = "olderToken123", Expires = DateTime.UtcNow.AddDays(-2) },
-            new RefreshToken
-                { Token = "newToken123", Expires = DateTime.UtcNow.AddMinutes(5) } // Token er stadig gyldig
+            new RefreshToken { Token = "expiredToken", Created = DateTime.UtcNow.AddDays(-2), Expires = DateTime.UtcNow.AddDays(-1) } // Token er udløbet
         };
-        Context.Users.First(u => u.Id == userId).RefreshTokens.AddRange(tokens);
 
-        bool result = TokenRepository.IsActive(userId);
+        Context.Users.Add(new User { Id = userId, RefreshTokens = tokens });
+        Context.SaveChanges();
 
-        Assert.That(result, Is.True);
+        // Act
+        bool isActive = repository.IsActive(userId);
+
+        // Assert
+        Assert.That(isActive, Is.False);
     }
 
-    [Test]
-    public void IsActive_ShouldReturnFalse_IfTokenHasExpired()
-    {
-        string userId = "1";
-        var tokens = new List<RefreshToken>
-        {
-            new RefreshToken { Token = "olderToken123", Expires = DateTime.UtcNow.AddDays(-2) },
-            new RefreshToken { Token = "newToken123", Expires = DateTime.UtcNow.AddMinutes(-5) } // Token er udløbet
-        };
-        Context.Users.First(u => u.Id == userId).RefreshTokens.AddRange(tokens);
 
-        bool result = TokenRepository.IsActive(userId);
-
-        Assert.That(result, Is.False);
-    }
+    
 }

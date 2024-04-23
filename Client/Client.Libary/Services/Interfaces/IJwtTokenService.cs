@@ -1,4 +1,4 @@
-namespace Client.Libary.Interfaces;
+namespace Client.Libary.Services;
 
 public interface IJwtTokenService
 {

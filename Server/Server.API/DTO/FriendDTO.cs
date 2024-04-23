@@ -4,7 +4,7 @@ namespace Server.API.DTO
 {
     public class FriendDTO
     {
-        public string? Name { get; set; }
+        public string? FriendId { get; set; }
         public DateTime FriendsSince { get; set; }
 
         public bool IsAccepted { get; set; }
@@ -13,7 +13,7 @@ namespace Server.API.DTO
             var friendId = f.User1Id == userId ? f.User2Id : f.User1Id;
             FriendDTO friendDTO = new FriendDTO
             {
-                Name = friendId,
+                FriendId = friendId,
                 FriendsSince = f.date,
                 IsAccepted = f.Status == "Accepted"
             };

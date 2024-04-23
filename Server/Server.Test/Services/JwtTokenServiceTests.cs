@@ -99,4 +99,120 @@ public class JwtTokenServiceTests : TestBase
 
         Assert.That(result, Is.EqualTo(token));
     }
+    
+    [Test]
+    public void IsGuest_WithGuestToken_ReturnsTrue()
+    {
+        // Arrange
+        string token = JwtTokenService.GenerateToken("guest", isGuest: true); // Simuler et token for en gæst
+
+        // Act
+        bool result = JwtTokenService.IsGuest(token);
+
+        // Assert
+        Assert.That(result, Is.True);
+    }
+
+    [Test]
+    public void IsGuest_WithUserToken_ReturnsFalse()
+    {
+        // Arrange
+        string token = JwtTokenService.GenerateToken("user", isGuest: false); // Simuler et token for en almindelig bruger
+
+        // Act
+        bool result = JwtTokenService.IsGuest(token);
+
+        // Assert
+        Assert.That(result, Is.False);
+    }
+    
+    [Test]
+    public void GetUserNameFromToken_ValidToken_ReturnsUserName()
+    {
+        // Arrange
+        string expectedUserName = "testUser";
+        string token = JwtTokenService.GenerateToken(expectedUserName);
+
+        // Act
+        string result = JwtTokenService.GetUserNameFromToken(token);
+
+        // Assert
+        Assert.That(result, Is.EqualTo(expectedUserName));
+    }
+    
+    [Test]
+    public void GenerateRefreshToken_GeneratesValidRefreshToken()
+    {
+        // Arrange
+        string userName = "testUser";
+
+        // Act
+        string refreshToken = JwtTokenService.GenerateRefreshToken(userName);
+
+        // Assert
+        Assert.That(refreshToken, Is.Not.Null);
+    }
+
+    [Test]
+    public void ValidateRefreshToken_ValidToken_ReturnsTrue()
+    {
+        // Arrange
+        string userName = "testUser";
+        string refreshToken = "someRefreshToken";
+        
+        TokenRepository.GetRefreshToken(userName).Returns(refreshToken);
+        TokenRepository.IsActive(userName).Returns(true);
+
+        // Act
+        bool isValid = JwtTokenService.ValidateRefreshToken(userName, refreshToken);
+
+        // Assert
+        Assert.That(isValid, Is.True);
+    }
+    
+    [Test]
+    public void ValidateUsername_ValidUsername_ReturnsTrue()
+    {
+        // Arrange
+        string userName = "testUser";
+        string token = JwtTokenService.GenerateToken(userName);
+
+        // Act
+        bool isValid = JwtTokenService.ValidateUsername(token, userName);
+
+        // Assert
+        Assert.That(isValid, Is.True);
+    }
+    
+    [Test]
+    public void GetTokenStringFromHttpContext_ValidHeader_ReturnsTokenString()
+    {
+        // Arrange
+        var context = new DefaultHttpContext();
+        string expectedToken = "expectedToken";
+        context.Request.Headers["Authorization"] = $"Bearer {expectedToken}";
+
+        // Act
+        string token = JwtTokenService.GetTokenStringFromHttpContext(context);
+
+        // Assert
+        Assert.That(token, Is.EqualTo(expectedToken));
+    }
+
+    [Test]
+    public void IsTokenExpiring_TokenExpiringSoon_ReturnsTrue()
+    {
+        // Arrange
+        string token = JwtTokenService.GenerateToken("testUser");
+        
+        TimeService.UtcNow.Returns(DateTime.UtcNow.AddMinutes(29));
+        
+        // Act
+        bool isExpiring = JwtTokenService.IsTokenExpiring(token);
+
+        // Assert
+        Assert.That(isExpiring, Is.True);
+    }
+    
+
 }

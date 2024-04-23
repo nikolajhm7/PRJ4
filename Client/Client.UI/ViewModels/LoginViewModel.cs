@@ -1,20 +1,12 @@
-using System;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Client.Libary.Interfaces;
 using Client.UI.Views;
-using Microsoft.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Maui.Controls;
-using Client.UI.Models;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Client.UI.Services;
-using Client.UI.Views;
+using Client.Libary.Services;
+using Newtonsoft.Json.Linq;
 
 namespace Client.UI.ViewModels;
 
@@ -29,7 +21,9 @@ public partial class LoginViewModel : ObservableObject
     private readonly NavigationService _navigationService;
     
     private IJwtTokenService _jwtTokenService;
-    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger, IJwtTokenService jwtTokenService)
+    
+    private IPreferenceManager _preferenceManager;
+    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger, IJwtTokenService jwtTokenService, IPreferenceManager preferenceManager)
     {
         _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
         
@@ -40,6 +34,8 @@ public partial class LoginViewModel : ObservableObject
         _logger = logger;
         
         _jwtTokenService = jwtTokenService;
+        
+        _preferenceManager = preferenceManager;
 
         IsAlreadyAuthenticated();
     }
@@ -103,11 +99,17 @@ public partial class LoginViewModel : ObservableObject
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponseToken = (await response.Content.ReadAsStringAsync()).Trim();
+                var tokenData = JObject.Parse(jsonResponseToken);
+                
+                var auth_token = tokenData["token"]?.ToString();
+                var refresh_token = tokenData["refreshToken"]?.ToString();
 
-                if (!string.IsNullOrWhiteSpace(jsonResponseToken))
+                if (!string.IsNullOrWhiteSpace(auth_token) && !string.IsNullOrWhiteSpace(refresh_token))
                 {
-                    Preferences.Set("auth_token", jsonResponseToken);
-                    Preferences.Set("username", username);
+                    
+                    _preferenceManager.Set("auth_token", auth_token);
+                    _preferenceManager.Set("refresh_token", refresh_token);
+                    _preferenceManager.Set("username", username);
                     return true;
                 }
 

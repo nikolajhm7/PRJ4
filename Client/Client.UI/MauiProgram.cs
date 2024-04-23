@@ -1,28 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using Client.Libary.Interfaces;
-using Client.UI.DTO;
+using Client.Libary.DTO;
 using Client.UI.Managers;
 using Client.UI.ViewModels;
 using Client.UI.Views;
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
-using Client.UI.Services;
-using Client.UI.Services.Interfaces;
+using Client.Libary.Services;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Maui.Controls.Hosting;
-using Microsoft.Maui.Hosting;
-using Microsoft.Maui.Networking;
-using Microsoft.Maui.Storage;
 using Newtonsoft.Json;
 using Serilog;
 using Client.Libary;
@@ -62,8 +48,6 @@ namespace Client.UI
             builder.Services.AddTransient<LoadingPage>();
             builder.Services.AddTransient<LoadingViewModel>();
 
-            builder.Services.AddSingleton<IPreferenceManager, PreferenceManager>();
-
             builder.Services.AddTransient<PlatformViewModel>();
             builder.Services.AddTransient<PlatformPage>();
 
@@ -89,11 +73,11 @@ namespace Client.UI
             builder.Services.AddSingleton<IFriendsService, FriendsService>();
 
             builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
+            
+            builder.Services.AddSingleton<IPreferenceManager, PreferenceManager>();
             builder.Services.AddSingleton<IApiService, ApiService>();
 
-            builder.Services.AddTransient<AuthenticationHeaderHandler>();
-            builder.Services.AddHttpClient("ApiHttpClient")
-                .AddHttpMessageHandler<AuthenticationHeaderHandler>();
+            builder.Services.AddHttpClient("ApiHttpClient");
 
             builder.Services.AddTransient<GamePage>();  // til game branch
             builder.Services.AddTransient<GameViewModel>();
@@ -107,8 +91,7 @@ namespace Client.UI
 
             var app = builder.Build();
             
-            //var jwtTokenService = app.Services.GetRequiredService<JwtTokenService>();
-            var jwtTokenService = (JwtTokenService)app.Services.GetRequiredService<IJwtTokenService>();
+            var jwtTokenService = app.Services.GetRequiredService<IJwtTokenService>();
 
 
             Task.Run(() => UploadLogsAsync(configuration, jwtTokenService));
@@ -213,19 +196,5 @@ namespace Client.UI
             return JsonConvert.SerializeObject(logEntries);
         }
 
-    }
-    
-    public class AuthenticationHeaderHandler : DelegatingHandler
-    {
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            var token = await SecureStorage.GetAsync("auth_token");
-            if (!string.IsNullOrWhiteSpace(token))
-            {
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            }
-
-            return await base.SendAsync(request, cancellationToken);
-        }
     }
 }

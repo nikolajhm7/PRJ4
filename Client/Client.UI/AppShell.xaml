@@ -14,14 +14,14 @@
         Route="Loading" />
 
     <ShellContent
-        Title="Platform"
-        ContentTemplate="{DataTemplate views:PlatformPage}"
-        Route="PlatformPage" />
-    
-    <ShellContent
         Title="Login"
         ContentTemplate="{DataTemplate views:LoginPage}"
         Route="LoginPage" />
+
+    <ShellContent
+        Title="Platform"
+        ContentTemplate="{DataTemplate views:PlatformPage}"
+        Route="PlatformPage" />
 
     <ShellContent
         Title="NewUser"

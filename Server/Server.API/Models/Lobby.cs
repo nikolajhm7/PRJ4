@@ -9,11 +9,12 @@ namespace Server.API.Models
         InGame
     }
     public class Lobby(string lobbyId, string hostConnectionId)
+    public class Lobby(string lobbyId, string hostConnectionId, int gameId)
     {
         public string LobbyId { get; set; } = lobbyId;
         public HashSet<ConnectedUserDTO> Members { get; set; } = new HashSet<ConnectedUserDTO>();
         public string HostConnectionId { get; } = hostConnectionId;
-        public int GameId { get; set; }
         public GameStatus Status { get; set; } = GameStatus.InLobby;
+        public int GameId { get; set; } = gameId;
     }
 }

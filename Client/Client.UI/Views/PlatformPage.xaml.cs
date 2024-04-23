@@ -1,4 +1,4 @@
-using Client.UI.Models;
+using Client.Libary.Models;
 using Client.UI.ViewModels;
 using Microsoft.Maui.Controls;
 using Client.UI.ViewModels;

@@ -33,7 +33,7 @@ namespace Server.API.Hubs
             _lobbyManager = lobbyManager;
         }
 
-        public async Task<ActionResult> CreateLobby()
+        public async Task<ActionResult> CreateLobby(int gameId)
         {
             var username = Context.User?.Identity?.Name;
             if (username == null)
