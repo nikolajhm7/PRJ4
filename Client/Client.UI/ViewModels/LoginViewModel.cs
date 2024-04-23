@@ -20,6 +20,8 @@ public partial class LoginViewModel : ObservableObject
     private readonly NavigationService _navigationService;
     
     private IJwtTokenService _jwtTokenService;
+    
+    private readonly IPreferenceManager _preferenceManager;
     public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger, IJwtTokenService jwtTokenService)
     {
         _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
@@ -97,8 +99,8 @@ public partial class LoginViewModel : ObservableObject
 
                 if (!string.IsNullOrWhiteSpace(jsonResponseToken))
                 {
-                    Preferences.Set("auth_token", jsonResponseToken);
-                    Preferences.Set("username", username);
+                    _preferenceManager.Set("auth_token", jsonResponseToken);
+                    _preferenceManager.Set("username", username);
                     return true;
                 }
 
