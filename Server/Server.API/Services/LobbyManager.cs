@@ -48,7 +48,7 @@ namespace Server.API.Services
             else return [];
         }
 
-        public string CreateNewLobby(ConnectedUserDTO user)
+        public string CreateNewLobby(ConnectedUserDTO user, int gameId)
         {
             string? lobbyId = null;
             while (lobbyId == null)
@@ -60,7 +60,7 @@ namespace Server.API.Services
                 }
             }
 
-            var lobby = new Lobby(lobbyId, user.ConnectionId);
+            var lobby = new Lobby(lobbyId, user.ConnectionId, gameId);
             lobby.Members.Add(user);
             lobbies.Add(lobbyId, lobby);
 
