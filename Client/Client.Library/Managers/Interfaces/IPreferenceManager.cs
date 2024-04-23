@@ -1,4 +1,4 @@
-namespace Client.Libary.Interfaces;
+namespace Client.Library.Interfaces;
 
 public interface IPreferenceManager
 {

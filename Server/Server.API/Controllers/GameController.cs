@@ -13,7 +13,7 @@ using Server.API.Services.Interfaces;
 namespace Server.API.Controllers;
 
 [ApiController]
-[Route("games/[controller]")]
+[Route("[controller]")]
 public class GameController : ControllerBase
 {
     private readonly ILogger<GameController> _logger;

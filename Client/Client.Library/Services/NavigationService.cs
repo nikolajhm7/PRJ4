@@ -1,7 +1,9 @@
 ﻿
-namespace Client.Libary.Services
+using Client.Library.Services.Interfaces;
+
+namespace Client.Library.Services
 {
-    public class NavigationService
+    public class NavigationService : INavigationService
     {
         public async Task NavigateToPage(string page)
         {

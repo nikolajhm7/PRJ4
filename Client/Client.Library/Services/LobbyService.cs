@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
-using Client.Libary.DTO;
-using Client.Libary.Models;
 using Microsoft.Extensions.Configuration;
-using Client.Libary.Services;
+using Client.Library.Services;
+using Client.Library.DTO;
+using Client.Library.Models;
 
-namespace Client.Libary.Services
+namespace Client.Library.Services
 {
     public class LobbyService : ConnectionService, ILobbyService
     {

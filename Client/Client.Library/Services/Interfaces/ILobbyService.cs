@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Client.Libary.Models;
-using Client.Libary.DTO;
+using Client.Library.DTO;
+using Client.Library.Models;
 
-namespace Client.Libary.Services
+namespace Client.Library.Services
 {
     public interface ILobbyService
     {

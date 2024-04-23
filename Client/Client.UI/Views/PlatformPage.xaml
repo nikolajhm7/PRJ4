@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
              xmlns:behaviors="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
-             xmlns:local="clr-namespace:Client.Libary.Models"
+             xmlns:local="clr-namespace:Client.Library.Models"
              x:Class="Client.UI.Views.PlatformPage"
              x:DataType="viewModels:PlatformViewModel"
             >

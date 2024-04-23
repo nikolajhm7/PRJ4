@@ -1,9 +1,10 @@
 ﻿using System.Collections.ObjectModel;
-using Client.Libary.Interfaces;
-using Client.Libary.Models;
+using Client.Library.Interfaces;
+using Client.Library.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Client.Libary.Services;
+using Client.Library.Services;
+using Client.Library.Services.Interfaces;
 using Client.UI.Managers;
 using Client.UI.Views;
 
@@ -22,7 +23,7 @@ namespace Client.UI.ViewModels
 
         private readonly ILobbyService _lobbyService;
 
-        private readonly NavigationService _navigationService;
+        private readonly INavigationService _navigationService;
 
         private ObservableCollection<Game> games;
         public ObservableCollection<Game> Games
@@ -30,17 +31,17 @@ namespace Client.UI.ViewModels
             get { return games; }
             set { SetProperty(ref games, value); }
         }
-        
-        private IPreferenceManager _preferenceManager = new PreferenceManager();
+
+        private IPreferenceManager _preferenceManager;
 
         private int gameCounter = 0;
-        public PlatformViewModel(ILobbyService lobbyService, IPreferenceManager preferenceManager)
+        public PlatformViewModel(ILobbyService lobbyService, IPreferenceManager preferenceManager, INavigationService navigationService)
         {
             _username = User.Instance.Username;
             _avatar = User.Instance.avatar;
             InitializeGame();
             _lobbyService = lobbyService;
-            _navigationService = new NavigationService();
+            _navigationService = navigationService;
             _preferenceManager = preferenceManager;
         }
 

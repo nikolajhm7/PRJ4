@@ -12,7 +12,6 @@ namespace Client.UI.Views
             InitializeComponent();
             if (Application.Current is App app)
             {
-                Console.WriteLine("Application.Current is App app");
                 var viewModel = app.ServiceProvider.GetService<LoginViewModel>();
                 if (viewModel == null) throw new InvalidOperationException("ViewModel kan ikke være null");
                 BindingContext = viewModel;

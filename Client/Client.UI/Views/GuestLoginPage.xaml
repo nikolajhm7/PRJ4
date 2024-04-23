@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
+             xmlns:behaviors="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
+             x:Class="Client.UI.Views.GuestLoginPage"
+             x:DataType="viewModels:GuestLoginViewModel">
+    <VerticalStackLayout
+        Padding="20,0"
+        Spacing="10">
+
+        <Label
+            Text="Login as Geust"
+            Style="{StaticResource Headline}"
+            SemanticProperties.HeadingLevel="Level1" />
+
+        <Image
+            Source="logo.png"
+            HeightRequest="185"
+            Aspect="AspectFit"
+            SemanticProperties.Description="Party Play Palace" />
+
+        <Entry Placeholder="Enter username"
+               Text="{Binding Username}" />
+
+        <Button
+            x:Name="CreateButton"
+            Text="Create" 
+            HorizontalOptions="Fill"
+            Command="{Binding MakeNewUserCommand}"/>
+        <Button
+            x:Name="Back"
+            Text="Back"
+            HorizontalOptions="Fill"
+            Command="{Binding GoBackCommand}"/>
+    </VerticalStackLayout>
+
+</ContentPage>

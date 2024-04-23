@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.UI", "Client.UI\Clie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Test", "Client.Test\Client.Test.csproj", "{829F3BC1-C63E-4AE6-BCF4-A2842818701C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Libary", "Client.Libary\Client.Libary.csproj", "{47503CB6-E523-45A2-88A8-D801A3430893}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Library", "Client.Library\Client.Library.csproj", "{47503CB6-E523-45A2-88A8-D801A3430893}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

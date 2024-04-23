@@ -1,17 +1,18 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
-using Client.Libary.Interfaces;
-using Client.Libary.DTO;
+using Client.Library.Interfaces;
+using Client.Library.DTO;
 using Client.UI.Managers;
 using Client.UI.ViewModels;
 using Client.UI.Views;
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
-using Client.Libary.Services;
+using Client.Library.Services;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Serilog;
-using Client.Libary;
+using Client.Library;
+using Client.Library.Services.Interfaces;
 
 namespace Client.UI
 {
@@ -76,6 +77,8 @@ namespace Client.UI
             
             builder.Services.AddSingleton<IPreferenceManager, PreferenceManager>();
             builder.Services.AddSingleton<IApiService, ApiService>();
+            
+            builder.Services.AddSingleton<INavigationService, NavigationService>();
 
             builder.Services.AddHttpClient("ApiHttpClient");
 

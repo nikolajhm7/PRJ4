@@ -2,7 +2,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
-using Client.Libary.Services;
+using Client.Library.Services;
+using Client.Library.Services.Interfaces;
 using Client.UI.Views;
 
 namespace Client.UI.ViewModels
@@ -11,12 +12,12 @@ namespace Client.UI.ViewModels
     {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
-        private readonly NavigationService _navigationService;
-        public NewUserViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        private readonly INavigationService _navigationService;
+        public NewUserViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, INavigationService navigationService)
         {
             _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
             _configuration = configuration;
-            _navigationService = new NavigationService();
+            _navigationService = navigationService;
         }
 
 

@@ -18,12 +18,23 @@ namespace Server.API.Repositories
 
         public async Task AddFriendRequest(string userId, string friendId)
         {
-            if (userId == friendId) return;
+            if (userId == friendId)
+            {
+                throw new Exception("Cannot add yourself as a friend");
+            }
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             var friend = await _context.Users.FirstOrDefaultAsync(u => u.Id == friendId);
 
-            if (user == null || friend == null) return;
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+            
+            if (friend == null)
+            {
+                throw new Exception("Friend not found");
+            }
 
             var friendRequest = new Friendship
             {

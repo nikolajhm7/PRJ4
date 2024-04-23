@@ -15,6 +15,7 @@ namespace Client.UI
             Routing.RegisterRoute(nameof(LobbyPage), typeof(LobbyPage));
             Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
             Routing.RegisterRoute(nameof(JoinPage), typeof(JoinPage));
+            Routing.RegisterRoute(nameof(GuestLoginPage), typeof(GuestLoginPage));
             //Med "nameof" laver den selv sidens navn til en string og den er dermed mere dynamisk
         }
     }

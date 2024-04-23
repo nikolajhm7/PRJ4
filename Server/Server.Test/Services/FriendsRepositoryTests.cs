@@ -111,14 +111,14 @@ public class FriendsRepositoryTests : TestBase
     }
 
     [Test]
-    public void AddFriendRequest_ThrowsExceptionWhenUserNotFound()
+    public async Task AddFriendRequest_ThrowsExceptionWhenUserNotFound()
     {
         // Act
-        Assert.Throws<Exception>(() => _friendsRepository.AddFriendRequest("user1", "user2"));
+        Assert.ThrowsAsync<Exception>(() => _friendsRepository.AddFriendRequest("user1", "user2"));
     }
     
     [Test]
-    public void AddFriendRequest_ThrowsExceptionWhenFriendNotFound()
+    public async Task AddFriendRequest_ThrowsExceptionWhenFriendNotFound()
     {
         // Arrange
         var user = new User { Id = "user1" };
@@ -126,11 +126,11 @@ public class FriendsRepositoryTests : TestBase
         Context.SaveChanges();
 
         // Act
-        Assert.Throws<Exception>(() => _friendsRepository.AddFriendRequest(user.Id, "user2"));
+        Assert.ThrowsAsync<Exception>(() => _friendsRepository.AddFriendRequest(user.Id, "user2"));
     }
 
     [Test]
-    public void RemoveFriend_ThrowsExceptionWhenFriendshipNotFound()
+    public async Task RemoveFriend_ThrowsExceptionWhenFriendshipNotFound()
     {
         // Arrange
         var user = new User { Id = "user1" };
@@ -138,11 +138,11 @@ public class FriendsRepositoryTests : TestBase
         Context.SaveChanges();
 
         // Act
-        Assert.Throws<Exception>(() => _friendsRepository.RemoveFriend(user.Id, "user2"));
+        Assert.ThrowsAsync<Exception>(() => _friendsRepository.RemoveFriend(user.Id, "user2"));
     }
     
     [Test]
-    public void AcceptFriendRequest_ThrowsExceptionWhenFriendshipNotFound()
+    public async Task AcceptFriendRequest_ThrowsExceptionWhenFriendshipNotFound()
     {
         // Arrange
         var user = new User { Id = "user1" };
@@ -150,11 +150,11 @@ public class FriendsRepositoryTests : TestBase
         Context.SaveChanges();
 
         // Act
-        Assert.Throws<Exception>(() => _friendsRepository.AcceptFriendRequest(user.Id, "user2"));
+       Assert.ThrowsAsync<Exception>(() => _friendsRepository.AcceptFriendRequest(user.Id, "user2"));
     }
     
     [Test]
-    public void AcceptFriendRequest_ThrowsExceptionWhenFriendshipNotPending()
+    public async Task AcceptFriendRequest_ThrowsExceptionWhenFriendshipNotPending()
     {
         // Arrange
         var user1 = new User { Id = "user1" };
@@ -165,7 +165,7 @@ public class FriendsRepositoryTests : TestBase
         Context.SaveChanges();
 
         // Act
-        Assert.Throws<Exception>(() => _friendsRepository.AcceptFriendRequest(user2.Id, user1.Id));
+        Assert.ThrowsAsync<Exception>(() => _friendsRepository.AcceptFriendRequest(user2.Id, user1.Id));
     }
 
     

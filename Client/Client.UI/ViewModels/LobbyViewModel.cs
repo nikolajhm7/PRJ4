@@ -7,11 +7,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Collections;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using Client.Libary.Models;
+using Client.Library.Models;
 using System.Diagnostics;
-using Client.Libary.DTO;
-using Client.Libary.Services;
-
+using Client.Library.DTO;
+using Client.Library.Services;
+using Client.Library.Services.Interfaces;
 
 
 namespace Client.UI.ViewModels
@@ -21,7 +21,7 @@ namespace Client.UI.ViewModels
     public partial class LobbyViewModel : ObservableObject
     {
         private readonly ILobbyService _lobbyService;
-        private readonly NavigationService _navigationService;
+        private readonly INavigationService _navigationService;
 
         [ObservableProperty]
         private string ?lobbyId;
@@ -32,10 +32,10 @@ namespace Client.UI.ViewModels
         [ObservableProperty]
         private Lobby lobby = new Lobby();
 
-        public LobbyViewModel(ILobbyService lobbyService)
+        public LobbyViewModel(ILobbyService lobbyService, INavigationService navigationService)
         {
             _lobbyService = lobbyService;
-            _navigationService = new NavigationService();
+            _navigationService = navigationService;
 
             // Example initialization, replace with actual dynamic data loading
             if(lobbyId != null)
