@@ -36,9 +36,9 @@
             Command="{Binding MakeNewUserCommand}"/>
         <Button
             x:Name="Back"
-Text="Back"
-HorizontalOptions="Fill"
-Command="{Binding GoBackCommand}"/>
+            Text="Back"
+            HorizontalOptions="Fill"
+            Command="{Binding GoBackCommand}"/>
     </VerticalStackLayout>
 
 </ContentPage>
