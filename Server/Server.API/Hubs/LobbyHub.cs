@@ -23,7 +23,7 @@ namespace Server.API.Hubs
             _idGen = idGen;
         }
 
-        public async Task<ActionResult> CreateLobby()
+        public async Task<ActionResult> CreateLobby(int gameId)
         {
             var username = Context.User?.Identity?.Name;
             if (username == null)
@@ -39,7 +39,7 @@ namespace Server.API.Hubs
 
             _logger.LogDebug("Random lobby ID {LobbyId} generated.", lobbyId);
 
-            var lobby = new Lobby(lobbyId, Context.ConnectionId);
+            var lobby = new Lobby(lobbyId, Context.ConnectionId, gameId);
             lobby.Members.Add(new ConnectedUserDTO(username, Context.ConnectionId));
             lobbies.Add(lobbyId, lobby);
 

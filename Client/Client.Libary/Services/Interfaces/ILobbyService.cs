@@ -15,7 +15,7 @@ namespace Client.Libary.Services
         public event Action? GameStartedEvent;
         public event Action? LobbyClosedEvent;
 
-        Task<ActionResult> CreateLobbyAsync();
+        Task<ActionResult> CreateLobbyAsync(int gameId);
 
         Task<ActionResult> JoinLobbyAsync(string lobbyId);
 

@@ -31,7 +31,7 @@ namespace Client.Libary.Services
                 LobbyClosedEvent?.Invoke());
         }
 
-        public async Task<ActionResult> CreateLobbyAsync()
+        public async Task<ActionResult> CreateLobbyAsync(int gameId)
         {
                 return await InvokeAsync("CreateLobby");
         }
