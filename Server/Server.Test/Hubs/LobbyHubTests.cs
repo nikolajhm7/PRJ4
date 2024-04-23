@@ -315,7 +315,7 @@ namespace Server.Test.Hubs
         [TearDown]
         public void TearDown()
         {
-            _uut.lobbies.Clear();
+            //_uut.lobbies.Clear();
 
             _uut?.Dispose();
 

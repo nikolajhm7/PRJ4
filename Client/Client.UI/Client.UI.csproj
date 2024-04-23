@@ -129,6 +129,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Games\1 - Hangman\" />
 	  <Folder Include="Logs\" />
 	</ItemGroup>
 

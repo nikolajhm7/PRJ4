@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Server.API.GameLogic
 {
+    /*
     public class HangmanGame : IGame
     {
         private static readonly Random rand = new Random();
@@ -130,4 +131,5 @@ namespace Server.API.GameLogic
             return count;
         }
     }
+    */
 }

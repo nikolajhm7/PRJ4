@@ -4,23 +4,33 @@ using Server.API.DTO;
 using Microsoft.AspNetCore.Authorization;
 using System.Reflection;
 using Server.API.Services.Interfaces;
+using Server.API.Services;
+using System.Text.RegularExpressions;
+using Server.API.Repositories;
 
 namespace Server.API.Hubs
 {
     [Authorize]
     public class LobbyHub : Hub
     {
-        public record ActionResult(bool Success, string? Msg);
-
-        public readonly Dictionary<string, Lobby> lobbies = [];
+        //public readonly Dictionary<string, Lobby> lobbies = [];
 
         private readonly ILogger<LobbyHub> _logger;
         private readonly IIdGenerator _idGen;
+        private readonly ILobbyManager _lobbyManager;
 
         public LobbyHub(ILogger<LobbyHub> logger, IIdGenerator idGen)
         {
             _logger = logger;
             _idGen = idGen;
+            _lobbyManager = new LobbyManager(_idGen);
+        }
+
+        public LobbyHub(ILogger<LobbyHub> logger, IIdGenerator idGen, ILobbyManager lobbyManager)
+        {
+            _logger = logger;
+            _idGen = idGen;
+            _lobbyManager = lobbyManager;
         }
 
         public async Task<ActionResult> CreateLobby()
@@ -32,16 +42,7 @@ namespace Server.API.Hubs
                 return new ActionResult(false, "Authentication context is not available.");
             }
 
-            _logger.LogDebug("Start generation of random lobby ID.");
-            var lobbyId = _idGen.GenerateRandomLobbyId();
-
-            // TODO: ADD Auth, that ID doesnt already exist.
-
-            _logger.LogDebug("Random lobby ID {LobbyId} generated.", lobbyId);
-
-            var lobby = new Lobby(lobbyId, Context.ConnectionId);
-            lobby.Members.Add(new ConnectedUserDTO(username, Context.ConnectionId));
-            lobbies.Add(lobbyId, lobby);
+            var lobbyId = _lobbyManager.CreateNewLobby(new ConnectedUserDTO(username, Context.ConnectionId));
 
             await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
             _logger.LogInformation("Lobby {LobbyId} created by {UserName}.", lobbyId, username);
@@ -61,16 +62,17 @@ namespace Server.API.Hubs
                 return new ActionResult(false, "Authentication context is not available.");
             }
 
-            if (lobbies.TryGetValue(lobbyId, out Lobby? lobby))
+            if (_lobbyManager.LobbyExists(lobbyId))
             {
                 var user = new ConnectedUserDTO(username, Context.ConnectionId);
 
-                foreach (var member in lobby.Members)
+                foreach (var member in _lobbyManager.GetUsersInLobby(lobbyId))
                 {
                     await Clients.Caller.SendAsync("UserJoinedLobby", member);
                 }
 
-                lobby.Members.Add(user);
+                _lobbyManager.AddToLobby(user, lobbyId);
+
                 await Clients.Group(lobbyId).SendAsync("UserJoinedLobby", user);
                 await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
 
@@ -79,7 +81,7 @@ namespace Server.API.Hubs
             }
             else
             {
-                _logger.LogError("Attemp to join non-existing lobby {LobbyId}.", lobbyId);
+                _logger.LogError("Attempt to join non-existing lobby {LobbyId}.", lobbyId);
                 return new ActionResult(false, "Lobby does not exist.");
             }
         }
@@ -96,20 +98,17 @@ namespace Server.API.Hubs
                 return new ActionResult(false, "Authentication context is not available.");
             }
 
-            if (lobbies.TryGetValue(lobbyId, out Lobby? lobby))
+            if (_lobbyManager.LobbyExists(lobbyId))
             {
                 var user = new ConnectedUserDTO(username, Context.ConnectionId);
 
-                lobby.Members.Remove(user);
-                await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyId);
-                await Clients.Group(lobbyId).SendAsync("UserLeftLobby", user);
+                await RemoveUserFromLobby(lobbyId, user);
 
-                _logger.LogInformation("{UserName} left lobby {LobbyId}.", Context.User?.Identity?.Name, lobbyId);
                 return new ActionResult(true, null);
             }
             else
             {
-                _logger.LogError("Attemp to leave non-existing lobby {LobbyId}.", lobbyId);
+                _logger.LogError("Attempt to leave non-existing lobby {LobbyId}.", lobbyId);
                 return new ActionResult(false, "Lobby does not exist.");
             }
         }
@@ -125,8 +124,9 @@ namespace Server.API.Hubs
                 return new ActionResult(false, "Authentication context is not available.");
             }
 
-            if (lobbies.TryGetValue(lobbyId, out Lobby? lobby) && lobby.HostConnectionId == Context.ConnectionId)
+            if (_lobbyManager.IsHost(Context.ConnectionId, lobbyId))
             {
+                _lobbyManager.StartGame(lobbyId);
                 // TODO: ADD START GAME LOGIC HERE
 
                 await Clients.Group(lobbyId).SendAsync("GameStarted");
@@ -153,31 +153,45 @@ namespace Server.API.Hubs
             var username = Context.User?.Identity?.Name;
             var user = new ConnectedUserDTO(username, Context.ConnectionId);
 
-            var lobby = lobbies.FirstOrDefault(x => x.Value.Members.Contains(user)).Value;
-            if (lobby != null)
+            var lobbyId = _lobbyManager.GetLobbyIdFromUser(user);
+            if (lobbyId != null)
             {
-                // If host disconnects, close lobby and remove all members.
-                if (lobby.HostConnectionId == Context.ConnectionId)
+                // If game is started we expect users to disconnect
+                if (_lobbyManager.GetGameStatus(lobbyId) == GameStatus.InGame)
                 {
-                    await Clients.Group(lobby.LobbyId).SendAsync("LobbyClosed");
-
-                    foreach(var member in lobby.Members)
-                    {
-                        await Groups.RemoveFromGroupAsync(member.ConnectionId, lobby.LobbyId);
-                    }
-
-                    lobbies.Remove(lobby.LobbyId);
+                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyId);
+                    await base.OnDisconnectedAsync(exception);
+                    return;
                 }
-                else
-                {
-                    await Clients.Group(lobby.LobbyId).SendAsync("UserLeftLobby", user);
-                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobby.LobbyId);
-                    lobby.Members.Remove(user);
-                    _logger.LogInformation("{UserName} successfully left lobby {LobbyId}.", username, lobby.LobbyId);
-                }
+
+                await RemoveUserFromLobby(lobbyId, user);
             }
-            _logger.LogError(exception, "Successfully disconnected {UserName}.", username);
+            _logger.LogDebug("Successfully disconnected {UserName}.", username);
             await base.OnDisconnectedAsync(exception);
+        }
+
+        // Funktion til simplificering af at fjerne user
+        private async Task RemoveUserFromLobby(string lobbyId, ConnectedUserDTO user)
+        {
+            // If host disconnects, close lobby and remove all members.
+            if (_lobbyManager.IsHost(Context.ConnectionId, lobbyId))
+            {
+                await Clients.Group(lobbyId).SendAsync("LobbyClosed");
+
+                foreach (var member in _lobbyManager.GetUsersInLobby(lobbyId))
+                {
+                    await Groups.RemoveFromGroupAsync(member.ConnectionId, lobbyId);
+                }
+
+                _lobbyManager.RemoveLobby(lobbyId);
+            }
+            else
+            {
+                await Clients.Group(lobbyId).SendAsync("UserLeftLobby", user);
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyId);
+                _lobbyManager.RemoveFromLobby(user, lobbyId);
+                _logger.LogInformation("{UserName} successfully left lobby {LobbyId}.", user.Username, lobbyId);
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.AspNetCore.SignalR.Client;
 using System.Collections.ObjectModel;
+using Microsoft.Extensions.Configuration;
 
 
 namespace Client.UI.ViewModels
@@ -27,10 +28,10 @@ namespace Client.UI.ViewModels
         [ObservableProperty]
         bool _isConnected;
 
-        public ChatAppViewModel()
+        public ChatAppViewModel(IConfiguration configuration)
         {
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl($"http://localhost:5008/ChatAppHub")
+                .WithUrl(configuration["ConnectionSettings:ApiUrl"] + configuration["ConnectionSettings:ChatAppEndpoint"])
                 .Build();
 
             Messages ??= new ObservableCollection<string>();
