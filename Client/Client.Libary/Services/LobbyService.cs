@@ -33,7 +33,7 @@ namespace Client.Libary.Services
 
         public async Task<ActionResult> CreateLobbyAsync(int gameId)
         {
-                return await InvokeAsync("CreateLobby");
+                return await InvokeAsync("CreateLobby", gameId);
         }
 
         public async Task<ActionResult> JoinLobbyAsync(string lobbyId)

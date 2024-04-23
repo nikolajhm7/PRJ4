@@ -85,7 +85,7 @@ namespace Client.Libary.Services
 
             if (IsConnected)
             {
-                return await _hubConnection.InvokeAsync<ActionResult>(methodName, args);
+                return await _hubConnection.InvokeAsync<ActionResult>(methodName, args[0]);
             }
             else
             {

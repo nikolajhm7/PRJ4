@@ -1,8 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using Client.Libary.Interfaces;
 using Client.Libary.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Client.Libary.Services;
+using Client.UI.Managers;
 using Client.UI.Views;
 
 namespace Client.UI.ViewModels
@@ -28,15 +30,18 @@ namespace Client.UI.ViewModels
             get { return games; }
             set { SetProperty(ref games, value); }
         }
+        
+        private IPreferenceManager _preferenceManager = new PreferenceManager();
 
         private int gameCounter = 0;
-        public PlatformViewModel(ILobbyService lobbyService)
+        public PlatformViewModel(ILobbyService lobbyService, IPreferenceManager preferenceManager)
         {
             _username = User.Instance.Username;
             _avatar = User.Instance.avatar;
             InitializeGame();
             _lobbyService = lobbyService;
             _navigationService = new NavigationService();
+            _preferenceManager = preferenceManager;
         }
 
         private void InitializeGame()
@@ -66,7 +71,7 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task LogOut()
         {
-            Preferences.Clear("auth_token");
+            _preferenceManager.Clear("auth_token");
             await _navigationService.NavigateToPage("///"+nameof(LoginPage));
         }
 
@@ -79,7 +84,8 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task GoToLobby(string s)
         {
-            var response = await _lobbyService.CreateLobbyAsync();
+            int someint = 1;
+            var response = await _lobbyService.CreateLobbyAsync(someint);
             if (response.Success)
             {
                 await Shell.Current.GoToAsync($"//LobbyPage?Image={s}&LobbyId={response.Msg}");

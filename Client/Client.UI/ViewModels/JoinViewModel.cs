@@ -16,11 +16,11 @@ namespace Client.UI.ViewModels
 {
     public partial class JoinViewModel : ObservableObject
     {
-        private readonly LobbyService _lobbyService;
+        private readonly ILobbyService _lobbyService;
         private readonly NavigationService _navigationService;
         [ObservableProperty]
         private string _lobbyId;
-        public JoinViewModel(LobbyService lobbyService)
+        public JoinViewModel(ILobbyService lobbyService)
         { 
             _lobbyService = lobbyService;
             _navigationService = new NavigationService();
