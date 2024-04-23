@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Client.Libary.Services;
+using Newtonsoft.Json.Linq;
 
 namespace Client.UI.ViewModels;
 
@@ -98,10 +99,16 @@ public partial class LoginViewModel : ObservableObject
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponseToken = (await response.Content.ReadAsStringAsync()).Trim();
+                var tokenData = JObject.Parse(jsonResponseToken);
+                
+                var auth_token = tokenData["token"]?.ToString();
+                var refresh_token = tokenData["refreshToken"]?.ToString();
 
-                if (!string.IsNullOrWhiteSpace(jsonResponseToken))
+                if (!string.IsNullOrWhiteSpace(auth_token) && !string.IsNullOrWhiteSpace(refresh_token))
                 {
-                    _preferenceManager.Set("auth_token", jsonResponseToken);
+                    
+                    _preferenceManager.Set("auth_token", auth_token);
+                    _preferenceManager.Set("refresh_token", refresh_token);
                     _preferenceManager.Set("username", username);
                     return true;
                 }

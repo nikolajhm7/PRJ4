@@ -26,8 +26,7 @@ namespace Client.Libary.Services
                 .WithUrl(url, options =>
                 {
                     options.AccessTokenProvider = () => {
-                        var json = Preferences.Get("auth_token", defaultValue: "{}");
-                        var token = JObject.Parse(json)["token"]?.ToString();
+                        var token = Preferences.Get("auth_token", defaultValue: "{}");
                         Debug.WriteLine($"Using token: {token}");
                         return Task.FromResult(token);
                     };
