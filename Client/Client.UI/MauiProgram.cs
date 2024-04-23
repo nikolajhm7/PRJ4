@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Serilog;
 using Client.Libary;
+using Client.Library.Games;
 
 namespace Client.UI
 {
@@ -71,6 +72,7 @@ namespace Client.UI
 
             builder.Services.AddSingleton<ILobbyService, LobbyService>();
             builder.Services.AddSingleton<IFriendsService, FriendsService>();
+            builder.Services.AddSingleton<IHangmanService, HangmanService>();
 
             builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
             

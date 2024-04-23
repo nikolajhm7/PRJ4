@@ -109,6 +109,9 @@ namespace Server.API.Hubs
             else
             {
                 _logger.LogError("Attempt to leave non-existing lobby {LobbyId}.", lobbyId);
+
+                Context.Abort();
+
                 return new ActionResult(false, "Lobby does not exist.");
             }
         }
