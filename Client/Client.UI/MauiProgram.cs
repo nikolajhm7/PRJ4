@@ -54,7 +54,10 @@ namespace Client.UI
 
             builder.Services.AddSingleton<LoginViewModel>();
             builder.Services.AddSingleton<LoginPage>();
-            
+
+            builder.Services.AddTransient<GuestLoginViewModel>();
+            builder.Services.AddTransient<GuestLoginPage>();
+
             builder.Services.AddTransient<TestViewModel>();
             builder.Services.AddTransient<TestPage>();
 
