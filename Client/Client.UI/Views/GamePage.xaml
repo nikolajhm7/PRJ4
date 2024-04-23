@@ -17,18 +17,5 @@
             x:Name="startButton"
             Text="Start"
             HorizontalOptions="Center" />
-        <Label 
-            x:Name="chatMessages"
-            FontSize="18"
-            HorizontalOptions="Center"/>
-        <Entry
-            x:Name="myChatMessage"
-            Placeholder="Enter message"
-            FontSize="18"
-            HorizontalOptions="Center"/>
-        <Button
-            x:Name="sendButton"
-            Text="Send"
-            HorizontalOptions="Center" />
     </VerticalStackLayout>
 </ContentPage>

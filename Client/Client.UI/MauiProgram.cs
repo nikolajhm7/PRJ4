@@ -98,6 +98,9 @@ namespace Client.UI
             builder.Services.AddTransient<GamePage>();  // til game branch
             builder.Services.AddTransient<GameViewModel>();
 
+            builder.Services.AddTransient<ChatAppPage>();
+            builder.Services.AddTransient<ChatAppViewModel>();
+
             #if DEBUG
                 builder.Logging.AddDebug();
             #endif
