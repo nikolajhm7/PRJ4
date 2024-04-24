@@ -86,11 +86,29 @@ public class GameController : ControllerBase
         var newGame = new Game
         {
             Name = game.Name,
+            MaxPlayers = game.MaxPlayers
         };
 
         await _gameRepository.AddGame(newGame);
         
         _logger.LogDebug("Game {GameName} added.", newGame.Name);
+        
+        return Ok();
+    }
+
+    [HttpPost("editGame")]
+    public async Task<IActionResult> EditGame([FromRoute] int gameId, [FromBody] GameDTO game)
+    {
+        _logger.LogDebug("Starting edit of game {GameName}.", game.Name);
+        
+        var existingGame = await _gameRepository.GetGameById(gameId);
+        
+        existingGame.Name = game.Name;
+        existingGame.MaxPlayers = game.MaxPlayers;
+        
+        await _gameRepository.EditGame(existingGame);
+        
+        _logger.LogDebug("Game {GameName} edited.", existingGame.Name);
         
         return Ok();
     }
