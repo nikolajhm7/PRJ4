@@ -17,7 +17,7 @@
         >
 
         <Label 
-            Text="{Binding Username}"
+            Text="{Binding UserInstance.Username}"
             Style="{StaticResource SubHeadline}"
             Grid.Row="0"
             Grid.Column="1"
@@ -58,7 +58,7 @@
             Command="{Binding ChangeViewCommand}"
             IsVisible="{Binding Showhost}"/>
 
-            
+
         <Button
             Text="Join"
             Grid.Row="2"
@@ -75,9 +75,9 @@
             BackgroundColor="Bisque"
             IsVisible="{Binding GamesShowing}"
             Command="{Binding ChangeViewCommand}"/>
-        
+
         <ImageButton
-            Source="{Binding Games[0].Name}"
+            Source="{Binding Games[0].Image}"
             Aspect="AspectFit"
             Grid.Row="2"
             Grid.Column="2"
@@ -85,10 +85,10 @@
             IsVisible="{Binding GamesShowing}"
             IsEnabled="{Binding Games[0].Playable}"
             Command ="{Binding GoToLobbyCommand}"
-            CommandParameter="{Binding Games[0].Name}"/>
+            CommandParameter="{Binding Games[0]}"/>
 
         <ImageButton
-            Source="{Binding Games[1].Name}"
+            Source="{Binding Games[1].Image}"
             Aspect="AspectFit"
             Grid.Row="2"
             Grid.Column="1"
@@ -96,8 +96,8 @@
             IsVisible="{Binding GamesShowing}"
             IsEnabled="{Binding Games[1].Playable}"
             Command ="{Binding GoToLobbyCommand}"
-            CommandParameter="{Binding Games[1].Name}"/>
+            CommandParameter="{Binding Games[1]}"/>
 
-           
+
     </Grid>
 </ContentPage>

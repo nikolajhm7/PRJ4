@@ -4,20 +4,23 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Client.Library.Models
 {
-    public class User
+    public partial class User : ObservableObject
     {
         private static User _instance = null;
-        private string _username = Preferences.Get("username", defaultValue: string.Empty);
+        [ObservableProperty]
+        string _username = Preferences.Get("username", defaultValue: string.Empty);
 
         private User()
         {
-            games.Add(Path.GetFileNameWithoutExtension("/Resources/Images/hangman.png"+".png"));
-            avatar = "charizard.png";
+            Random random = new Random();
+            avatar = random.Next(1, 4);
         }
 
         public static User Instance
@@ -32,22 +35,6 @@ namespace Client.Library.Models
             }
         }
 
-        public string Username
-        {
-            get => _username;
-            set
-            {
-                if (_username != value)
-                {
-                    _username = value;
-                }
-            }
-        }
-
-        public ObservableCollection<string> games { get; set; } = new ObservableCollection<string>();
-        public ObservableCollection<string> friends { get; set; } = new ObservableCollection<string>();
-        public string avatar { get; set; }
-        public double coins { get; set; }
+        public int avatar { get; set; }
     }
 }
-
