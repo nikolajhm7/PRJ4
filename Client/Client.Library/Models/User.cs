@@ -20,7 +20,7 @@ namespace Client.Library.Models
         private User()
         {
             Random random = new Random();
-            avatar = random.Next(1, 4);
+            Avatar = random.Next(1, 4);
         }
 
         public static User Instance
@@ -35,6 +35,6 @@ namespace Client.Library.Models
             }
         }
 
-        public int avatar { get; set; }
+        [ObservableProperty] public int _avatar;
     }
 }

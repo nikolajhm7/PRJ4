@@ -11,7 +11,7 @@ namespace Client.Library.Models
     public partial class Game : ObservableObject
     {
         [ObservableProperty] private int _gameId;
-        [ObservableProperty] private string _name;
+        [ObservableProperty] private string _name=null;
         [ObservableProperty] private bool _playable = true;
         [ObservableProperty] private string _image;
 
@@ -21,7 +21,15 @@ namespace Client.Library.Models
 
         public void setImage()
         {
-            Image = Name + ".png";
+            if (Name != null)
+            {
+                Image = Name + ".png";
+            }
+            else
+            {
+                Image = "locked.png";
+            }
+            
         }
     }
 }

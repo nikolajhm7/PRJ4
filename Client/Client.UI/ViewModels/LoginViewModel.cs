@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using Client.Library.Interfaces;
+using Client.Library.Models;
 using Client.UI.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -106,6 +107,7 @@ public partial class LoginViewModel : ObservableObject
                 if (_jwtTokenService.SetTokensFromResponse(response))
                 {
                     _preferenceManager.Set("username", username);
+                    User.Instance.Username = username;
                     return true;
                 }
 

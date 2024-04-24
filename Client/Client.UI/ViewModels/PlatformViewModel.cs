@@ -43,8 +43,6 @@ namespace Client.UI.ViewModels
             set { SetProperty(ref games, value); }
         }
 
-
-        private int gameCounter = 0;
         public PlatformViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, INavigationService navigationService, ILobbyService lobbyService, IPreferenceManager preferenceManager, IJwtTokenService jwtTokenService, IApiService apiService)
         {
             _configuration = configuration;
@@ -53,22 +51,27 @@ namespace Client.UI.ViewModels
             _preferenceManager = preferenceManager;
             _jwtTokenService = jwtTokenService;
             _apiService = apiService;
+            //SetAvatar();
+            //pullGames();
+        }
+
+        public void OnPageAppearing()
+        {
             SetAvatar();
             pullGames();
         }
-
         public void SetImagesForGames()
         {
             foreach (var game in Games)
             {
-                game.setImage(); // Assuming setimage() is a method in the Game class
+                game.setImage();
             }
         }
 
         [RelayCommand]
         public async Task pullGames()
         {
-            string endpoint = $"/games/Game/getGamesForUser/{User.Instance.Username}";
+            string endpoint = $"/Game/getGamesForUser/{User.Instance.Username}";
             var response = await _apiService.MakeApiCall(endpoint, HttpMethod.Get);
             if (response.IsSuccessStatusCode)
             {
@@ -85,16 +88,16 @@ namespace Client.UI.ViewModels
 
         public void SetAvatar()
         {
-            switch (UserInstance.avatar)
+            switch (UserInstance.Avatar)
             {
                 case 1:
-                    _avatar = "charizard.png";
+                    Avatar = "charizard.png";
                     break;
                 case 2:
-                    _avatar = "pikachu.png";
+                    Avatar = "pikachu.png";
                     break;
                 case 3:
-                    _avatar = "mewtow.png";
+                    Avatar = "mewtow.png";
                     break;
             }
         }
@@ -122,22 +125,30 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task GoToLobby(Game s)
         {
-            int someint = 1;
-            var response = await _lobbyService.CreateLobbyAsync(someint);
-            if (response.Success)
+            if (s != null)
             {
-                var box = new Dictionary<string, object>
+                int someint = 1;
+                var response = await _lobbyService.CreateLobbyAsync(someint);
+                if (response.Success)
                 {
-                        {"gameId", s.GameId},
-                        {"name", s.Name},
-                        {"image", s.Image},
-                        {"lobbyId",response.Msg},
-                };
-                await Shell.Current.GoToAsync("//LobbyPage",box);
+                    var box = new Dictionary<string, object>
+                    {
+                        //{"gameId", s.GameId},
+                        //{"name", s.Name},
+                        //{"image", s.Image},
+                        { "lobbyId", response.Msg },
+                        { "game", s }
+                    };
+                    await Shell.Current.GoToAsync(nameof(LobbyPage), true, box);
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Fejl", "Kunne ikke oprette lobby", "OK");
+                }
             }
             else
             {
-                await Shell.Current.DisplayAlert("Fejl", "Kunne ikke oprette lobby", "OK");
+                await Shell.Current.DisplayAlert("Fejl", "Vælg et spil som du har adgang til", "OK");
             }
         }
         [RelayCommand]

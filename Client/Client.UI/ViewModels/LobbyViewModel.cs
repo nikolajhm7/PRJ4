@@ -17,53 +17,32 @@ using Client.Library.Services.Interfaces;
 namespace Client.UI.ViewModels
 {
     [QueryProperty(nameof(LobbyId), "lobbyId")]
-    [QueryProperty(nameof(Image), "image")]
-    [QueryProperty(nameof(Name), "name")]
-    [QueryProperty(nameof(GameId), "gameId")]
+    //[QueryProperty(nameof(Image), "image")]
+    //[QueryProperty(nameof(Name), "name")]
+    //[QueryProperty(nameof(GameId), "gameId")]
+    [QueryProperty(nameof(Recivedgame), "game")]
     public partial class LobbyViewModel : ObservableObject
     {
         private readonly ILobbyService _lobbyService;
         private readonly INavigationService _navigationService;
 
-        [ObservableProperty] private string? lobbyId="00000";
-        [ObservableProperty] private string image;
-        [ObservableProperty] private string name;
-        [ObservableProperty] private int gameId;
+        [ObservableProperty] private string? lobbyId;
+        //[ObservableProperty] private string? image;
+        //[ObservableProperty] private string? name;
+        //[ObservableProperty] private int? gameId;
+        [ObservableProperty] private Game? recivedgame;
 
         [ObservableProperty] private Lobby lobby = new Lobby();
 
-        public LobbyViewModel(ILobbyService lobbyService, INavigationService navigationService,
-            IDictionary<string, object>? navigationParameters)
+        public LobbyViewModel(ILobbyService lobbyService, INavigationService navigationService)
         {
             _lobbyService = lobbyService;
             _navigationService = navigationService;
-            InitializeFromNavigationParameters(navigationParameters);
-
-            // Subscribe to events
+            Recivedgame = null;
+            LobbyId = "00000";
+           
             _lobbyService.UserJoinedLobbyEvent += OnUserJoinedLobby;
             _lobbyService.UserLeftLobbyEvent += OnUserLeftLobby;
-        }
-        private void InitializeFromNavigationParameters(IDictionary<string, object> navigationParameters)
-        {
-            if (navigationParameters.ContainsKey("lobbyId"))
-            {
-                LobbyId = navigationParameters["lobbyId"] as string;
-            }
-
-            if (navigationParameters.ContainsKey("image"))
-            {
-                Image = navigationParameters["image"] as string;
-            }
-
-            if (navigationParameters.ContainsKey("name"))
-            {
-                Name = navigationParameters["name"] as string;
-            }
-
-            if (navigationParameters.ContainsKey("gameId") && navigationParameters["gameId"] is int gameId)
-            {
-                GameId = gameId;
-            }
         }
 
         private void OnUserJoinedLobby(ConnectedUserDTO user)
