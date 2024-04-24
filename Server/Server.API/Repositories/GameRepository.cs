@@ -59,4 +59,43 @@ public class GameRepository : IGameRepository
         await _context.Games.AddAsync(game);
         await _context.SaveChangesAsync();
     }
+    
+    public async Task<int> GetMaxPlayers(int gameId)
+    {
+        var game = await _context.Games.FirstOrDefaultAsync(g => g.GameId == gameId);
+        
+        if (game == null)
+        {
+            throw new Exception("Game not found");
+        }
+        
+        return game.MaxPlayers;
+    }
+    
+    public async Task<Game> GetGameById(int gameId)
+    {
+        var game = await _context.Games.FirstOrDefaultAsync(g => g.GameId == gameId);
+        
+        if (game == null)
+        {
+            throw new Exception("Game not found");
+        }
+        
+        return game;
+    }
+    
+    public async Task EditGame(Game game)
+    {
+        var existingGame = await _context.Games.FirstOrDefaultAsync(g => g.GameId == game.GameId);
+        
+        if (existingGame == null)
+        {
+            throw new Exception("Game not found");
+        }
+        
+        existingGame.Name = game.Name;
+        existingGame.MaxPlayers = game.MaxPlayers;
+        
+        await _context.SaveChangesAsync();
+    }
 }
