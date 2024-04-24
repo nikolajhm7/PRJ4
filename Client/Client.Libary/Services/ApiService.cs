@@ -4,8 +4,9 @@ using System.Net.Http.Headers;
 using Client.Libary.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 
-namespace Client.Libary;
+namespace Client.Libary.Services;
 
 public class ApiService : IApiService
 {
@@ -88,5 +89,11 @@ public class ApiService : IApiService
             var newRefreshToken = response.Headers.GetValues("X-New-RefreshToken").FirstOrDefault();
             _preferenceManager.Set("refresh_token", newRefreshToken);
         }
+    }
+
+    public JObject GetJsonObjectFromResponse(HttpResponseMessage response)
+    {
+        var jsonResponse = response.Content.ReadAsStringAsync().Result;
+        return JObject.Parse(jsonResponse);
     }
 }

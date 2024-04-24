@@ -7,42 +7,49 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Collections;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using Client.Libary.Models;
+using Client.Library.Models;
 using System.Diagnostics;
-using Client.Libary.DTO;
-using Client.Libary.Services;
-
+using Client.Library.DTO;
+using Client.Library.Services;
+using Client.Library.Interfaces;
+using Client.Library.Services.Interfaces;
 
 
 namespace Client.UI.ViewModels
 {
-    [QueryProperty("Image", "Image")]
     [QueryProperty("LobbyId", "LobbyId")]
     public partial class LobbyViewModel : ObservableObject
     {
         private readonly ILobbyService _lobbyService;
-        private readonly NavigationService _navigationService;
+        private readonly INavigationService _navigationService;
 
         [ObservableProperty]
-        private string ?lobbyId;
+        private string? lobbyId;
 
         [ObservableProperty]
-        private string ?image;
+        private Game? gameFromPlat;
 
         [ObservableProperty]
         private Lobby lobby = new Lobby();
 
-        public LobbyViewModel(ILobbyService lobbyService)
+        public LobbyViewModel(ILobbyService lobbyService, INavigationService navigationService, IDictionary<string, object>? navigationParameters)
         {
             _lobbyService = lobbyService;
-            _navigationService = new NavigationService();
+            _navigationService = navigationService;
+
+            //if (navigationParameters != null && navigationParameters.ContainsKey("game"))
+            //{
+            //    // Retrieve the Game object from the dictionary
+            //    GameFromPlat = navigationParameters["game"] as Game;
+
+            //}
 
             // Example initialization, replace with actual dynamic data loading
-            if(lobbyId != null)
+            if (lobbyId != null)
                 Lobby.LobbyId = lobbyId; // Example Lobby ID
             else
                 Lobby.LobbyId = "00000"; // Example Lobby ID
-            System.Console.WriteLine(Image);
+            System.Console.WriteLine(GameFromPlat.Image);
 
             // Subscribe to events
             _lobbyService.UserJoinedLobbyEvent += OnUserJoinedLobby;
@@ -58,7 +65,6 @@ namespace Client.UI.ViewModels
         {
             Lobby.PlayerNames.Remove(user.Username);
         }
-
 
         [RelayCommand]
         public async Task TestAddPlayer()
@@ -76,6 +82,7 @@ namespace Client.UI.ViewModels
         private void HandleActionResult(ActionResult message)
         {
             if (!message.Success)
+
             {
                 // Give the user feedback about the error
                 Debug.WriteLine("Creating a lobby failed: msg:", message.Msg);

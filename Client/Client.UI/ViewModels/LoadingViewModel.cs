@@ -1,4 +1,4 @@
-﻿using Client.Libary.Interfaces;
+﻿using Client.Library.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Client.UI.Views;
-using Client.Libary.Services;
+using Client.Library.Services;
 
 namespace Client.UI.ViewModels
 {

@@ -7,8 +7,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Collections;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using Client.Libary.Models;
-using Client.Libary.Services;
+using Client.Library.Models;
+using Client.Library.Services;
 using System.Diagnostics;
 using Client.UI.Views;
 

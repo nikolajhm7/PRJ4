@@ -10,6 +10,8 @@ using Microsoft.Maui.Storage;
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 using Client.Libary.Models;
+using Client.Libary.Models;
+using Client.Libary.Services;
 
 
 namespace Client.Libary.Services
@@ -101,7 +103,7 @@ namespace Client.Libary.Services
                 return await _hubConnection.InvokeAsync<ActionResult<T>>(methodName, args);
             }
             else
-            {   
+            {
                 ActionResult<T> actionResult = new(false, "No connection to server.", default(T));
                 return actionResult;
             }

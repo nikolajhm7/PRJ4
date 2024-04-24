@@ -124,7 +124,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Client.Libary\Client.Libary.csproj" />
+	  <ProjectReference Include="..\Client.Library\Client.Library.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -15,7 +15,7 @@
         </Frame>
 
         <Image
-            Source="{Binding Image}"
+            Source="{Binding GameFromPlat.Image}"
             Aspect="AspectFit"
             HeightRequest="100"
             WidthRequest="100"/>

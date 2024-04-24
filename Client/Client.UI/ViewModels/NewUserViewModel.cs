@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
-using Client.Libary.Services;
+using Client.Library.Services;
 using Client.UI.Views;
 
 namespace Client.UI.ViewModels

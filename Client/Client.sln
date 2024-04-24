@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.UI", "Client.UI\Client.UI.csproj", "{5DFF532F-3AC5-488A-899F-83227CAE01F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client.UI", "Client.UI\Client.UI.csproj", "{5DFF532F-3AC5-488A-899F-83227CAE01F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Test", "Client.Test\Client.Test.csproj", "{829F3BC1-C63E-4AE6-BCF4-A2842818701C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client.Test", "Client.Test\Client.Test.csproj", "{829F3BC1-C63E-4AE6-BCF4-A2842818701C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Libary", "Client.Libary\Client.Libary.csproj", "{47503CB6-E523-45A2-88A8-D801A3430893}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client.Libary", "Client.Libary\Client.Libary.csproj", "{47503CB6-E523-45A2-88A8-D801A3430893}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

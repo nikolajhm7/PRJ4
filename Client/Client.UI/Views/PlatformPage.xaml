@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
              xmlns:behaviors="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
-             xmlns:local="clr-namespace:Client.Libary.Models"
+             xmlns:local="clr-namespace:Client.Library.Models"
              x:Class="Client.UI.Views.PlatformPage"
              x:DataType="viewModels:PlatformViewModel"
             >
@@ -17,7 +17,7 @@
         >
 
         <Label 
-            Text="{Binding Username}"
+            Text="{Binding UserInstance.Username}"
             Style="{StaticResource SubHeadline}"
             Grid.Row="0"
             Grid.Column="1"
@@ -77,7 +77,7 @@
             Command="{Binding ChangeViewCommand}"/>
         
         <ImageButton
-            Source="{Binding Games[0].Name}"
+            Source="{Binding Games[0].Image}"
             Aspect="AspectFit"
             Grid.Row="2"
             Grid.Column="2"
@@ -85,10 +85,10 @@
             IsVisible="{Binding GamesShowing}"
             IsEnabled="{Binding Games[0].Playable}"
             Command ="{Binding GoToLobbyCommand}"
-            CommandParameter="{Binding Games[0].Name}"/>
+            CommandParameter="{Binding Games[0]}"/>
 
         <ImageButton
-            Source="{Binding Games[1].Name}"
+            Source="{Binding Games[1].Image}"
             Aspect="AspectFit"
             Grid.Row="2"
             Grid.Column="1"
@@ -96,7 +96,7 @@
             IsVisible="{Binding GamesShowing}"
             IsEnabled="{Binding Games[1].Playable}"
             Command ="{Binding GoToLobbyCommand}"
-            CommandParameter="{Binding Games[1].Name}"/>
+            CommandParameter="{Binding Games[1]}"/>
 
            
     </Grid>
