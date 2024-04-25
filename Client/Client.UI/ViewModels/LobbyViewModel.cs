@@ -20,6 +20,7 @@ namespace Client.UI.ViewModels
     //[QueryProperty(nameof(Image), "image")]
     //[QueryProperty(nameof(Name), "name")]
     //[QueryProperty(nameof(GameId), "gameId")]
+    //Test
     [QueryProperty(nameof(Recivedgame), "game")]
     public partial class LobbyViewModel : ObservableObject
     {
