@@ -1,5 +1,6 @@
 ﻿namespace Server.API.GameLogic
 {
+    /*
     // Define the basic operations and events common to all games
     public interface IGame
     {
@@ -64,5 +65,5 @@
         Win,
         Loss,
         Draw
-    }
+    }*/
 }

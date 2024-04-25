@@ -38,6 +38,8 @@
 
         <!-- Knapper for at tilføje eller fjerne spiller -->
         <Button Command="{Binding TestAddPlayerCommand}" Text="Add Player" HorizontalOptions="Center"/>
+        <!-- Knapper for at tilføje eller fjerne spiller -->
+        <Button Command="{Binding TestRemovePlayerCommand}" Text="Remove Player" HorizontalOptions="Center"/>
 
         <Grid
             RowDefinitions="*,*"

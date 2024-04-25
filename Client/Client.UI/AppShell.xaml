@@ -12,7 +12,7 @@
         Title="LoadingPage"
         ContentTemplate="{DataTemplate views:LoadingPage}"
         Route="Loading" />
-
+    
     <ShellContent
         Title="Login"
         ContentTemplate="{DataTemplate views:LoginPage}"
@@ -27,7 +27,7 @@
         Title="NewUser"
         ContentTemplate="{DataTemplate views:NewUserPage}"
         Route="NewUserPage" />
-
+    
     <ShellContent
         Title="Test"
         ContentTemplate="{DataTemplate views:TestPage}"
@@ -42,10 +42,13 @@
         Title="Lobby"
         ContentTemplate="{DataTemplate views:LobbyPage}"
         Route="LobbyPage" />
-    
     <ShellContent
-        Title="GuestLogin"
-        ContentTemplate="{DataTemplate views:GuestLoginPage}"
-        Route="LoginAsGuestPage" />
+        Title="Game"
+        ContentTemplate="{DataTemplate views:GamePage}"
+        Route="GamePage" />
+    <ShellContent
+        Title="ChatApp"
+        ContentTemplate="{DataTemplate views:ChatAppPage}"
+        Route="ChatAppPage" />
 
 </Shell>

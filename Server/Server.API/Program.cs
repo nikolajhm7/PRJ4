@@ -125,10 +125,15 @@ app.UseAuthorization();
 
 ConfigureMiddleware(app);
 
+//app.MapHub<HangmanHub>("/HangmanGame");
+//app.MapHub<ChatAppHub>("/ChatAppHub");
+
 app.UseEndpoints(endpoints =>
 {
     _ = endpoints.MapHub<LobbyHub>(builder.Configuration["ConnectionSettings:LobbyEndpoint"]);
     _ = endpoints.MapHub<FriendsHub>(builder.Configuration["ConnectionSettings:FriendsEndpoint"]);
+    //_ = endpoints.MapHub<HangmanHub>(builder.Configuration["ConnectionSettings:HangmanEndpoint"]);
+    _ = endpoints.MapHub<ChatAppHub>(builder.Configuration["ConnectionSettings:ChatAppEndpoint"]);
 });
 
 app.MapControllers();
@@ -253,10 +258,11 @@ void ConfigureServices(IServiceCollection services)
     services.AddScoped<ITokenRepository, TokenRepository>();
     services.AddScoped<IJwtTokenService, JwtTokenService>();
     services.AddScoped<ITimeService, TimeService>();
-    services.AddScoped<IIdGenerator, IdGenerator>();
+    services.AddSingleton<IIdGenerator, IdGenerator>();
     services.AddScoped<IFriendsRepository, FriendsRepository>();
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IGameRepository, GameRepository>();
+    services.AddSingleton<ILobbyManager, LobbyManager>();
 }
 
 

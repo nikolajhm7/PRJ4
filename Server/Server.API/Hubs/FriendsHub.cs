@@ -11,9 +11,6 @@ namespace Server.API.Hubs
     [Authorize]
     public class FriendsHub : Hub
     {
-        public record ActionResult(bool Success, string? Msg);
-        public record ActionResult<T>(bool Success, string? Msg, T? Value);
-
         private readonly ILogger<FriendsHub> _logger;
         private readonly IFriendsRepository _friendsRepository;
 

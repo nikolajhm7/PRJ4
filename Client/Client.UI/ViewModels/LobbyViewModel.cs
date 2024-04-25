@@ -41,6 +41,21 @@ namespace Client.UI.ViewModels
             Recivedgame = null;
             LobbyId = "00000";
            
+            _navigationService = new NavigationService();
+
+            // Example initialization, replace with actual dynamic data loading
+            if(lobbyId != null)
+                Lobby.LobbyId = lobbyId; // Example Lobby ID
+            else
+                Lobby.LobbyId = "00000"; // Example Lobby ID
+
+            // Add the current player
+            Lobby.PlayerNames.Add(User.Instance.Username);
+
+            // Add the current player
+            Lobby.PlayerNames.Add(User.Instance.Username);
+
+            // Subscribe to events
             _lobbyService.UserJoinedLobbyEvent += OnUserJoinedLobby;
             _lobbyService.UserLeftLobbyEvent += OnUserLeftLobby;
         }
@@ -60,6 +75,12 @@ namespace Client.UI.ViewModels
         public async Task TestAddPlayer()
         {
             Lobby.PlayerNames.Add("Player 4");
+        }
+
+        [RelayCommand]
+        public async Task TestRemovePlayer()
+        {
+            Lobby.PlayerNames.Remove("Player 4");
         }
 
         [RelayCommand]
