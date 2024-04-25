@@ -7,6 +7,8 @@ using Server.API.DTO;
 using Server.API.Models;
 using Microsoft.AspNetCore.Http;
 using Server.API.Services.Interfaces;
+using Server.API.Services;
+using NSubstitute.Core.Arguments;
 
 namespace Server.Test.Hubs
 {
@@ -19,9 +21,9 @@ namespace Server.Test.Hubs
         private HubCallerContext _context;
 
         private ILogger<LobbyHub> _logger;
-        private IIdGenerator _idGen;
         private IClientProxy _clientProxy;
         private ISingleClientProxy _singleClientProxy;
+        private ILobbyManager _lobbyManager;
 
         [SetUp]
         public void Setup()
@@ -35,9 +37,9 @@ namespace Server.Test.Hubs
 
 
             _logger = Substitute.For<ILogger<LobbyHub>>();
-            _idGen = Substitute.For<IIdGenerator>();
+            _lobbyManager = Substitute.For<ILobbyManager>();
 
-            _uut = new LobbyHub(_logger, _idGen)
+            _uut = new LobbyHub(_logger, _lobbyManager)
             {
                 Clients = _clients,
                 Groups = _groups,
@@ -51,7 +53,7 @@ namespace Server.Test.Hubs
             string lobbyId = "123456";
             _context.User?.Identity?.Name.Returns("testuser");
             _context.ConnectionId.Returns("connection-id");
-            _idGen.GenerateRandomLobbyId().Returns(lobbyId);
+            _lobbyManager.CreateNewLobby(Arg.Any<ConnectedUserDTO>(), Arg.Any<int>()).Returns(lobbyId);
 
             var result = await _uut.CreateLobby(1);
 
@@ -79,20 +81,13 @@ namespace Server.Test.Hubs
             string lobbyId = "123456";
             var username = "testuser";
             var connection = "connection-id";
-            var hostuser = "hostuser";
-            var hostconnection = "host-connection-id";
 
             _clients.Group(lobbyId).Returns(_clientProxy);
             _clients.Caller.Returns(_singleClientProxy);
-
-            // Create lobby
-            _context.User?.Identity?.Name.Returns(hostuser);
-            _context.ConnectionId.Returns(hostconnection);
-            _idGen.GenerateRandomLobbyId().Returns(lobbyId);
-            await _uut.CreateLobby(1);
-
-            _clients.ClearReceivedCalls();
-            _groups.ClearReceivedCalls();
+            _lobbyManager.LobbyExists(lobbyId).Returns(true);
+            _lobbyManager.AddToLobby(Arg.Any<ConnectedUserDTO>(), lobbyId).Returns(new ActionResult(true, null));
+            var list = new List<ConnectedUserDTO> { new ConnectedUserDTO("", "")};
+            _lobbyManager.GetUsersInLobby(lobbyId).Returns(list);
 
             // Act
             _context.User?.Identity?.Name.Returns(username);
@@ -103,7 +98,6 @@ namespace Server.Test.Hubs
             // Assert
             Assert.That(result.Success, Is.True);
 
-            //await _clientProxy.Received(1).SendAsync("UserJoinedLobby", Arg.Any<ConnectedUserDTO>());
             await _clientProxy.Received(1).SendCoreAsync("UserJoinedLobby", Arg.Any<object[]>());
             await _singleClientProxy.Received(1).SendCoreAsync("UserJoinedLobby", Arg.Any<object[]>());
 
@@ -111,10 +105,38 @@ namespace Server.Test.Hubs
         }
 
         [Test]
+        public async Task JoinLobby_LobbyExistsLobbyFull_UserDoesNotJoin()
+        {
+            // Arrange
+            string lobbyId = "123456";
+            var username = "testuser";
+            var connection = "connection-id";
+
+            _clients.Group(lobbyId).Returns(_clientProxy);
+            _clients.Caller.Returns(_singleClientProxy);
+            _lobbyManager.LobbyExists(lobbyId).Returns(true);
+            _lobbyManager.AddToLobby(Arg.Any<ConnectedUserDTO>(), lobbyId).Returns(new ActionResult(false, "Lobby is full"));
+
+            // Act
+            _context.User?.Identity?.Name.Returns(username);
+            _context.ConnectionId.Returns(connection);
+
+            var result = await _uut.JoinLobby(lobbyId);
+
+            // Assert
+            Assert.That(result.Success, Is.False);
+
+            await _clientProxy.DidNotReceive().SendCoreAsync(Arg.Any<string>(), Arg.Any<object[]>());
+            await _singleClientProxy.DidNotReceive().SendCoreAsync(Arg.Any<string>(), Arg.Any<object[]>());
+
+            await _groups.DidNotReceive().AddToGroupAsync(Arg.Any<string>(), Arg.Any<string>());
+        }
+
+        [Test]
         public async Task JoinLobby_LobbyDoesNotExist_ReturnsError()
         {
             string lobbyId = "nonexistent";
-            _context.User?.Identity?.Name.Returns("testuser");
+            _lobbyManager.LobbyExists(lobbyId).Returns(false);
 
             var result = await _uut.JoinLobby(lobbyId);
 
@@ -129,31 +151,17 @@ namespace Server.Test.Hubs
             string lobbyId = "123456";
             var username = "testuser";
             var connection = "connection-id";
-            var hostuser = "hostuser";
-            var hostconnection = "host-connection-id";
 
             _clients.Group(lobbyId).Returns(_clientProxy);
-
-            // Create lobby
-            _context.User?.Identity?.Name.Returns(hostuser);
-            _context.ConnectionId.Returns(hostconnection);
-            _idGen.GenerateRandomLobbyId().Returns(lobbyId);
-            await _uut.CreateLobby(1);
-
-            // Add user to lobby
-            _context.User?.Identity?.Name.Returns(username);
+            _lobbyManager.LobbyExists(lobbyId).Returns(true);
             _context.ConnectionId.Returns(connection);
-            await _uut.JoinLobby(lobbyId);
-
-            _clients.ClearReceivedCalls();
-            _groups.ClearReceivedCalls();
-            _clientProxy.ClearReceivedCalls();
 
             // Act
             var result = await _uut.LeaveLobby(lobbyId);
 
 
             // Assert
+            _lobbyManager.RemoveFromLobby(new(username, connection), lobbyId);
             Assert.That(result.Success, Is.True);
             Assert.That(result.Msg, Is.Null);
 
@@ -179,19 +187,16 @@ namespace Server.Test.Hubs
             var hostconnection = "host-connection-id";
 
             _clients.Group(lobbyId).Returns(_clientProxy);
-
-            // Create lobby
+            _lobbyManager.IsHost(hostconnection, lobbyId).Returns(true);
             _context.User?.Identity?.Name.Returns(hostuser);
             _context.ConnectionId.Returns(hostconnection);
-            _idGen.GenerateRandomLobbyId().Returns(lobbyId);
-            await _uut.CreateLobby(1);
 
             // Act
             var result = await _uut.StartGame(lobbyId);
 
             // Assert
             Assert.That(result.Success, Is.True);
-
+            _lobbyManager.Received(1).StartGame(lobbyId);
             await _clientProxy.Received(1).SendAsync("GameStarted");
         }
 
@@ -200,23 +205,10 @@ namespace Server.Test.Hubs
         {
             // Arrange
             string lobbyId = "123456";
-            var user = "user";
             var connection = "connection-id";
-            var hostuser = "hostuser";
-            var hostconnection = "host-connection-id";
 
             _clients.Group(lobbyId).Returns(_clientProxy);
-
-            // Create lobby
-            _context.User?.Identity?.Name.Returns(hostuser);
-            _context.ConnectionId.Returns(hostconnection);
-            _idGen.GenerateRandomLobbyId().Returns(lobbyId);
-            await _uut.CreateLobby(1);
-
-            // User join lobby
-            _context.User?.Identity?.Name.Returns(user);
-            _context.ConnectionId.Returns(connection);
-            await _uut.JoinLobby(lobbyId);
+            _lobbyManager.IsHost(connection, lobbyId).Returns(false);
 
             // Act
             var result = await _uut.StartGame(lobbyId);
@@ -237,36 +229,26 @@ namespace Server.Test.Hubs
         }
 
         [Test]
-        public async Task OnDisconnectedAsync_UserInLobby_ShouldRemoveUser()
+        public async Task OnDisconnectedAsync_UserInLobbyGameNotStarted_ShouldRemoveUser()
         {
             // Arrange
             string lobbyId = "123456";
             var username = "testuser";
             var connection = "connection-id";
-            var hostuser = "hostuser";
-            var hostconnection = "host-connection-id";
+            var user = new ConnectedUserDTO(username, connection);
 
-            _clients.Group(lobbyId).Returns(_clientProxy);
-
-            // Create lobby
-            _context.User?.Identity?.Name.Returns(hostuser);
-            _context.ConnectionId.Returns(hostconnection);
-            _idGen.GenerateRandomLobbyId().Returns(lobbyId);
-            await _uut.CreateLobby(1);
-
-            // Add user to lobby
             _context.User?.Identity?.Name.Returns(username);
             _context.ConnectionId.Returns(connection);
-            await _uut.JoinLobby(lobbyId);
-
-            _clients.ClearReceivedCalls();
-            _groups.ClearReceivedCalls();
-            _clientProxy.ClearReceivedCalls();
+            _clients.Group(lobbyId).Returns(_clientProxy);
+            _lobbyManager.GetLobbyIdFromUser(user).Returns(lobbyId);
+            _lobbyManager.GetGameStatus(lobbyId).Returns(GameStatus.InLobby);
+            _lobbyManager.IsHost(connection, lobbyId).Returns(false);
 
             // Act
             await _uut.OnDisconnectedAsync(null);
 
             // Assert
+            _lobbyManager.Received(1).RemoveFromLobby(user, lobbyId);
             await _groups.Received(1).RemoveFromGroupAsync(connection, lobbyId);
             await _clientProxy.Received(1).SendCoreAsync("UserLeftLobby", Arg.Any<object[]>());
         }
@@ -278,47 +260,58 @@ namespace Server.Test.Hubs
             string lobbyId = "123456";
             var username = "testuser";
             var connection = "connection-id";
-            var hostuser = "hostuser";
-            var hostconnection = "host-connection-id";
+            var user = new ConnectedUserDTO(username, connection);
 
             _clients.Group(lobbyId).Returns(_clientProxy);
-
-            // Create lobby
-            _context.User?.Identity?.Name.Returns(hostuser);
-            _context.ConnectionId.Returns(hostconnection);
-            _idGen.GenerateRandomLobbyId().Returns(lobbyId);
-            await _uut.CreateLobby(1);
-
-            // Add user to lobby
             _context.User?.Identity?.Name.Returns(username);
             _context.ConnectionId.Returns(connection);
-            await _uut.JoinLobby(lobbyId);
-
-            // Set host to disconnect
-            _context.User?.Identity?.Name.Returns(hostuser);
-            _context.ConnectionId.Returns(hostconnection);
-
-            _clients.ClearReceivedCalls();
-            _groups.ClearReceivedCalls();
-            _clientProxy.ClearReceivedCalls();
+            _lobbyManager.IsHost(connection, lobbyId).Returns(true);
+            _lobbyManager.GetLobbyIdFromUser(user).Returns(lobbyId);
+            _lobbyManager.GetGameStatus(lobbyId).Returns(GameStatus.InLobby);
+            var list = new List<ConnectedUserDTO> { user, new ConnectedUserDTO("", "") };
+            _lobbyManager.GetUsersInLobby(lobbyId).Returns(list);
 
             // Act
             await _uut.OnDisconnectedAsync(null);
 
 
             // Assert
+            _lobbyManager.Received(1).RemoveLobby(lobbyId);
             await _clientProxy.Received(1).SendCoreAsync("LobbyClosed", Arg.Any<object[]>());
             await _groups.Received(2).RemoveFromGroupAsync(Arg.Any<string>(), Arg.Any<string>());
+        }
+
+        [Test]
+        public async Task OnDisconnectedAsync_UserInLobbyGameStarted_ShouldIgnore()
+        {
+            // Arrange
+            string lobbyId = "123456";
+            var username = "testuser";
+            var connection = "connection-id";
+            var user = new ConnectedUserDTO(username, connection);
+
+            _clients.Group(lobbyId).Returns(_clientProxy);
+            _context.User?.Identity?.Name.Returns(username);
+            _context.ConnectionId.Returns(connection);
+            _lobbyManager.IsHost(connection, lobbyId).Returns(true);
+            _lobbyManager.GetLobbyIdFromUser(user).Returns(lobbyId);
+            _lobbyManager.GetGameStatus(lobbyId).Returns(GameStatus.InGame);
+
+            // Act
+            await _uut.OnDisconnectedAsync(null);
+
+
+            // Assert
+            _lobbyManager.DidNotReceive().RemoveLobby(Arg.Any<string>());
+            await _clientProxy.DidNotReceive().SendCoreAsync(Arg.Any<string>(), Arg.Any<object[]>());
+            await _groups.Received(1).RemoveFromGroupAsync(Arg.Any<string>(), Arg.Any<string>());
         }
 
 
         [TearDown]
         public void TearDown()
         {
-            //_uut.lobbies.Clear();
-
             _uut?.Dispose();
-
         }
     }
 }

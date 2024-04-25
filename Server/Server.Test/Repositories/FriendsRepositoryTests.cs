@@ -3,7 +3,7 @@ using Server.API.Data;
 using Server.API.Models;
 using Server.API.Repositories;
 
-namespace Server.Test.Services;
+namespace Server.Test.Repositories;
 
 public class FriendsRepositoryTests : TestBase
 {
@@ -15,7 +15,7 @@ public class FriendsRepositoryTests : TestBase
         base.SetUp();
         _friendsRepository = new FriendsRepository(Context);
     }
-    
+
     [Test]
     public void AddFriendRequest_AddsRequestWhenBothUsersExistAndDifferent()
     {
@@ -89,7 +89,7 @@ public class FriendsRepositoryTests : TestBase
         var remainingFriendships = Context.Friendships.ToList();
         Assert.That(remainingFriendships, Is.Empty);
     }
-    
+
     [Test]
     public async Task GetFriendsOf_ReturnsCorrectFriends()
     {
@@ -116,7 +116,7 @@ public class FriendsRepositoryTests : TestBase
         // Act
         Assert.Throws<Exception>(() => _friendsRepository.AddFriendRequest("user1", "user2"));
     }
-    
+
     [Test]
     public void AddFriendRequest_ThrowsExceptionWhenFriendNotFound()
     {
@@ -140,7 +140,7 @@ public class FriendsRepositoryTests : TestBase
         // Act
         Assert.Throws<Exception>(() => _friendsRepository.RemoveFriend(user.Id, "user2"));
     }
-    
+
     [Test]
     public void AcceptFriendRequest_ThrowsExceptionWhenFriendshipNotFound()
     {
@@ -152,7 +152,7 @@ public class FriendsRepositoryTests : TestBase
         // Act
         Assert.Throws<Exception>(() => _friendsRepository.AcceptFriendRequest(user.Id, "user2"));
     }
-    
+
     [Test]
     public void AcceptFriendRequest_ThrowsExceptionWhenFriendshipNotPending()
     {
@@ -168,7 +168,7 @@ public class FriendsRepositoryTests : TestBase
         Assert.Throws<Exception>(() => _friendsRepository.AcceptFriendRequest(user2.Id, user1.Id));
     }
 
-    
+
     [Test]
     public async Task GetFriendsOf_ReturnsFriendsForBothFriends1AndFriends2()
     {
@@ -190,5 +190,5 @@ public class FriendsRepositoryTests : TestBase
         Assert.That(friends[0].FriendId, Is.EqualTo(user2.Id));
         Assert.That(friends[1].FriendId, Is.EqualTo(user3.Id));
     }
-    
+
 }

@@ -7,6 +7,7 @@ using Server.API.Services.Interfaces;
 using Server.API.Services;
 using System.Text.RegularExpressions;
 using Server.API.Repositories;
+using Server.API.Repository.Interfaces;
 
 namespace Server.API.Hubs
 {
@@ -16,20 +17,11 @@ namespace Server.API.Hubs
         //public readonly Dictionary<string, Lobby> lobbies = [];
 
         private readonly ILogger<LobbyHub> _logger;
-        private readonly IIdGenerator _idGen;
         private readonly ILobbyManager _lobbyManager;
 
-        public LobbyHub(ILogger<LobbyHub> logger, IIdGenerator idGen)
+        public LobbyHub(ILogger<LobbyHub> logger, ILobbyManager lobbyManager)
         {
             _logger = logger;
-            _idGen = idGen;
-            _lobbyManager = new LobbyManager(_idGen);
-        }
-
-        public LobbyHub(ILogger<LobbyHub> logger, IIdGenerator idGen, ILobbyManager lobbyManager)
-        {
-            _logger = logger;
-            _idGen = idGen;
             _lobbyManager = lobbyManager;
         }
 
@@ -66,12 +58,17 @@ namespace Server.API.Hubs
             {
                 var user = new ConnectedUserDTO(username, Context.ConnectionId);
 
+                var result = _lobbyManager.AddToLobby(user, lobbyId);
+                if (!result.Success)
+                {
+                    _logger.LogError("Failed to join lobby {LobbyId} by user {UserName}.", lobbyId, username);
+                    return result;
+                }
+
                 foreach (var member in _lobbyManager.GetUsersInLobby(lobbyId))
                 {
                     await Clients.Caller.SendAsync("UserJoinedLobby", member);
                 }
-
-                _lobbyManager.AddToLobby(user, lobbyId);
 
                 await Clients.Group(lobbyId).SendAsync("UserJoinedLobby", user);
                 await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);

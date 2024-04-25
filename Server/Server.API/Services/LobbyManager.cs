@@ -1,5 +1,6 @@
 ﻿using Server.API.DTO;
 using Server.API.Models;
+using Server.API.Repository.Interfaces;
 using Server.API.Services.Interfaces;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
@@ -8,11 +9,13 @@ namespace Server.API.Services
     public class LobbyManager : ILobbyManager
     {
         private readonly IIdGenerator _idGenerator;
+        private readonly IGameRepository _gameRepository;
         public readonly Dictionary<string, Lobby> lobbies = [];
 
-        public LobbyManager(IIdGenerator idGenerator)
+        public LobbyManager(IIdGenerator idGenerator, IGameRepository gameRepository)
         {
             _idGenerator = idGenerator;
+            _gameRepository = gameRepository;
         }
 
         public bool LobbyExists(string lobbyId)
@@ -60,17 +63,24 @@ namespace Server.API.Services
                 }
             }
 
-            var lobby = new Lobby(lobbyId, user.ConnectionId, gameId);
+            var maxPlayers = 10; // _gameRepository.GetMaxPlayers(gameId);
+            var lobby = new Lobby(lobbyId, user.ConnectionId, gameId, maxPlayers);
             lobby.Members.Add(user);
             lobbies.Add(lobbyId, lobby);
 
             return lobbyId;
         }
 
-        public void AddToLobby(ConnectedUserDTO user, string lobbyId)
+        public ActionResult AddToLobby(ConnectedUserDTO user, string lobbyId)
         {
             if (lobbies.TryGetValue(lobbyId, out Lobby? lobby))
+            {
+                if (lobby.Members.Count >= lobby.MaxPlayers) return new(false, "Lobby is full");
+
                 lobby.Members.Add(user);
+                return new(true, null);
+            }
+            else return new(false, "Could not find lobby");
         }
 
         public void RemoveFromLobby(ConnectedUserDTO user, string lobbyId)
