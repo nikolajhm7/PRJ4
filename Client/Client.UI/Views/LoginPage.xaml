@@ -9,18 +9,21 @@
 
         <VerticalStackLayout
             Padding="20,0"
-            Spacing="10">
+            Spacing="10"
+            >
             
             <Label
                 Text="Welcome to PartyPlayPalace!"
                 Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1" />
+                SemanticProperties.HeadingLevel="Level1"
+                />
             
             <Image
                 Source="logo.png"
                 HeightRequest="185"
                 Aspect="AspectFit"
-                SemanticProperties.Description="Party Play Palace" />
+                SemanticProperties.Description="Party Play Palace"
+                />
 
             <Entry Placeholder="Enter username"
                    Text="{Binding LoginUsername}" />

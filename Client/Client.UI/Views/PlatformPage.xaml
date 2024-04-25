@@ -90,7 +90,6 @@
             Grid.Column="2"
             Width="100"
             IsVisible="{Binding GamesShowing}"
-            IsEnabled="{Binding Games[0].Playable}"
             Command ="{Binding GoToLobbyCommand}"
             CommandParameter="{Binding Games[0]}"/>
 
@@ -101,7 +100,6 @@
             Grid.Column="3"
             Width="100"
             IsVisible="{Binding GamesShowing}"
-            IsEnabled="{Binding Games[1].Playable}"
             Command ="{Binding GoToLobbyCommand}"
             CommandParameter="{Binding Games[1]}"/>
         
@@ -112,9 +110,10 @@
             Grid.Column="2"
             Width="100"
             IsVisible="{Binding GamesShowing}"
-            IsEnabled="{Binding Games[2].Playable}"
             Command ="{Binding GoToLobbyCommand}"
             CommandParameter="{Binding Games[2]}"/>
+
+
 
         <ImageButton
             Source="{Binding Games[3].Image}"
@@ -123,7 +122,6 @@
             Grid.Column="3"
             Width="100"
             IsVisible="{Binding GamesShowing}"
-            IsEnabled="{Binding Games[3].Playable}"
             Command ="{Binding GoToLobbyCommand}"
             CommandParameter="{Binding Games[3]}"/>
 

@@ -12,8 +12,8 @@ namespace Client.Library.Models
     {
         [ObservableProperty] private int _gameId;
         [ObservableProperty] private string _name=null;
-        [ObservableProperty] private bool _playable = true;
         [ObservableProperty] private string _image;
+        [ObservableProperty] private int maxPlayers;
 
         public Game()
         {
