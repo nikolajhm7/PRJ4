@@ -2,30 +2,23 @@
 using Server.API.Models;
 using Server.API.DTO;
 using Microsoft.AspNetCore.Authorization;
-using System.Reflection;
 using Server.API.Services.Interfaces;
-using Server.API.Services;
-using System.Text.RegularExpressions;
-using Server.API.Repositories;
 
 namespace Server.API.Hubs
 {
-    [Authorize]
+    [Authorize("Guest+")]
     public class LobbyHub : Hub
     {
-        public readonly Dictionary<string, Lobby> lobbies = [];
-
         private readonly ILogger<LobbyHub> _logger;
-        private readonly IIdGenerator _idGen;
         private readonly ILobbyManager _lobbyManager;
 
-        public LobbyHub(ILogger<LobbyHub> logger, IIdGenerator idGen, ILobbyManager lobbyManager)
+        public LobbyHub(ILogger<LobbyHub> logger, ILobbyManager lobbyManager)
         {
             _logger = logger;
-            _idGen = idGen;
-            _lobbyManager = new LobbyManager(_idGen);
+            _lobbyManager = lobbyManager;
         }
 
+        [Authorize]
         public async Task<ActionResult> CreateLobby(int gameId)
         {
             var username = Context.User?.Identity?.Name;
@@ -44,7 +37,6 @@ namespace Server.API.Hubs
             return new ActionResult(true, lobbyId);
         }
 
-        [Authorize(Policy = "Guest+")]
         public async Task<ActionResult> JoinLobby(string lobbyId)
         {
             _logger.LogDebug("Attempting to join lobby {LobbyId} by user {UserName}.", lobbyId, Context.User?.Identity?.Name);
@@ -80,7 +72,6 @@ namespace Server.API.Hubs
             }
         }
 
-        [Authorize(Policy = "Guest+")]
         public async Task<ActionResult> LeaveLobby(string lobbyId)
         {
             _logger.LogDebug("Attempting to leave lobby {LobbyId} by user {UserName}.", lobbyId, Context.User?.Identity?.Name);
@@ -107,6 +98,7 @@ namespace Server.API.Hubs
             }
         }
 
+        [Authorize]
         public async Task<ActionResult> StartGame(string lobbyId)
         {
             _logger.LogDebug("Attempting to start game in lobby {LobbyId} by user {UserName}.", lobbyId, Context.User?.Identity?.Name);
@@ -135,7 +127,6 @@ namespace Server.API.Hubs
             return new ActionResult(false, "Lobby does not exist.");
         }
 
-        [Authorize(Policy = "Guest+")]
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             _logger.LogDebug("Handling disconnect of user {UserName}.", Context.User?.Identity?.Name);

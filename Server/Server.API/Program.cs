@@ -213,10 +213,9 @@ void addJWTAuthentication(WebApplicationBuilder builder)
                 {
                     var accessToken = context.Request.Query["access_token"];
 
-                    // Hvis requesten er til en SignalR hub, hent tokenet fra query string
                     var path = context.HttpContext.Request.Path;
                     if (!string.IsNullOrEmpty(accessToken) &&
-                        path.StartsWithSegments("/hubs")) // Angiv stien til dine hubs
+                        path.StartsWithSegments("/hubs"))
                     {
                         context.Token = accessToken;
                     }
@@ -236,6 +235,10 @@ void addJWTAuthentication(WebApplicationBuilder builder)
         options.AddPolicy("Guest+", policy =>
             policy.RequireAssertion(context =>
                 context.User.IsInRole("Guest") || context.User.IsInRole("User")));
+
+        options.AddPolicy("User+", policy =>
+            policy.RequireAssertion(context =>
+                context.User.IsInRole("User")));
     });
 }
 
