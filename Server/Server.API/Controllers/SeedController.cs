@@ -42,7 +42,7 @@ namespace Server.API.Controllers
                 }
 
                 // Seed Game
-                var game = new Game { Name = "hangman", MaxPlayers = 2 };
+                var game = new Game { Name = "hangman" };
 
                 await _gameRepository.AddGame(game);
 

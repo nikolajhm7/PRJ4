@@ -7,47 +7,68 @@
              x:DataType="viewModels:LoginViewModel"
              Title="LoginPage">
 
-        <VerticalStackLayout
-            Padding="20,0"
-            Spacing="10"
-            >
-            
-            <Label
-                Text="Welcome to PartyPlayPalace!"
-                Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1"
-                />
-            
-            <Image
-                Source="logo.png"
-                HeightRequest="185"
-                Aspect="AspectFit"
-                SemanticProperties.Description="Party Play Palace"
-                />
+    <Grid
+        ColumnDefinitions="*,4*,4*,*"
+        RowDefinitions="*,*,*,*,*,*,*,*"
+        RowSpacing="10"
+        Padding="10">
 
-            <Entry Placeholder="Enter username"
-                   Text="{Binding LoginUsername}" />
-            
-            <Entry Placeholder="Enter password"
-                   Text="{Binding LoginPassword}" />
+        <Label
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="4"
+            Text="Welcome to PartyPlayPalace!"
+            Style="{StaticResource Headline}"
+            SemanticProperties.HeadingLevel="Level1"
+            />
+        <Image
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Aspect="AspectFit"
+            Source="logo.png"
+            SemanticProperties.Description="Party Play Palace"
+        />
+        <Entry Placeholder="Enter username"
+               Height="25"
+               Grid.Row="3"
+               Grid.Column="1"
+               Grid.ColumnSpan="2"
+               Text="{Binding LoginUsername}" />
 
-            <Button
-                x:Name="LoginBtn"
-                Text="Login" 
-                HorizontalOptions="Fill"
-                Command="{Binding LoginOnPlatformCommand}"/>
+        <Entry Placeholder="Enter password"
+               Height="25"
+               Grid.Row="4"
+               Grid.Column="1"
+               Grid.ColumnSpan="2"
+               Text="{Binding LoginPassword}" />
 
-            <Button
-                x:Name="NewUserBtn"
-                Text="Make a new user" 
-                HorizontalOptions="Fill"
-                Command="{Binding GoToNewUserCommand}"/>
+        <Button
+            x:Name="LoginBtn"
+            Text="Login" 
+            Height="20"
+            Grid.Row="5"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Command="{Binding LoginOnPlatformCommand}"/>
 
-            <Button
-                x:Name="GuestJoinBtn"
-                Text="Join as Guest" 
-                HorizontalOptions="Fill"
-                Command="{Binding JoinAsGuestCommand}"/>
-    </VerticalStackLayout>
+        <Button
+            x:Name="NewUserBtn"
+            Text="Make a new user" 
+            Height="20"
+            Grid.Row="6"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Command="{Binding GoToNewUserCommand}"/>
 
+        <Button
+            x:Name="GuestJoinBtn"
+            Text="Join as Guest" 
+            Height="20"
+            Grid.Row="7"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Command="{Binding JoinAsGuestCommand}"/>
+    </Grid>
 </ContentPage>

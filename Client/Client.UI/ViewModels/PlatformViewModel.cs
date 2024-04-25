@@ -112,8 +112,9 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task LogOut()
         {
-            _preferenceManager.Clear("auth_token");
-            await _navigationService.NavigateToPage("///"+nameof(LoginPage));
+            _preferenceManager.Remove("auth_token");
+            _preferenceManager.Remove("refresh_token");
+            await _navigationService.NavigateToPage("//"+nameof(LoginPage));
         }
 
         [RelayCommand]
