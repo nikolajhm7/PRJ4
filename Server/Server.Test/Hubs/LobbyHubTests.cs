@@ -14,40 +14,40 @@ namespace Server.Test.Hubs
     [TestFixture]
     public class LobbyHubTests
     {
-        private LobbyHub _uut;
-        private IHubCallerClients _clients;
-        private IGroupManager _groups;
-        private HubCallerContext _context;
+        //private LobbyHub _uut;
+        //private IHubCallerClients _clients;
+        //private IGroupManager _groups;
+        //private HubCallerContext _context;
 
-        private ILogger<LobbyHub> _logger;
-        private IIdGenerator _idGen;
-        private IClientProxy _clientProxy;
-        private ISingleClientProxy _singleClientProxy;
-        private ILobbyManager _lobbyManager;
+        //private ILogger<LobbyHub> _logger;
+        //private IIdGenerator _idGen;
+        //private IClientProxy _clientProxy;
+        //private ISingleClientProxy _singleClientProxy;
+        //private ILobbyManager _lobbyManager;
 
-        [SetUp]
-        public void Setup()
-        {
+        //[SetUp]
+        //public void Setup()
+        //{
 
-            _clients = Substitute.For<IHubCallerClients>();
-            _groups = Substitute.For<IGroupManager>();
-            _context = Substitute.For<HubCallerContext>();
-            _clientProxy = Substitute.For<IClientProxy>();
-            _singleClientProxy = Substitute.For<ISingleClientProxy>();
-
-
-            _logger = Substitute.For<ILogger<LobbyHub>>();
-            _idGen = Substitute.For<IIdGenerator>();
-            _lobbyManager = Substitute.For<ILobbyManager>();
+        //    _clients = Substitute.For<IHubCallerClients>();
+        //    _groups = Substitute.For<IGroupManager>();
+        //    _context = Substitute.For<HubCallerContext>();
+        //    _clientProxy = Substitute.For<IClientProxy>();
+        //    _singleClientProxy = Substitute.For<ISingleClientProxy>();
 
 
-            _uut = new LobbyHub(_logger, _idGen, _lobbyManager)
-            {
-                Clients = _clients,
-                Groups = _groups,
-                Context = _context
-            };
-        }
+        //    _logger = Substitute.For<ILogger<LobbyHub>>();
+        //    _idGen = Substitute.For<IIdGenerator>();
+        //    _lobbyManager = Substitute.For<ILobbyManager>();
+
+
+        //    _uut = new LobbyHub(_logger, _idGen, _lobbyManager)
+        //    {
+        //        Clients = _clients,
+        //        Groups = _groups,
+        //        Context = _context
+        //    };
+        //}
 
         //[Test]
         //public async Task CreateLobby_UserAuthenticated_LobbyCreatedAndUserJoined()
