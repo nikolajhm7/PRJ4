@@ -85,8 +85,9 @@ namespace Server.Test.Hubs
             _clients.Group(lobbyId).Returns(_clientProxy);
             _clients.Caller.Returns(_singleClientProxy);
             _lobbyManager.LobbyExists(lobbyId).Returns(true);
-            _lobbyManager.AddToLobby(Arg.Any<ConnectedUserDTO>(), lobbyId).Returns(new ActionResult(true, null));
             var list = new List<ConnectedUserDTO> { new ConnectedUserDTO("", "")};
+            var ar = new ActionResult<List<ConnectedUserDTO>>(true, null, list);
+            _lobbyManager.AddToLobby(Arg.Any<ConnectedUserDTO>(), lobbyId).Returns(ar);
             _lobbyManager.GetUsersInLobby(lobbyId).Returns(list);
 
             // Act
@@ -97,9 +98,10 @@ namespace Server.Test.Hubs
 
             // Assert
             Assert.That(result.Success, Is.True);
+            Assert.That(result.Msg, Is.Null);
+            Assert.That(result.Value, Is.EqualTo(list));
 
             await _clientProxy.Received(1).SendCoreAsync("UserJoinedLobby", Arg.Any<object[]>());
-            await _singleClientProxy.Received(1).SendCoreAsync("UserJoinedLobby", Arg.Any<object[]>());
 
             await _groups.Received(1).AddToGroupAsync(connection, lobbyId);
         }
@@ -115,7 +117,8 @@ namespace Server.Test.Hubs
             _clients.Group(lobbyId).Returns(_clientProxy);
             _clients.Caller.Returns(_singleClientProxy);
             _lobbyManager.LobbyExists(lobbyId).Returns(true);
-            _lobbyManager.AddToLobby(Arg.Any<ConnectedUserDTO>(), lobbyId).Returns(new ActionResult(false, "Lobby is full"));
+            var ar = new ActionResult<List<ConnectedUserDTO>>(false, "Lobby is full.", []);
+            _lobbyManager.AddToLobby(Arg.Any<ConnectedUserDTO>(), lobbyId).Returns(ar);
 
             // Act
             _context.User?.Identity?.Name.Returns(username);
