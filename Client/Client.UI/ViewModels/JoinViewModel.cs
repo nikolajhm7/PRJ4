@@ -7,9 +7,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Collections;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using Client.Libary.Models;
-using Client.Libary.Services;
+using Client.Library.Models;
+using Client.Library.Services;
 using System.Diagnostics;
+using Client.Library.Services.Interfaces;
 using Client.UI.Views;
 
 namespace Client.UI.ViewModels
@@ -17,18 +18,19 @@ namespace Client.UI.ViewModels
     public partial class JoinViewModel : ObservableObject
     {
         private readonly ILobbyService _lobbyService;
-        private readonly NavigationService _navigationService;
+        private readonly INavigationService _navigationService;
         [ObservableProperty]
         private string _lobbyId;
-        public JoinViewModel(ILobbyService lobbyService)
+        public JoinViewModel(ILobbyService lobbyService, INavigationService navigationService)
         { 
             _lobbyService = lobbyService;
-            _navigationService = new NavigationService();
+            _navigationService = navigationService;
         }
         [RelayCommand]
        public async Task GoToLobby()
-        {
+       {
             var result = await _lobbyService.JoinLobbyAsync(_lobbyId);
+
             if (result.Success)
             {
                 await Shell.Current.GoToAsync($"//LobbyPage?LobbyId={_lobbyId}");

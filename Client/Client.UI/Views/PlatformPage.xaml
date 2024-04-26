@@ -3,101 +3,129 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
              xmlns:behaviors="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
-             xmlns:local="clr-namespace:Client.Libary.Models"
+             xmlns:local="clr-namespace:Client.Library.Models"
              x:Class="Client.UI.Views.PlatformPage"
              x:DataType="viewModels:PlatformViewModel"
             >
+    <!--<ContentPage.Behaviors>
+        <behaviors:EventToCommandBehavior Command="{Binding AppearingCommand}" EventName="Appearing" />
+    </ContentPage.Behaviors>-->
 
     <Grid
         RowSpacing="5"
         ColumnSpacing="5"
         Padding="20,0"
         RowDefinitions="*,*,*,*,*,*"
-        ColumnDefinitions="*,*,*,*"
+        ColumnDefinitions="*,*,*,*,*,*"
         >
 
         <Label 
-            Text="{Binding Username}"
+            Text="{Binding UserInstance.Username}"
             Style="{StaticResource SubHeadline}"
-            Grid.Row="0"
+            Grid.Row="1"
             Grid.Column="1"
             HorizontalOptions="Fill"
             VerticalOptions="Center"
         />
 
-        <Image
+        <ImageButton
             Source="{Binding Avatar}"
+            Command="{Binding GoToSettingsCommand}"
             Aspect="AspectFit"
+            Grid.Row="1"
             Grid.Column="2"
-            Grid.Row="0"/>
+            />
 
         <Button
             Text="Log ud"
             Command="{Binding LogOutCommand}"
-            Grid.Row="4"
-            Grid.Column="2"
-            WidthRequest="100"
+            Grid.Row="1"
+            Grid.Column="3"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
             BackgroundColor="Bisque"
         />
 
-        <Button
+        <!--<Button
             Text="Settings"
             Command="{Binding GoToSettingsCommand}"
             Grid.Row="3"
             Grid.Column="2"
             WidthRequest="100"
             BackgroundColor="Bisque"
-        />
+        />-->
 
         <Button
             Text="Host"
-            Grid.Row="2"
-            Grid.Column="1"
+            Grid.Row="3"
+            Grid.Column="2"
             BackgroundColor="Bisque"
-            WidthRequest="200"
+            WidthRequest="100"
             Command="{Binding ChangeViewCommand}"
             IsVisible="{Binding Showhost}"/>
 
-            
+
         <Button
             Text="Join"
-            Grid.Row="2"
-            Grid.Column="2"
-            WidthRequest="200"
+            Grid.Row="3"
+            Grid.Column="3"
+            WidthRequest="100"
             Command="{Binding GoToJoinCommand}"
             IsVisible="{Binding Showhost}"
         />
         <Button
             Text="Back"
-            Grid.Row="3"
-            Grid.Column="1"
-            WidthRequest="100"
+            Grid.Row="4"
+            Grid.Column="2"
+            Grid.ColumnSpan="2"
+            WidthRequest="300"
             BackgroundColor="Bisque"
             IsVisible="{Binding GamesShowing}"
             Command="{Binding ChangeViewCommand}"/>
-        
+
         <ImageButton
-            Source="{Binding Games[0].Name}"
+            Source="{Binding Games[0].Image}"
             Aspect="AspectFit"
             Grid.Row="2"
             Grid.Column="2"
             Width="100"
             IsVisible="{Binding GamesShowing}"
-            IsEnabled="{Binding Games[0].Playable}"
             Command ="{Binding GoToLobbyCommand}"
-            CommandParameter="{Binding Games[0].Name}"/>
+            CommandParameter="{Binding Games[0]}"/>
 
         <ImageButton
-            Source="{Binding Games[1].Name}"
+            Source="{Binding Games[1].Image}"
             Aspect="AspectFit"
             Grid.Row="2"
-            Grid.Column="1"
+            Grid.Column="3"
             Width="100"
             IsVisible="{Binding GamesShowing}"
-            IsEnabled="{Binding Games[1].Playable}"
             Command ="{Binding GoToLobbyCommand}"
-            CommandParameter="{Binding Games[1].Name}"/>
+            CommandParameter="{Binding Games[1]}"/>
+        
+        <ImageButton
+            Source="{Binding Games[2].Image}"
+            Aspect="AspectFit"
+            Grid.Row="3"
+            Grid.Column="2"
+            Width="100"
+            IsVisible="{Binding GamesShowing}"
+            Command ="{Binding GoToLobbyCommand}"
+            CommandParameter="{Binding Games[2]}"/>
 
-           
+
+
+        <ImageButton
+            Source="{Binding Games[3].Image}"
+            Aspect="AspectFit"
+            Grid.Row="3"
+            Grid.Column="3"
+            Width="100"
+            IsVisible="{Binding GamesShowing}"
+            Command ="{Binding GoToLobbyCommand}"
+            CommandParameter="{Binding Games[3]}"/>
+
+
+
     </Grid>
 </ContentPage>

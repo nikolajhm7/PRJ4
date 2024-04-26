@@ -1,4 +1,5 @@
-﻿using Client.UI.Views;
+using Client.Library.Services;
+using Client.UI.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -14,6 +15,19 @@ namespace Client.UI.ViewModels
     public partial class GameViewModel : ObservableObject
     {
         private readonly HubConnection _connection;
+
+        [ObservableProperty]
+        string _name;
+
+        [ObservableProperty]
+        string _message;
+
+        [ObservableProperty]
+        ObservableCollection<string> _messages;
+
+        [ObservableProperty]
+        bool _isConnected;
+
         public GameViewModel()
         {
             _connection = new HubConnectionBuilder()

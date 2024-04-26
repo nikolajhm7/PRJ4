@@ -1,12 +1,14 @@
 using System.Net.Http.Json;
-using Client.Libary.Interfaces;
+using Client.Library.Interfaces;
+using Client.Library.Models;
 using Client.UI.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Client.Libary.Services;
 using Newtonsoft.Json.Linq;
+using Client.Library.Services;
+using Client.Library.Services.Interfaces;
 
 namespace Client.UI.ViewModels;
 
@@ -18,24 +20,28 @@ public partial class LoginViewModel : ObservableObject
     
     private readonly ILogger<LoginViewModel> _logger;
 
-    private readonly NavigationService _navigationService;
+    private readonly INavigationService _navigationService;
     
     private IJwtTokenService _jwtTokenService;
     
     private IPreferenceManager _preferenceManager;
-    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger, IJwtTokenService jwtTokenService, IPreferenceManager preferenceManager)
+    
+    private IApiService _apiService;
+    public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger, IJwtTokenService jwtTokenService, IPreferenceManager preferenceManager, INavigationService navigationService, IApiService apiService)
     {
         _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
         
         _configuration = configuration;
 
-        _navigationService = new NavigationService();
+        _navigationService = navigationService;
         
         _logger = logger;
         
         _jwtTokenService = jwtTokenService;
         
         _preferenceManager = preferenceManager;
+        
+        _apiService = apiService;
 
         IsAlreadyAuthenticated();
     }
@@ -87,7 +93,7 @@ public partial class LoginViewModel : ObservableObject
     [RelayCommand]
     public async Task JoinAsGuest()
     {
-        await _navigationService.NavigateToPage(nameof(JoinPage));
+        await _navigationService.NavigateToPage(nameof(GuestLoginPage));
     }
 
     public async Task<bool> LoginAsync(string username, string password)
@@ -98,18 +104,10 @@ public partial class LoginViewModel : ObservableObject
 
             if (response.IsSuccessStatusCode)
             {
-                var jsonResponseToken = (await response.Content.ReadAsStringAsync()).Trim();
-                var tokenData = JObject.Parse(jsonResponseToken);
-                
-                var auth_token = tokenData["token"]?.ToString();
-                var refresh_token = tokenData["refreshToken"]?.ToString();
-
-                if (!string.IsNullOrWhiteSpace(auth_token) && !string.IsNullOrWhiteSpace(refresh_token))
+                if (_jwtTokenService.SetTokensFromResponse(response))
                 {
-                    
-                    _preferenceManager.Set("auth_token", auth_token);
-                    _preferenceManager.Set("refresh_token", refresh_token);
                     _preferenceManager.Set("username", username);
+                    User.Instance.Username = username;
                     return true;
                 }
 

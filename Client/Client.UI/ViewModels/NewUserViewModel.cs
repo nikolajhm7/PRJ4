@@ -2,7 +2,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
-using Client.Libary.Services;
+using Client.Library.Services;
+using Client.Library.Services.Interfaces;
 using Client.UI.Views;
 
 namespace Client.UI.ViewModels
@@ -11,12 +12,12 @@ namespace Client.UI.ViewModels
     {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
-        private readonly NavigationService _navigationService;
-        public NewUserViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        private readonly INavigationService _navigationService;
+        public NewUserViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, INavigationService navigationService)
         {
             _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
             _configuration = configuration;
-            _navigationService = new NavigationService();
+            _navigationService = navigationService;
         }
 
 
@@ -52,11 +53,11 @@ namespace Client.UI.ViewModels
         }
 
         [ObservableProperty]
-        string _username = "Test123";
+        string _username = "";
         [ObservableProperty]
-        string _password = "Test123Test123";
+        string _password = "";
         [ObservableProperty]
-        string _email = "Test@123.com";
+        string _email = "";
 
         [RelayCommand]
         public async Task GoBack()
@@ -87,7 +88,7 @@ namespace Client.UI.ViewModels
             else if (await Check(_username, _password, _email))
             {
                 await Shell.Current.DisplayAlert("Succses", $"{Username} was created","OK");
-                await _navigationService.NavigateToPage(nameof(LoginPage));
+                await _navigationService.NavigateBack();
                 return;
             }
         }

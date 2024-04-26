@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 using Microsoft.Maui.Storage;
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
-using Client.Libary.Models;
+using Client.Library.Models;
 
 
-namespace Client.Libary.Services
+namespace Client.Library.Services
 {
     public abstract class ConnectionService : IConnectionService
     {

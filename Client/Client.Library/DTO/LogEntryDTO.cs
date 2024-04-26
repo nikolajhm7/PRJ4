@@ -1,6 +1,6 @@
 using System;
 
-namespace Client.Libary.DTO;
+namespace Client.Library.DTO;
 
 public class LogEntryDTO
 {

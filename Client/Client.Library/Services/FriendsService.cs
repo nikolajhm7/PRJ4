@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Client.Libary.DTO;
-using Client.Libary.Models;
+using Client.Library.DTO;
+using Client.Library.Models;
 
-namespace Client.Libary.Services
+namespace Client.Library.Services
 {
     public class FriendsService : ConnectionService, IFriendsService
     {

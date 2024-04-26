@@ -13,12 +13,13 @@
                    HorizontalTextAlignment="Center" 
                    TextColor="White"/>
         </Frame>
-
         <Image
-            Source="{Binding Image}"
+            Source="{Binding  Recivedgame.Image}"
             Aspect="AspectFit"
             HeightRequest="100"
             WidthRequest="100"/>
+        <Label Text="{Binding Recivedgame.Name}" HorizontalTextAlignment="Center" FontSize="Large"/>
+        <Label Text="{Binding Recivedgame.MaxPlayers}" HorizontalTextAlignment="Center" FontSize="Medium"/>
 
         <CollectionView x:Name="PlayersCollectionView" ItemsSource="{Binding Lobby.PlayerNames}" SelectionMode="None" HeightRequest="200">
             <CollectionView.ItemsLayout>
@@ -37,26 +38,24 @@
 
         <!-- Knapper for at tilføje eller fjerne spiller -->
         <Button Command="{Binding TestAddPlayerCommand}" Text="Add Player" HorizontalOptions="Center"/>
+        <!-- Knapper for at tilføje eller fjerne spiller -->
+        <Button Command="{Binding TestRemovePlayerCommand}" Text="Remove Player" HorizontalOptions="Center"/>
 
-        <!-- Knapper for at tilbage eller starte spillet -->
-        <Grid VerticalOptions="FillAndExpand">
-            <!-- Use the RowDefinitions to define the space. The '*' means it takes up all available space -->
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <!-- Use the ColumnDefinitions to split the grid into two columns -->
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <Grid
+            RowDefinitions="*,*"
+            ColumnDefinitions="*,*,*,*">
 
-            <!-- Place the Tilbage/exit button in the bottom left -->
-            <Button Grid.Row="1" Grid.Column="0" Text="Tilbage/exit" HorizontalOptions="Start"
-                    Command="{Binding GoBackCommand}"/>
+            <Button 
+                Grid.Row="1" 
+                Grid.Column="1" Text="Tilbage/exit" 
+                HorizontalOptions="Start"
+                Command="{Binding GoBackCommand}"/>
 
             <!-- Place the Start spil button in the bottom right -->
-            <Button Grid.Row="1" Grid.Column="1" Text="Start spil" HorizontalOptions="End" />
+            <Button Grid.Row="1" 
+                    Grid.Column="2" 
+                    Text="Start spil" 
+                    HorizontalOptions="End" />
         </Grid>
     </VerticalStackLayout>
 </ContentPage>

@@ -1,4 +1,4 @@
-using Client.Libary.Interfaces;
+using Client.Library.Interfaces;
 
 namespace Client.UI.Managers;
 

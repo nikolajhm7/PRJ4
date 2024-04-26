@@ -63,7 +63,7 @@ namespace Server.API.Services
                 }
             }
 
-            var maxPlayers = 10; // _gameRepository.GetMaxPlayers(gameId);
+            var maxPlayers = _gameRepository.GetMaxPlayers(gameId);
             var lobby = new Lobby(lobbyId, user.ConnectionId, gameId, maxPlayers);
             lobby.Members.Add(user);
             lobbies.Add(lobbyId, lobby);
@@ -106,7 +106,7 @@ namespace Server.API.Services
         {
             if (lobbies.TryGetValue(lobbyId, out Lobby? lobby))
             {
-                return GameStatus.InGame;
+                return lobby.Status;
             }
             return GameStatus.NO_LOBBY;
         }

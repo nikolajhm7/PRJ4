@@ -1,18 +1,20 @@
 ﻿using System.Collections.ObjectModel;
-using Client.Libary.Interfaces;
-using Client.Libary.Models;
+using Client.Library.Interfaces;
+using Client.Library.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Client.Libary.Services;
+using Client.Library.Services;
+using Client.Library.Services.Interfaces;
 using Client.UI.Managers;
 using Client.UI.Views;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace Client.UI.ViewModels
 {
     public partial class PlatformViewModel : ObservableObject
     {
-        [ObservableProperty]
-        string _username;
+        public User UserInstance => User.Instance;
         [ObservableProperty]
         private bool gamesShowing = false;
         [ObservableProperty]
@@ -22,7 +24,17 @@ namespace Client.UI.ViewModels
 
         private readonly ILobbyService _lobbyService;
 
-        private readonly NavigationService _navigationService;
+        private readonly INavigationService _navigationService;
+
+        private readonly HttpClient _httpClient;
+
+        private readonly IApiService _apiService;
+
+        private readonly IConfiguration _configuration;
+
+        private IJwtTokenService _jwtTokenService;
+
+        private IPreferenceManager _preferenceManager;
 
         private ObservableCollection<Game> games;
         public ObservableCollection<Game> Games
@@ -30,35 +42,64 @@ namespace Client.UI.ViewModels
             get { return games; }
             set { SetProperty(ref games, value); }
         }
-        
-        private IPreferenceManager _preferenceManager = new PreferenceManager();
 
-        private int gameCounter = 0;
-        public PlatformViewModel(ILobbyService lobbyService, IPreferenceManager preferenceManager)
+        public PlatformViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, INavigationService navigationService, ILobbyService lobbyService, IPreferenceManager preferenceManager, IJwtTokenService jwtTokenService, IApiService apiService)
         {
-            _username = User.Instance.Username;
-            _avatar = User.Instance.avatar;
-            InitializeGame();
+            _configuration = configuration;
             _lobbyService = lobbyService;
-            _navigationService = new NavigationService();
+            _navigationService = navigationService;
             _preferenceManager = preferenceManager;
+            _jwtTokenService = jwtTokenService;
+            _apiService = apiService;
+            //SetAvatar();
+            //pullGames();
         }
 
-        private void InitializeGame()
+        public void OnPageAppearing()
         {
-            games = new ObservableCollection<Game>();
-            games.Add(new Game { Name = "hangman.png", Playable = false});
-            games.Add(new Game { Name = "krydsogbolle.png", Playable = false });
-
-            foreach (var game in games)
+            SetAvatar();
+            pullGames();
+        }
+        public void SetImagesForGames()
+        {
+            foreach (var game in Games)
             {
-                game.Playable=GameCheck(game.Name);
+                game.setImage();
             }
         }
 
-        public bool GameCheck(string s)
+        [RelayCommand]
+        public async Task pullGames()
         {
-            return User.Instance.games.Contains(s);
+            string endpoint = $"/Game/getGamesForUser/{User.Instance.Username}";
+            var response = await _apiService.MakeApiCall(endpoint, HttpMethod.Get);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                Games = JsonConvert.DeserializeObject<ObservableCollection<Game>>(jsonResponse);
+                SetImagesForGames();
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Fejl", "Kunne ikke hente spil", "OK");
+            }
+
+        }
+
+        public void SetAvatar()
+        {
+            switch (UserInstance.Avatar)
+            {
+                case 1:
+                    Avatar = "charizard.png";
+                    break;
+                case 2:
+                    Avatar = "pikachu.png";
+                    break;
+                case 3:
+                    Avatar = "mewtow.png";
+                    break;
+            }
         }
 
         [RelayCommand]
@@ -71,8 +112,9 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task LogOut()
         {
-            _preferenceManager.Clear("auth_token");
-            await _navigationService.NavigateToPage("///"+nameof(LoginPage));
+            _preferenceManager.Remove("auth_token");
+            _preferenceManager.Remove("refresh_token");
+            await _navigationService.NavigateToPage("//"+nameof(LoginPage));
         }
 
         [RelayCommand]
@@ -82,31 +124,38 @@ namespace Client.UI.ViewModels
         }
 
         [RelayCommand]
-        async Task GoToLobby(string s)
+        async Task GoToLobby(Game s)
         {
-            int someint = 1;
-            var response = await _lobbyService.CreateLobbyAsync(someint);
-            if (response.Success)
+            if (s != null)
             {
-                await Shell.Current.GoToAsync($"//LobbyPage?Image={s}&LobbyId={response.Msg}");
+                int someint = 1;
+                var response = await _lobbyService.CreateLobbyAsync(someint);
+                if (response.Success)
+                {
+                    var box = new Dictionary<string, object>
+                    {
+                        //{"gameId", s.GameId},
+                        //{"name", s.Name},
+                        //{"image", s.Image},
+                        { "lobbyId", response.Msg },
+                        { "game", s }
+                    };
+                    await Shell.Current.GoToAsync(nameof(LobbyPage), true, box);
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Fejl", "Kunne ikke oprette lobby", "OK");
+                }
             }
             else
             {
-                await Shell.Current.DisplayAlert("Fejl", "Kunne ikke oprette lobby", "OK");
+                await Shell.Current.DisplayAlert("Fejl", "Vælg et spil som du har adgang til", "OK");
             }
         }
         [RelayCommand]
         async Task GoToJoin(string s)
         {
             await _navigationService.NavigateToPage(nameof(JoinPage));
-        }
-        
-        public partial class Game: ObservableObject
-        {
-            [ObservableProperty]
-            private string _name;
-            [ObservableProperty]
-            private bool _playable;
         }
     }
 }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Server.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class FriendshipController : ControllerBase
     {

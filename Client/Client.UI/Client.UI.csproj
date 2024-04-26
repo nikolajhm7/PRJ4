@@ -107,6 +107,10 @@
 	  <MauiXaml Update="Views\PlatformPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\GuestLoginPage.xaml">
+	    <SubType>Designer</SubType>
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -126,6 +130,10 @@
 	  <Compile Update="Views\TestPage.xaml.cs">
 	    <DependentUpon>TestPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\GuestLoginPage.xaml.cs">
+	    <DependentUpon>LoginAsGuest.xaml</DependentUpon>
+	    <SubType>Code</SubType>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -134,7 +142,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Client.Libary\Client.Libary.csproj" />
+	  <ProjectReference Include="..\Client.Library\Client.Library.csproj" />
 	</ItemGroup>
 
 </Project>

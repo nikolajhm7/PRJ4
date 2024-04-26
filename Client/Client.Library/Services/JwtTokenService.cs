@@ -1,13 +1,12 @@
-using Client.Libary.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Headers;
-using Client.Libary.Interfaces;
+using Client.Library.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Storage;
 
-namespace Client.Libary.Services;
+namespace Client.Library.Services;
 
 public class JwtTokenService : IJwtTokenService
 {
@@ -42,5 +41,25 @@ public class JwtTokenService : IJwtTokenService
         var handler = new JwtSecurityTokenHandler();
         var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
         return jsonToken.Claims.First(claim => claim.Type == "unique_name").Value;
+    }
+    
+    private void GetTokensFromResponse(HttpResponseMessage response, out string jwtToken, out string refreshToken)
+    {
+        var jsonTokens = _apiService.GetJsonObjectFromResponse(response);
+        jwtToken = jsonTokens["token"].ToString();
+        refreshToken = jsonTokens["refreshToken"].ToString();
+    }
+    
+    public bool SetTokensFromResponse(HttpResponseMessage response)
+    {
+        if (response.IsSuccessStatusCode)
+        {
+            GetTokensFromResponse(response, out var jwtToken, out var refreshToken);
+            _preferenceManager.Set("auth_token", jwtToken);
+            _preferenceManager.Set("refresh_token", refreshToken);
+            return true;
+        }
+
+        return false;
     }
 }

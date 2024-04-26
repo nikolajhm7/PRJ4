@@ -3,23 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
              xmlns:behaviors="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
-             x:Class="Client.UI.Views.NewUserPage"
-             x:DataType="viewModels:NewUserViewModel">
-
+             x:Class="Client.UI.Views.GuestLoginPage"
+             x:DataType="viewModels:GuestLoginViewModel">
     <Grid
         ColumnDefinitions="*,4*,4*,*"
-        RowDefinitions="*,*,*,*,*,*,*,*,10"
+        RowDefinitions="*,*,*,*,*,*,10"
         RowSpacing="0"
         Padding="0,0,0,10">
 
         <Label
+            Text="Login as Guest"
             Grid.Row="0"
             Grid.Column="0"
             Grid.ColumnSpan="4"
-            Text="Welcome to PartyPlayPalace!"
             Style="{StaticResource Headline}"
-            SemanticProperties.HeadingLevel="Level1"
-        />
+            SemanticProperties.HeadingLevel="Level1" />
+
         <Image
             Grid.Row="1"
             Grid.RowSpan="2"
@@ -27,47 +26,32 @@
             Grid.ColumnSpan="2"
             Aspect="AspectFit"
             Source="logo.png"
-            SemanticProperties.Description="Party Play Palace"
-        />
-        <Entry Placeholder="Enter username"
-               HeightRequest="20"
-               Grid.Row="3"
-               Grid.Column="1"
-               Grid.ColumnSpan="2"
-               Text="{Binding Username}" />
+            SemanticProperties.Description="Party Play Palace"/>
 
-        <Entry Placeholder="Enter password"
-               HeightRequest="20"
-               Grid.Row="4"
-               Grid.Column="1"
-               Grid.ColumnSpan="2"
-               Text="{Binding Password}" />
-
-        <Entry Placeholder="Email"
-               Text="{Binding Email}" 
-               HeightRequest="20"
-               Grid.Row="5"
-               Grid.Column="1"
-               Grid.ColumnSpan="2"/>
+        <Entry
+            Placeholder="Your guest name"
+            HeightRequest="20"
+            Grid.Row="3"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Text="{Binding Username}" />
 
         <Button
             x:Name="CreateButton"
             Style="{StaticResource normalBtn}"
-            Text="Make a new user" 
-            Grid.Row="6"
+            Text="Create guest" 
+            Grid.Row="4"
             Grid.Column="1"
             Grid.ColumnSpan="2"
             Command="{Binding MakeNewUserCommand}"/>
         <Button
             x:Name="Back"
-
             Style="{StaticResource normalBtn}"
             Text="Back" 
-            Grid.Row="7"
+            Grid.Row="5"
             Grid.Column="1"
             Grid.ColumnSpan="2"
             Command="{Binding GoBackCommand}"/>
-
     </Grid>
 
 </ContentPage>

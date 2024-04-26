@@ -43,6 +43,7 @@ namespace Server.API.Controllers
 
                 // Seed Game
                 var game = new Game { Name = "hangman" };
+
                 await _gameRepository.AddGame(game);
 
                 await _gameRepository.AddGameToUser(user.Id, game.GameId);

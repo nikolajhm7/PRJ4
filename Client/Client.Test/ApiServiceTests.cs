@@ -1,7 +1,7 @@
 using NSubstitute;
 using System.Net;
-using Client.Libary;
-using Client.Libary.Interfaces;
+using Client.Library;
+using Client.Library.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 

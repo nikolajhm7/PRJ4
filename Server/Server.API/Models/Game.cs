@@ -10,6 +10,7 @@ public class Game
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int GameId { get; set; }
     public string Name { get; set;}
+    public int MaxPlayers { get; set; }
     public virtual List<UserGame> UserGames { get; set; } = new List<UserGame>();
 }
 
