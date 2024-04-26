@@ -44,6 +44,7 @@ namespace Client.UI.ViewModels
         public async Task GoBack()
         {
                 string authToken = Preferences.Get("auth_token", defaultValue: string.Empty);
+
                 if(!string.IsNullOrEmpty(authToken))
                 {
                     await _navigationService.NavigateToPage(nameof(PlatformPage));

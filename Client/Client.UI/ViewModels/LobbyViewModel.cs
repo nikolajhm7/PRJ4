@@ -40,7 +40,7 @@ namespace Client.UI.ViewModels
             _lobbyService = lobbyService;
             _navigationService = navigationService;
             Recivedgame = null;
-            LobbyId = "00000";
+            //LobbyId = "00000";
            
             _navigationService = new NavigationService();
 
