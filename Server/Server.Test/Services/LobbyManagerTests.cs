@@ -18,15 +18,15 @@ namespace Server.Test.Services
     {
         private LobbyManager _uut;
         private IIdGenerator _idGenerator;
-        private IGameRepository _gameRepository;
+        private IServiceProvider _serviceProvider;
 
         [SetUp]
         public void Setup()
         {
             _idGenerator = Substitute.For<IIdGenerator>();
-            _gameRepository = Substitute.For<IGameRepository>();
+            _serviceProvider = Substitute.For<IServiceProvider>();
 
-            _uut = new LobbyManager(_idGenerator, _gameRepository);
+            _uut = new LobbyManager(_idGenerator, _serviceProvider);
         }
 
         [Test]
