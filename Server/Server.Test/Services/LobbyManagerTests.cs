@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NSubstitute;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Server.Test.Services
 {
@@ -18,15 +19,19 @@ namespace Server.Test.Services
     {
         private LobbyManager _uut;
         private IIdGenerator _idGenerator;
-        private IServiceProvider _serviceProvider;
+        private IGameRepository _gameRepository;
 
         [SetUp]
         public void Setup()
         {
             _idGenerator = Substitute.For<IIdGenerator>();
-            _serviceProvider = Substitute.For<IServiceProvider>();
+            _gameRepository = Substitute.For<IGameRepository>();
 
-            _uut = new LobbyManager(_idGenerator, _serviceProvider);
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddScoped(sp => _gameRepository);
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            _uut = new LobbyManager(_idGenerator, serviceProvider);
         }
 
         [Test]
@@ -154,7 +159,7 @@ namespace Server.Test.Services
             string lobbyId = "123";
             ConnectedUserDTO user = new ConnectedUserDTO("name", "123");
             _idGenerator.GenerateRandomLobbyId().Returns(lobbyId);
-            //_gameRepository.GetMaxPlayers(1).Returns(10);
+            _gameRepository.GetMaxPlayers(1).Returns(10);
 
             // Act
             var result = await _uut.CreateNewLobby(user, 1);
