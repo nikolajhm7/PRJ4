@@ -12,7 +12,7 @@ using Server.API.Data;
 namespace Server.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240426092306_SeedingData")]
+    [Migration("20240426101515_SeedingData")]
     partial class SeedingData
     {
         /// <inheritdoc />
@@ -185,7 +185,7 @@ namespace Server.API.Migrations
                             User1Id = "59fbd0c8-0e0b-4cba-980e-f196b905a249",
                             User2Id = "3de1a4b2-2b03-4b9d-b04d-d02cbef1f447",
                             Status = "Accepted",
-                            date = new DateTime(2024, 4, 26, 9, 23, 6, 606, DateTimeKind.Utc).AddTicks(8467)
+                            date = new DateTime(2024, 4, 26, 10, 15, 14, 798, DateTimeKind.Utc).AddTicks(4872)
                         });
                 });
 
@@ -329,15 +329,15 @@ namespace Server.API.Migrations
                         {
                             Id = "59fbd0c8-0e0b-4cba-980e-f196b905a249",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6642bff1-f83f-443f-8ce0-53b1a3cf8052",
+                            ConcurrencyStamp = "8c7fae49-ffeb-45d5-88c8-270041106a91",
                             Email = "frank@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "FRANK@GMAIL.COM",
                             NormalizedUserName = "FRANK",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJG0S05v4sdXYbPjLVpDkW0OtqES0cN89zOB8JWmMiZCWAvw2Hm2pvwEemNu47dMDA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEACmQzOpmcOcFloGIU4TDSw60YBQP09BpAwGlPCo81ad2KAF16wye9yMBqgrAbKlfA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "94c3cf4c-d506-4bc3-b93c-9eab6eb6b08f",
+                            SecurityStamp = "11d067de-dab8-4af5-acda-f5547182d02a",
                             TwoFactorEnabled = false,
                             UserName = "Frank",
                             coins = 0
@@ -346,15 +346,15 @@ namespace Server.API.Migrations
                         {
                             Id = "3de1a4b2-2b03-4b9d-b04d-d02cbef1f447",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "075bfb6d-56bf-42ae-9503-2b496cfc16e5",
+                            ConcurrencyStamp = "aadafbc0-c42a-41e5-a5dd-9365f253221c",
                             Email = "Peter@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "PETER@GMAIL.COM",
                             NormalizedUserName = "PETER",
-                            PasswordHash = "AQAAAAIAAYagAAAAENtuLVFoeOOgQM37uwRcHtija0smC74T2ejZ/+vIzJtzaHcx0lYCwdYgPQ+k856pzQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKEkbduNuZQ32XYvK81f2xrTZgxo1xNnJzfBtg1QIg/Csb4bIuCTnysY5JyHslZo2A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "6fdc264b-f195-48a0-8286-bac37ec14a23",
+                            SecurityStamp = "9c3e5414-2bae-49cc-9726-52610fe4f8a1",
                             TwoFactorEnabled = false,
                             UserName = "Peter",
                             coins = 0
@@ -363,15 +363,15 @@ namespace Server.API.Migrations
                         {
                             Id = "1c7e97d3-a982-4a1b-8d8e-b6b9d7e32c0f",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a649e50c-ebeb-4168-9ed7-0708050753a3",
+                            ConcurrencyStamp = "76955fb6-ee1c-4110-b021-85d60d2571a7",
                             Email = "Hans@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "HANS@GMAIL.COM",
                             NormalizedUserName = "HANS",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHDNaGCMw+3rzd4s9zw1K8989QQGvCEHWvi/wb54Ahih2+x4D6hRKr4MsV7W9msizw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPSBrQwjRueMy1PV27hAOYVO3KvNk4NW2+iiLPimTIf7oLq0+/0Q92hbZP24PPQkwQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "843e9e1b-06f5-4f97-81c7-1e5026cbebc6",
+                            SecurityStamp = "1ac144aa-de13-43c7-8807-13fc1c3ab8c3",
                             TwoFactorEnabled = false,
                             UserName = "Hans",
                             coins = 0

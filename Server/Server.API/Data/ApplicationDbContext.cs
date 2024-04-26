@@ -91,13 +91,13 @@ public class ApplicationDbContext : IdentityDbContext<User>
 
         //set user passwords
         PasswordHasher<User> ph1 = new PasswordHasher<User>();
-        appUser1.PasswordHash = ph1.HashPassword(appUser1, "abc123ABC123!");
+        appUser1.PasswordHash = ph1.HashPassword(appUser1, "FrankFrank1!");
 
         PasswordHasher<User> ph2 = new PasswordHasher<User>();
-        appUser2.PasswordHash = ph2.HashPassword(appUser2, "AbCdEfGhIj123!");
+        appUser2.PasswordHash = ph2.HashPassword(appUser2, "PeterPeter1!");
 
         PasswordHasher<User> ph3 = new PasswordHasher<User>();
-        appUser3.PasswordHash = ph3.HashPassword(appUser3, "HansTheBigGuy123!");
+        appUser3.PasswordHash = ph3.HashPassword(appUser3, "HansHans1!");
 
         //seed users
         modelBuilder.Entity<User>().HasData(appUser1);
