@@ -10,21 +10,22 @@ public class ApplicationDbContext : IdentityDbContext<User>
         : base(options)
     {
     }
-    private const string DbName = "PartyPlayPalaceDB";
-    private const string ConnectionString = $"Data Source=localhost;Initial Catalog={DbName};User ID=SA;Password=abc123AB;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+    //private const string DbName = "PartyPlayPalaceDB";
+    //private const string ConnectionString = $"Data Source=localhost;Initial Catalog={DbName};User ID=SA;Password=abc123AB;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+
 
     public DbSet<User> Users { get; set; }
     public DbSet<Game> Games { get; set; }
     public DbSet<UserGame> UserGames { get; set; }
     public DbSet<Friendship> Friendships { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
-    {
-        if (!options.IsConfigured)
-        {
-            options.UseSqlServer(ConnectionString);
-        }
-    }
+    //protected override void OnConfiguring(DbContextOptionsBuilder options)
+    //{
+    //    if (!options.IsConfigured)
+    //    {
+    //        options.UseSqlServer(ConnectionString);
+    //    }
+    //} 
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -108,6 +108,12 @@ ConfigureServices(builder.Services);
 
 var app = builder.Build();
 
+using (var serviceScope = app.Services.CreateScope())
+{
+    var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    context.Database.Migrate();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -143,7 +149,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var env = services.GetRequiredService<IWebHostEnvironment>();
-    
+
     if (!env.IsEnvironment("Testing"))
     {
         var dbContext = services.GetRequiredService<ApplicationDbContext>();
