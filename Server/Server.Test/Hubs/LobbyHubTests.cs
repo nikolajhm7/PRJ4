@@ -1,4 +1,4 @@
-﻿susing Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Server.API.Hubs;

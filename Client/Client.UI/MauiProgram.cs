@@ -11,7 +11,6 @@ using Client.Library.Services;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Serilog;
-using Client.Libary;
 using Client.Library.Games;
 using Client.Library;
 using Client.Library.Services.Interfaces;

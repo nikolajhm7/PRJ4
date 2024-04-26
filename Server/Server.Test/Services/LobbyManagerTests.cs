@@ -148,7 +148,7 @@ namespace Server.Test.Services
         }
 
         [Test]
-        public void CreateNewLobby_ReturnsLobbyId()
+        public async Task CreateNewLobby_ReturnsLobbyId()
         {
             // Arrange
             string lobbyId = "123";
@@ -157,7 +157,7 @@ namespace Server.Test.Services
             //_gameRepository.GetMaxPlayers(1).Returns(10);
 
             // Act
-            var result = _uut.CreateNewLobby(user, 1);
+            var result = await _uut.CreateNewLobby(user, 1);
 
             // Assert
             Assert.That(result, Is.EqualTo(lobbyId));

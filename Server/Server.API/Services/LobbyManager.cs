@@ -9,13 +9,13 @@ namespace Server.API.Services
     public class LobbyManager : ILobbyManager
     {
         private readonly IIdGenerator _idGenerator;
-        private readonly IGameRepository _gameRepository;
+        private readonly IServiceProvider _serviceProvider;
         public readonly Dictionary<string, Lobby> lobbies = [];
 
-        public LobbyManager(IIdGenerator idGenerator, IGameRepository gameRepository)
+        public LobbyManager(IIdGenerator idGenerator, IServiceProvider serviceProvider)
         {
             _idGenerator = idGenerator;
-            _gameRepository = gameRepository;
+            _serviceProvider = serviceProvider;
         }
 
         public bool LobbyExists(string lobbyId)
@@ -51,7 +51,7 @@ namespace Server.API.Services
             else return [];
         }
 
-        public string CreateNewLobby(ConnectedUserDTO user, int gameId)
+        public async Task<string> CreateNewLobby(ConnectedUserDTO user, int gameId)
         {
             string? lobbyId = null;
             while (lobbyId == null)
@@ -63,7 +63,9 @@ namespace Server.API.Services
                 }
             }
 
-            var maxPlayers = _gameRepository.GetMaxPlayers(gameId);
+            var gameRepository = _serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IGameRepository>();
+
+            var maxPlayers = await gameRepository.GetMaxPlayers(gameId);
             var lobby = new Lobby(lobbyId, user.ConnectionId, gameId, maxPlayers);
             lobby.Members.Add(user);
             lobbies.Add(lobbyId, lobby);

@@ -32,7 +32,7 @@ namespace Server.API.Hubs
                 return new ActionResult(false, "Authentication context is not available.");
             }
 
-            var lobbyId = _lobbyManager.CreateNewLobby(new ConnectedUserDTO(username, Context.ConnectionId), gameId);
+            var lobbyId = await _lobbyManager.CreateNewLobby(new ConnectedUserDTO(username, Context.ConnectionId), gameId);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
             _logger.LogInformation("Lobby {LobbyId} created by {UserName}.", lobbyId, username);
