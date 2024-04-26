@@ -27,12 +27,10 @@ namespace Client.UI.ViewModels
             if (await _jwtTokenService.IsAuthenticated())
             {
                 await _navigationService.NavigateToPage(nameof(PlatformPage));
-                //await Shell.Current.GoToAsync($"{nameof(PlatformPage)}");
             }
             else
             {
                 await _navigationService.NavigateToPage(nameof(LoginPage));
-                //await Shell.Current.GoToAsync($"{nameof(LoginPage)}");
             }
         }
     }

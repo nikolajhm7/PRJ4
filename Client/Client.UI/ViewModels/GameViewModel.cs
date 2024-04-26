@@ -71,6 +71,9 @@ namespace Client.UI.ViewModels
             });
         }
 
+        public object GuessedWord { get; }
+        public object StartGameCommand { get; }
+
         private async void StartGame(object sender, EventArgs e)
         {
             string category = "Animals";
