@@ -5,57 +5,77 @@
              x:Class="Client.UI.Views.LobbyPage"
              x:DataType="viewModels:LobbyViewModel"
              Title="LobbyPage">
-    <VerticalStackLayout Spacing="10" Padding="20,0">
 
-        <!-- Overskrift med game ID -->
-        <Frame CornerRadius="10" Padding="10" HorizontalOptions="FillAndExpand" BackgroundColor="#2196F3">
-            <Label Text="{Binding LobbyId}" 
-                   HorizontalTextAlignment="Center" 
-                   TextColor="White"/>
-        </Frame>
+    <Grid
+        ColumnDefinitions="*,2*,2*,*"
+        RowDefinitions="*,*,*,*,*,*,10"
+        RowSpacing="0"
+        Padding="10">
+
+        <Label
+            Text="{Binding LobbyId}"
+            Grid.Row="1"
+            Grid.Column="2"
+            Grid.ColumnSpan="2"
+            HorizontalOptions="Center"
+        />
+
         <Image
-            Source="{Binding  Recivedgame.Image}"
+            Source="{Binding Recivedgame.Image}"
+            Grid.Row="1"
+            Grid.Column="1"
+            Grid.RowSpan="1"
             Aspect="AspectFit"
-            HeightRequest="100"
-            WidthRequest="100"/>
-        <Label Text="{Binding Recivedgame.Name}" HorizontalTextAlignment="Center" FontSize="Large"/>
-        <Label Text="{Binding Recivedgame.MaxPlayers}" HorizontalTextAlignment="Center" FontSize="Medium"/>
+          />
+        <!--<Label
+            Grid.Row="3"
+            Grid.Column="1"
+            Text="{Binding Recivedgame.MaxPlayers}"/>
+        <Label
+            Grid.Row="2"
+            Grid.Column="1"
+            Text="{Binding Recivedgame.Name}"/>-->
 
-        <CollectionView x:Name="PlayersCollectionView" ItemsSource="{Binding Lobby.PlayerNames}" SelectionMode="None" HeightRequest="200">
+        <CollectionView 
+            x:Name="PlayersCollectionView" 
+            ItemsSource="{Binding Lobby.PlayerNames}" 
+            SelectionMode="None" 
+            HeightRequest="200"
+            Grid.Column="2"
+            Grid.ColumnSpan="2"
+            Grid.Row="1"
+            Grid.RowSpan="5">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical" Span="2" />
                 <!-- Adjust Span for desired number of columns -->
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame CornerRadius="10" Padding="10" Margin="5" HorizontalOptions="FillAndExpand">
-                        <Label Text="{Binding .}" HorizontalTextAlignment="Center"/>
+                    <Frame 
+                        CornerRadius="10" 
+                        Padding="10" 
+                        Margin="5" 
+                        HorizontalOptions="FillAndExpand">
+                        <Label 
+                            Text="{Binding .}" 
+                            HorizontalTextAlignment="Center"/>
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
+        <Button 
+            Grid.Row="3" 
+            Grid.Column="1" 
+            Text="Tilbage/exit"
+            Style="{StaticResource normalBtn }"
+            Command="{Binding GoBackCommand}"/>
 
-        <!-- Knapper for at tilføje eller fjerne spiller -->
-        <Button Command="{Binding TestAddPlayerCommand}" Text="Add Player" HorizontalOptions="Center"/>
-        <!-- Knapper for at tilføje eller fjerne spiller -->
-        <Button Command="{Binding TestRemovePlayerCommand}" Text="Remove Player" HorizontalOptions="Center"/>
-
-        <Grid
-            RowDefinitions="*,*"
-            ColumnDefinitions="*,*,*,*">
-
-            <Button 
-                Grid.Row="1" 
-                Grid.Column="1" Text="Tilbage/exit" 
-                HorizontalOptions="Start"
-                Command="{Binding GoBackCommand}"/>
-
-            <!-- Place the Start spil button in the bottom right -->
-            <Button Grid.Row="1" 
-                    Grid.Column="2" 
-                    Text="Start spil" 
-                    HorizontalOptions="End" />
-        </Grid>
-    </VerticalStackLayout>
+        <!-- Place the Start spil button in the bottom right -->
+        <Button Grid.Row="4" 
+                Grid.Column="1" 
+                Style="{StaticResource normalBtn}"
+                Text="Start spil" 
+               />
+    </Grid>
 </ContentPage>
