@@ -58,7 +58,19 @@ public class ApplicationDbContext : IdentityDbContext<User>
         modelBuilder.Entity<IdentityUserToken<string>>()
             .HasKey(l => new { l.UserId, l.LoginProvider, l.Name });
 
+        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Testing")
+        {
+            SeedData(modelBuilder);
+        }
+    }
+    public async Task DeleteOldLogEntriesAsync()
+    {
+        var sql = "DELETE FROM LogEvents WHERE TimeStamp < DATEADD(day, -30, GETUTCDATE())";
+        await Database.ExecuteSqlRawAsync(sql);
+    }
 
+    public void SeedData(ModelBuilder modelBuilder)
+    {
         //Seeding data for user and game
         //creating users
         var appUser1 = new User
@@ -129,7 +141,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
         modelBuilder.Entity<Game>().HasData(game1);
         modelBuilder.Entity<Game>().HasData(game2);
         modelBuilder.Entity<Game>().HasData(game3);
-        
+
         // Define friendship data with user ids
 
         modelBuilder.Entity<Friendship>().HasData(
@@ -145,11 +157,6 @@ public class ApplicationDbContext : IdentityDbContext<User>
             new UserGame { UserGameId = 4, UserId = "3de1a4b2-2b03-4b9d-b04d-d02cbef1f447", GameId = 1 },
             new UserGame { UserGameId = 5, UserId = "1c7e97d3-a982-4a1b-8d8e-b6b9d7e32c0f", GameId = 1 }
         );
-    }
-    public async Task DeleteOldLogEntriesAsync()
-    {
-        var sql = "DELETE FROM LogEvents WHERE TimeStamp < DATEADD(day, -30, GETUTCDATE())";
-        await Database.ExecuteSqlRawAsync(sql);
     }
 
 }
