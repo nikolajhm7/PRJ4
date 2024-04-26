@@ -36,9 +36,9 @@ namespace Client.Library.Services
                 return await InvokeAsync("CreateLobby", gameId);
         }
 
-        public async Task<ActionResult> JoinLobbyAsync(string lobbyId)
+        public async Task<ActionResult<List<ConnectedUserDTO>>> JoinLobbyAsync(string lobbyId)
         {
-            return await InvokeAsync("JoinLobby", lobbyId);
+            return await InvokeAsync<List<ConnectedUserDTO>>("JoinLobby", lobbyId);
 
         }
 

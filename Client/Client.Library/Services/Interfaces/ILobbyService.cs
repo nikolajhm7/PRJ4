@@ -17,7 +17,7 @@ namespace Client.Library.Services
 
         Task<ActionResult> CreateLobbyAsync(int gameId);
 
-        Task<ActionResult> JoinLobbyAsync(string lobbyId);
+        Task<ActionResult<List<ConnectedUserDTO>>> JoinLobbyAsync(string lobbyId);
 
         Task<ActionResult> LeaveLobbyAsync(string lobbyId);
 

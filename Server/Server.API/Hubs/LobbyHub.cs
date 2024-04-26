@@ -37,7 +37,7 @@ namespace Server.API.Hubs
             return new ActionResult(true, lobbyId);
         }
 
-        public async Task<ActionResult> JoinLobby(string lobbyId)
+        public async Task<ActionResult<List<ConnectedUserDTO>>> JoinLobby(string lobbyId)
         {
             _logger.LogDebug("Attempting to join lobby {LobbyId} by user {UserName}.", lobbyId, Context.User?.Identity?.Name);
 
@@ -45,30 +45,26 @@ namespace Server.API.Hubs
             if (username == null)
             {
                 _logger.LogWarning("Context.User or Context.User.Identity is null.");
-                return new ActionResult(false, "Authentication context is not available.");
+                return new(false, "Authentication context is not available.", []);
             }
 
             if (_lobbyManager.LobbyExists(lobbyId))
             {
                 var user = new ConnectedUserDTO(username, Context.ConnectionId);
 
-                foreach (var member in _lobbyManager.GetUsersInLobby(lobbyId))
-                {
-                    await Clients.Caller.SendAsync("UserJoinedLobby", member);
-                }
-
+                var users = _lobbyManager.GetUsersInLobby(lobbyId);
                 _lobbyManager.AddToLobby(user, lobbyId);
 
                 await Clients.Group(lobbyId).SendAsync("UserJoinedLobby", user);
                 await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
 
                 _logger.LogInformation("{UserName} joined lobby {LobbyId}.", Context.User?.Identity?.Name, lobbyId);
-                return new ActionResult(true, null);
+                return new(true, null, users);
             }
             else
             {
                 _logger.LogError("Attempt to join non-existing lobby {LobbyId}.", lobbyId);
-                return new ActionResult(false, "Lobby does not exist.");
+                return new(false, "Lobby does not exist.", []);
             }
         }
 
