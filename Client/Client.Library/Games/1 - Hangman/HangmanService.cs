@@ -19,8 +19,8 @@ namespace Client.Library.Games
             On<char, bool, List<int>>("GuessResult", (letter, isCorrect, positions) =>
                            GuessResultEvent?.Invoke(letter, isCorrect, positions));
 
-            On<bool>("GameOver", (win) =>
-                           GameOverEvent?.Invoke(win));
+            On<bool, string>("GameOver", (didWin, word) =>
+                           GameOverEvent?.Invoke(didWin, word));
 
             On("LobbyClosed", () =>
                            LobbyClosedEvent?.Invoke());
@@ -31,7 +31,7 @@ namespace Client.Library.Games
 
         public event Action<int>? GameStartedEvent;
         public event Action<char, bool, List<int>>? GuessResultEvent;
-        public event Action<bool>? GameOverEvent;
+        public event Action<bool, string>? GameOverEvent;
         public event Action? LobbyClosedEvent;
         public event Action<string>? UserLeftLobbyEvent;
         public async Task<ActionResult> StartGame(string lobbyId)

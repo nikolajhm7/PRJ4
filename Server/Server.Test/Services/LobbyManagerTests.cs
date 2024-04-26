@@ -326,7 +326,7 @@ namespace Server.Test.Services
             var result = _uut.GetGameStatus(lobbyId);
 
             // Assert
-            Assert.That(result, Is.EqualTo(GameStatus.NO_LOBBY));
+            Assert.That(result, Is.EqualTo(GameStatus.NoLobby));
         }
     }
 }

@@ -10,12 +10,14 @@ namespace Server.API.Games
     {
         private readonly ILogger<HangmanHub> _logger;
         private readonly ILobbyManager _lobbyManager;
-        private readonly Dictionary<string, HangmanLogic> _lobbyLogic = [];
+        public readonly Dictionary<string, HangmanLogic> LobbyLogic = [];
+        private readonly IRandomPicker _randomPicker;
 
-        public HangmanHub(ILobbyManager lobbyManager, ILogger<HangmanHub> logger)
+        public HangmanHub(ILobbyManager lobbyManager, ILogger<HangmanHub> logger, IRandomPicker randomPicker)
         {
             _logger = logger;
             _lobbyManager = lobbyManager;
+            _randomPicker = randomPicker;
         }
 
         public override async Task OnConnectedAsync()
@@ -38,26 +40,31 @@ namespace Server.API.Games
 
         public async Task<ActionResult> StartGame(string lobbyId)
         {
-            var logic = new HangmanLogic(lobbyId);
-            _lobbyLogic.Add(lobbyId, logic);
+            if (LobbyLogic.ContainsKey(lobbyId))
+            {
+                return new(false, "Game lobby already exists, and started.");
+            }
 
-            var word = logic.StartGame();
-            await Clients.Group(lobbyId).SendAsync("GameStarted", word.Length);
+            var logic = new HangmanLogic(_randomPicker);
+            LobbyLogic.Add(lobbyId, logic);
+
+            var wordLength = logic.StartGame();
+            await Clients.Group(lobbyId).SendAsync("GameStarted", wordLength);
             return new(true, null);
         }
 
         public async Task<ActionResult> GuessLetter(string lobbyId, char letter)
         {
-            if (_lobbyLogic.TryGetValue(lobbyId, out var logic))
+            if (LobbyLogic.TryGetValue(lobbyId, out var logic))
             {
                 List<int> positions;
                 var isCorrect = logic.GuessLetter(letter, out positions);
-                await Clients.Group(logic.LobbyId).SendAsync("GuessResult", letter, isCorrect, positions);
+                await Clients.Group(lobbyId).SendAsync("GuessResult", letter, isCorrect, positions);
 
-                var isWin = logic.IsGameOver();
-                if (isWin)
+                var res = logic.IsGameOver();
+                if (res)
                 {
-                    await Clients.Group(logic.LobbyId).SendAsync("GameOver", isWin);
+                    await Clients.Group(lobbyId).SendAsync("GameOver", logic.DidUserWin(), logic.SecretWord);
                 }
 
                 return new(true, null);
@@ -67,10 +74,10 @@ namespace Server.API.Games
 
         public async Task<ActionResult> RestartGame(string lobbyId)
         {
-            if (_lobbyLogic.TryGetValue(lobbyId, out var logic))
+            if (LobbyLogic.TryGetValue(lobbyId, out var logic))
             {
-                var word = logic.RestartGame();
-                await Clients.Group(logic.LobbyId).SendAsync("GameStarted", word.Length);
+                var wordLength = logic.StartGame();
+                await Clients.Group(lobbyId).SendAsync("GameStarted", wordLength);
                 return new(true, null);
             }
             return new(false, "Lobby does not exist.");
@@ -79,10 +86,6 @@ namespace Server.API.Games
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             _logger.LogDebug("Handling disconnect of user {UserName}.", Context.User?.Identity?.Name);
-            if (exception != null)
-            {
-                _logger.LogError(exception, "Error on disconnect by {UserName}.", Context.User?.Identity?.Name);
-            }
 
             var username = Context.User?.Identity?.Name;
             var user = new ConnectedUserDTO(username, Context.ConnectionId);

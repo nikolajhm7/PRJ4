@@ -19,6 +19,7 @@ using Server.API.Repository;
 using Server.API.Repository.Interfaces;
 using Server.API.Services.Interfaces;
 using Server.API.Repositories.Interfaces;
+using Server.API.Games;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMemoryCache();
@@ -132,7 +133,7 @@ app.UseEndpoints(endpoints =>
 {
     _ = endpoints.MapHub<LobbyHub>(builder.Configuration["ConnectionSettings:LobbyEndpoint"]);
     _ = endpoints.MapHub<FriendsHub>(builder.Configuration["ConnectionSettings:FriendsEndpoint"]);
-    //_ = endpoints.MapHub<HangmanHub>(builder.Configuration["ConnectionSettings:HangmanEndpoint"]);
+    _ = endpoints.MapHub<HangmanHub>(builder.Configuration["ConnectionSettings:HangmanEndpoint"]);
     _ = endpoints.MapHub<ChatAppHub>(builder.Configuration["ConnectionSettings:ChatAppEndpoint"]);
 });
 
@@ -261,11 +262,12 @@ void ConfigureServices(IServiceCollection services)
     services.AddScoped<ITokenRepository, TokenRepository>();
     services.AddScoped<IJwtTokenService, JwtTokenService>();
     services.AddScoped<ITimeService, TimeService>();
-    services.AddSingleton<IIdGenerator, IdGenerator>();
+    services.AddSingleton<IIdGenerator, RandomGenerator>();
     services.AddScoped<IFriendsRepository, FriendsRepository>();
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IGameRepository, GameRepository>();
     services.AddSingleton<ILobbyManager, LobbyManager>();
+    services.AddScoped<IRandomPicker, RandomGenerator>();
 }
 
 
