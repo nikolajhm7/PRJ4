@@ -114,7 +114,7 @@ namespace Client.UI.ViewModels
         {
             _preferenceManager.Remove("auth_token");
             _preferenceManager.Remove("refresh_token");
-            await _navigationService.NavigateToPage("//"+nameof(LoginPage));
+            await _navigationService.NavigateToPage(nameof(LoginPage));
         }
 
         [RelayCommand]

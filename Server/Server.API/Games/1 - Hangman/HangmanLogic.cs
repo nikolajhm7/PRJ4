@@ -18,12 +18,18 @@ namespace Server.API.Games
             return _secretWord;
         }
 
-        public bool GuessLetter(char letter)
+        public bool GuessLetter(char letter, out List<int> positions)
         {
             letter = char.ToLower(letter);
-            if (!char.IsLetter(letter) || _guessedLetters.Contains(letter)) return false;
+            if (!char.IsLetter(letter) || _guessedLetters.Contains(letter))
+            {
+                positions = [];
+                return false;
+            }
 
             _guessedLetters.Add(letter);
+
+            positions = FindLetterPositions(letter);
             return _secretWord.Contains(letter);
         }
 
@@ -34,6 +40,12 @@ namespace Server.API.Games
 
             SelectRandomWord();
             return _secretWord;
+        }
+        
+        public bool IsGameOver()
+        {
+            var isWin = !_secretWord.Any(c => !_guessedLetters.Contains(c));
+            return isWin || _currentGuessCount >= _maxIncorrectGuesses;
         }
 
         private void SelectRandomWord()
@@ -46,11 +58,18 @@ namespace Server.API.Games
             //List<string> wordsInCategory = wordCategories[category];
             _secretWord = wordsInCategory[_rand.Next(wordsInCategory.Count)].ToUpper();
         }
-        
-        public bool IsGameOver()
+
+        private List<int> FindLetterPositions(char letter)
         {
-            var isWin = !_secretWord.Any(c => !_guessedLetters.Contains(c));
-            return isWin || _currentGuessCount >= _maxIncorrectGuesses;
+            List<int> positions = new List<int>();
+            for (int i = 0; i < _secretWord.Length; i++)
+            {
+                if (_secretWord[i] == letter)
+                {
+                    positions.Add(i);
+                }
+            }
+            return positions;
         }
     }
 }

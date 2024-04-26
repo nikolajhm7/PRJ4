@@ -3,6 +3,10 @@ using Server.API.Models;
 using Server.API.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Server.API.Services.Interfaces;
+using Server.API.Services;
+using System.Text.RegularExpressions;
+using Server.API.Repositories;
+using Server.API.Repository.Interfaces;
 
 namespace Server.API.Hubs
 {
@@ -28,8 +32,7 @@ namespace Server.API.Hubs
                 return new ActionResult(false, "Authentication context is not available.");
             }
 
-            _logger.LogDebug("Create a new lobby using lobbymanager.");
-            var lobbyId = _lobbyManager.CreateNewLobby(new ConnectedUserDTO(username, Context.ConnectionId), gameId);
+            var lobbyId = await _lobbyManager.CreateNewLobby(new ConnectedUserDTO(username, Context.ConnectionId), gameId);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
             _logger.LogInformation("Lobby {LobbyId} created by {UserName}.", lobbyId, username);
@@ -52,12 +55,17 @@ namespace Server.API.Hubs
             {
                 var user = new ConnectedUserDTO(username, Context.ConnectionId);
 
+                var result = _lobbyManager.AddToLobby(user, lobbyId);
+                if (!result.Success)
+                {
+                    _logger.LogError("Failed to join lobby {LobbyId} by user {UserName}.", lobbyId, username);
+                    return result;
+                }
+
                 foreach (var member in _lobbyManager.GetUsersInLobby(lobbyId))
                 {
                     await Clients.Caller.SendAsync("UserJoinedLobby", member);
                 }
-
-                _lobbyManager.AddToLobby(user, lobbyId);
 
                 await Clients.Group(lobbyId).SendAsync("UserJoinedLobby", user);
                 await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
