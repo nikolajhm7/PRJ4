@@ -75,7 +75,21 @@
             BackgroundColor="Bisque"
             IsVisible="{Binding GamesShowing}"
             Command="{Binding ChangeViewCommand}"/>
-        
+            
+        <Label Text="Friendslist" Grid.Column="0" HorizontalOptions="Center"/>
+        <ListView Grid.Column="0" ItemsSource="{Binding Friends}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout>
+                            <Label Text="{Binding Username}"/>
+                            <Label Text="{Binding Status}"/>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
         <ImageButton
             Source="{Binding Games[0].Image}"
             Aspect="AspectFit"

@@ -58,6 +58,7 @@ namespace Client.UI.ViewModels
             _apiService = apiService;
             SetAvatar();
             pullGames();
+            LoadFriendsAsync();
 
         }
 
@@ -147,6 +148,40 @@ namespace Client.UI.ViewModels
         {
             await _navigationService.NavigateToPage(nameof(JoinPage));
         }
+
+    [RelayCommand]
+    public async Task<List<FriendDTO>> RetrieveFriends(bool includeInvites)
+    {
+        ActionResult<List<FriendDTO>> result = await GetFriends(includeInvites);
+
+        if (result.Result is OkObjectResult okResult)
+        {
+            return okResult.Value as List<FriendDTO>;
+        }
+        else
+        {
+            // Handle error here, for example throw an exception or return an empty list
+            return new List<FriendDTO>();
+        }
+    }
+
+    private List<FriendDTO> _friends;
+    public List<FriendDTO> Friends
+    {
+        get
+        {
+            if (_friends == null)
+                LoadFriendsAsync();
+            return _friends;
+        }
+    }
+
+    private async void LoadFriendsAsync()
+    {
+        _friends = await RetrieveFriends(true); // true if you want to include invites
+        OnPropertyChanged(nameof(Friends)); // Notify the UI that the Friends property has changed
+    }
+        
+    
     }
 }
-
