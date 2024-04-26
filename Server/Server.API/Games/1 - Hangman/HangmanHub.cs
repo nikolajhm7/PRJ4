@@ -50,8 +50,9 @@ namespace Server.API.Games
         {
             if (_lobbyLogic.TryGetValue(lobbyId, out var logic))
             {
-                var isCorrect = logic.GuessLetter(letter);
-                await Clients.Group(logic.LobbyId).SendAsync("GuessResult", letter, isCorrect);
+                List<int> positions;
+                var isCorrect = logic.GuessLetter(letter, out positions);
+                await Clients.Group(logic.LobbyId).SendAsync("GuessResult", letter, isCorrect, positions);
 
                 var isWin = logic.IsGameOver();
                 if (isWin)
@@ -112,7 +113,7 @@ namespace Server.API.Games
             }
             else
             {
-                await Clients.Group(lobbyId).SendAsync("UserLeftLobby", user);
+                await Clients.Group(lobbyId).SendAsync("UserLeftLobby", user.Username);
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyId);
                 _lobbyManager.RemoveFromLobby(user, lobbyId);
                 _logger.LogInformation("{UserName} successfully left lobby {LobbyId}.", user.Username, lobbyId);

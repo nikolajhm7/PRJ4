@@ -5,6 +5,22 @@
              x:Class="Client.UI.App">
     <Application.Resources>
         <ResourceDictionary>
+            <Style TargetType="Button" x:Key="normalBtn">
+                <Setter Property="HeightRequest" Value="20" />
+                <Setter Property="BackgroundColor" Value="MediumPurple" />
+                <Setter Property="BorderWidth" Value="2" />
+                <Setter Property="BorderColor" Value="BlueViolet" />
+                <Setter Property="TextColor" Value="Black" />
+                <Setter Property="Padding" Value="0,10"/>
+                <Button.Triggers>
+                    <Trigger TargetType="Button" Property="IsPressed" Value="True">
+                        <Setter Property="BackgroundColor" Value="Gray" />
+                    </Trigger>
+                    <Trigger TargetType="Button" Property="IsPressed" Value="False">
+                        <Setter Property="BackgroundColor" Value="MediumPurple" />
+                    </Trigger>
+                </Button.Triggers>
+            </Style>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />

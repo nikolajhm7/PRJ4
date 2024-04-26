@@ -2,30 +2,27 @@
 using Server.API.Models;
 using Server.API.DTO;
 using Microsoft.AspNetCore.Authorization;
-using System.Reflection;
 using Server.API.Services.Interfaces;
 using Server.API.Services;
 using System.Text.RegularExpressions;
 using Server.API.Repositories;
+using Server.API.Repository.Interfaces;
 
 namespace Server.API.Hubs
 {
-    [Authorize]
+    [Authorize("Guest+")]
     public class LobbyHub : Hub
     {
-        public readonly Dictionary<string, Lobby> lobbies = [];
-
         private readonly ILogger<LobbyHub> _logger;
-        private readonly IIdGenerator _idGen;
         private readonly ILobbyManager _lobbyManager;
 
-        public LobbyHub(ILogger<LobbyHub> logger, IIdGenerator idGen, ILobbyManager lobbyManager)
+        public LobbyHub(ILogger<LobbyHub> logger, ILobbyManager lobbyManager)
         {
             _logger = logger;
-            _idGen = idGen;
-            _lobbyManager = new LobbyManager(_idGen);
+            _lobbyManager = lobbyManager;
         }
 
+        [Authorize]
         public async Task<ActionResult> CreateLobby(int gameId)
         {
             var username = Context.User?.Identity?.Name;
@@ -35,8 +32,7 @@ namespace Server.API.Hubs
                 return new ActionResult(false, "Authentication context is not available.");
             }
 
-            _logger.LogDebug("Create a new lobby using lobbymanager.");
-            var lobbyId = _lobbyManager.CreateNewLobby(new ConnectedUserDTO(username, Context.ConnectionId), gameId);
+            var lobbyId = await _lobbyManager.CreateNewLobby(new ConnectedUserDTO(username, Context.ConnectionId), gameId);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
             _logger.LogInformation("Lobby {LobbyId} created by {UserName}.", lobbyId, username);
@@ -44,7 +40,6 @@ namespace Server.API.Hubs
             return new ActionResult(true, lobbyId);
         }
 
-        [Authorize(Policy = "Guest+")]
         public async Task<ActionResult> JoinLobby(string lobbyId)
         {
             _logger.LogDebug("Attempting to join lobby {LobbyId} by user {UserName}.", lobbyId, Context.User?.Identity?.Name);
@@ -60,12 +55,17 @@ namespace Server.API.Hubs
             {
                 var user = new ConnectedUserDTO(username, Context.ConnectionId);
 
+                var result = _lobbyManager.AddToLobby(user, lobbyId);
+                if (!result.Success)
+                {
+                    _logger.LogError("Failed to join lobby {LobbyId} by user {UserName}.", lobbyId, username);
+                    return result;
+                }
+
                 foreach (var member in _lobbyManager.GetUsersInLobby(lobbyId))
                 {
                     await Clients.Caller.SendAsync("UserJoinedLobby", member);
                 }
-
-                _lobbyManager.AddToLobby(user, lobbyId);
 
                 await Clients.Group(lobbyId).SendAsync("UserJoinedLobby", user);
                 await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
@@ -80,7 +80,6 @@ namespace Server.API.Hubs
             }
         }
 
-        [Authorize(Policy = "Guest+")]
         public async Task<ActionResult> LeaveLobby(string lobbyId)
         {
             _logger.LogDebug("Attempting to leave lobby {LobbyId} by user {UserName}.", lobbyId, Context.User?.Identity?.Name);
@@ -107,6 +106,7 @@ namespace Server.API.Hubs
             }
         }
 
+        [Authorize]
         public async Task<ActionResult> StartGame(string lobbyId)
         {
             _logger.LogDebug("Attempting to start game in lobby {LobbyId} by user {UserName}.", lobbyId, Context.User?.Identity?.Name);
@@ -135,7 +135,6 @@ namespace Server.API.Hubs
             return new ActionResult(false, "Lobby does not exist.");
         }
 
-        [Authorize(Policy = "Guest+")]
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             _logger.LogDebug("Handling disconnect of user {UserName}.", Context.User?.Identity?.Name);

@@ -5,40 +5,69 @@
              xmlns:behaviors="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
              x:Class="Client.UI.Views.NewUserPage"
              x:DataType="viewModels:NewUserViewModel">
-    <VerticalStackLayout
-        Padding="20,0"
-        Spacing="10">
+
+    <Grid
+        ColumnDefinitions="*,4*,4*,*"
+        RowDefinitions="*,*,*,*,*,*,*,*,10"
+        RowSpacing="0"
+        Padding="0,0,0,10">
 
         <Label
-            Text="Make a new user"
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="4"
+            Text="Welcome to PartyPlayPalace!"
             Style="{StaticResource Headline}"
-            SemanticProperties.HeadingLevel="Level1" />
-
+            SemanticProperties.HeadingLevel="Level1"
+        />
         <Image
-            Source="logo.png"
-            HeightRequest="185"
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
             Aspect="AspectFit"
-            SemanticProperties.Description="Party Play Palace" />
-
+            Source="logo.png"
+            SemanticProperties.Description="Party Play Palace"
+        />
         <Entry Placeholder="Enter username"
+               HeightRequest="20"
+               Grid.Row="3"
+               Grid.Column="1"
+               Grid.ColumnSpan="2"
                Text="{Binding Username}" />
 
         <Entry Placeholder="Enter password"
+               HeightRequest="20"
+               Grid.Row="4"
+               Grid.Column="1"
+               Grid.ColumnSpan="2"
                Text="{Binding Password}" />
 
         <Entry Placeholder="Email"
-               Text="{Binding Email}" />
+               Text="{Binding Email}" 
+               HeightRequest="20"
+               Grid.Row="5"
+               Grid.Column="1"
+               Grid.ColumnSpan="2"/>
 
         <Button
             x:Name="CreateButton"
-            Text="Create" 
-            HorizontalOptions="Fill"
+            Style="{StaticResource normalBtn}"
+            Text="Make a new user" 
+            Grid.Row="6"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
             Command="{Binding MakeNewUserCommand}"/>
         <Button
             x:Name="Back"
-            Text="Back"
-            HorizontalOptions="Fill"
+
+            Style="{StaticResource normalBtn}"
+            Text="Back" 
+            Grid.Row="7"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
             Command="{Binding GoBackCommand}"/>
-    </VerticalStackLayout>
+
+    </Grid>
 
 </ContentPage>

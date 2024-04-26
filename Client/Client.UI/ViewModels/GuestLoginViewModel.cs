@@ -25,7 +25,7 @@ namespace Client.UI.ViewModels
             _jwtTokenService = jwtTokenService;
         }
 
-        [ObservableProperty] string _username = "Test123";
+        [ObservableProperty] string _username = "";
 
         [RelayCommand]
         public async Task GoBack()

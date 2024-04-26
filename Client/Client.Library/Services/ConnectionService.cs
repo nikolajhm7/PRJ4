@@ -78,13 +78,13 @@ namespace Client.Library.Services
             }
         }
 
-        public async Task<ActionResult> InvokeAsync(string methodName, params object[] args)
+        public async Task<ActionResult> InvokeAsync(string methodName, object? arg1)
         {
             await ConnectAsync();
 
             if (IsConnected)
             {
-                return await _hubConnection.InvokeAsync<ActionResult>(methodName, args[0]);
+                return await _hubConnection.InvokeAsync<ActionResult>(methodName, arg1);
             }
             else
             {
@@ -92,13 +92,27 @@ namespace Client.Library.Services
             }
         }
 
-        public async Task<ActionResult<T>> InvokeAsync<T>(string methodName, params object[] args)
+        public async Task<ActionResult> InvokeAsync(string methodName, object? arg1, object? arg2)
         {
             await ConnectAsync();
 
             if (IsConnected)
             {
-                return await _hubConnection.InvokeAsync<ActionResult<T>>(methodName, args);
+                return await _hubConnection.InvokeAsync<ActionResult>(methodName, arg1, arg2);
+            }
+            else
+            {
+                return new ActionResult(false, "No connection to server.");
+            }
+        }
+
+        public async Task<ActionResult<T>> InvokeAsync<T>(string methodName, object? arg1)
+        {
+            await ConnectAsync();
+
+            if (IsConnected)
+            {
+                return await _hubConnection.InvokeAsync<ActionResult<T>>(methodName, arg1);
             }
             else
             {   
@@ -107,12 +121,22 @@ namespace Client.Library.Services
             }
         }
 
+        public void On(string methodName, Action handler)
+        {
+            _hubConnection.On(methodName, handler);
+        }
+
         public void On<T>(string methodName, Action<T> handler)
         {
             _hubConnection.On(methodName, handler);
         }
 
-        public void On(string methodName, Action handler)
+        public void On<T1, T2>(string methodName, Action<T1, T2> handler)
+        {
+            _hubConnection.On(methodName, handler);
+        }
+
+        public void On<T1, T2, T3>(string methodName, Action<T1, T2, T3> handler)
         {
             _hubConnection.On(methodName, handler);
         }

@@ -53,11 +53,11 @@ namespace Client.UI.ViewModels
         }
 
         [ObservableProperty]
-        string _username = "Test123";
+        string _username = "";
         [ObservableProperty]
-        string _password = "Test123Test123";
+        string _password = "";
         [ObservableProperty]
-        string _email = "Test@123.com";
+        string _email = "";
 
         [RelayCommand]
         public async Task GoBack()
@@ -88,7 +88,7 @@ namespace Client.UI.ViewModels
             else if (await Check(_username, _password, _email))
             {
                 await Shell.Current.DisplayAlert("Succses", $"{Username} was created","OK");
-                await _navigationService.NavigateToPage(nameof(LoginPage));
+                await _navigationService.NavigateBack();
                 return;
             }
         }

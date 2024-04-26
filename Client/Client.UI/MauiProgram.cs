@@ -11,6 +11,7 @@ using Client.Library.Services;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Serilog;
+using Client.Library.Games;
 using Client.Library;
 using Client.Library.Services.Interfaces;
 
@@ -75,6 +76,7 @@ namespace Client.UI
 
             builder.Services.AddSingleton<ILobbyService, LobbyService>();
             builder.Services.AddSingleton<IFriendsService, FriendsService>();
+            builder.Services.AddSingleton<IHangmanService, HangmanService>();
 
             builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
             
@@ -84,12 +86,6 @@ namespace Client.UI
             builder.Services.AddSingleton<INavigationService, NavigationService>();
 
             builder.Services.AddHttpClient("ApiHttpClient");
-
-            builder.Services.AddTransient<GamePage>();  // til game branch
-            builder.Services.AddTransient<GameViewModel>();
-
-            builder.Services.AddTransient<ChatAppPage>();
-            builder.Services.AddTransient<ChatAppViewModel>();
 
             builder.Services.AddTransient<GamePage>();  // til game branch
             builder.Services.AddTransient<GameViewModel>();

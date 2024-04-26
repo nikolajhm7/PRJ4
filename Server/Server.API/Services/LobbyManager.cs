@@ -1,5 +1,6 @@
 ﻿using Server.API.DTO;
 using Server.API.Models;
+using Server.API.Repository.Interfaces;
 using Server.API.Services.Interfaces;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
@@ -8,11 +9,13 @@ namespace Server.API.Services
     public class LobbyManager : ILobbyManager
     {
         private readonly IIdGenerator _idGenerator;
+        private readonly IServiceProvider _serviceProvider;
         public readonly Dictionary<string, Lobby> lobbies = [];
 
-        public LobbyManager(IIdGenerator idGenerator)
+        public LobbyManager(IIdGenerator idGenerator, IServiceProvider serviceProvider)
         {
             _idGenerator = idGenerator;
+            _serviceProvider = serviceProvider;
         }
 
         public bool LobbyExists(string lobbyId)
@@ -48,7 +51,7 @@ namespace Server.API.Services
             else return [];
         }
 
-        public string CreateNewLobby(ConnectedUserDTO user, int gameId)
+        public async Task<string> CreateNewLobby(ConnectedUserDTO user, int gameId)
         {
             string? lobbyId = null;
             while (lobbyId == null)
@@ -60,17 +63,26 @@ namespace Server.API.Services
                 }
             }
 
-            var lobby = new Lobby(lobbyId, user.ConnectionId, gameId);
+            var gameRepository = _serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IGameRepository>();
+
+            var maxPlayers = await gameRepository.GetMaxPlayers(gameId);
+            var lobby = new Lobby(lobbyId, user.ConnectionId, gameId, maxPlayers);
             lobby.Members.Add(user);
             lobbies.Add(lobbyId, lobby);
 
             return lobbyId;
         }
 
-        public void AddToLobby(ConnectedUserDTO user, string lobbyId)
+        public ActionResult AddToLobby(ConnectedUserDTO user, string lobbyId)
         {
             if (lobbies.TryGetValue(lobbyId, out Lobby? lobby))
+            {
+                if (lobby.Members.Count >= lobby.MaxPlayers) return new(false, "Lobby is full");
+
                 lobby.Members.Add(user);
+                return new(true, null);
+            }
+            else return new(false, "Could not find lobby");
         }
 
         public void RemoveFromLobby(ConnectedUserDTO user, string lobbyId)

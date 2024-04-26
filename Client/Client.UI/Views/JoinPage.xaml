@@ -4,18 +4,29 @@
              x:DataType="viewModels:JoinViewModel"
              x:Class="Client.UI.Views.JoinPage">
 
+    <Grid
+        ColumnDefinitions="50,*,50"
+        RowDefinitions="*,*,*,*,*"
+        >
 
-    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center"
-                 Padding="10"
-                 Spacing="20">
         <Entry Placeholder="Enter LobbyId"
-            Text="{Binding LobbyId}"/>
+               Grid.Row="0"
+               Grid.Column="1"
+               HeightRequest="20"
+               Text="{Binding LobbyId}"/>
+
         <Button Text="Join"
+            Style="{StaticResource normalBtn}"
+            Grid.Row="1"
+            Grid.Column="1"
             Command ="{Binding GoToLobbyCommand}"/>
 
         <Button
             Text="Back"
-        HorizontalOptions="Fill"
-        Command="{Binding GoBackCommand}"/>
-    </VerticalStackLayout>
+            Grid.Row="2"
+            Grid.Column="1"
+            Style="{StaticResource normalBtn}"
+            Command="{Binding GoBackCommand}"/>
+    </Grid>
+
 </ContentPage>

@@ -7,11 +7,11 @@
              x:DataType="viewModels:LoginViewModel"
              Title="LoginPage">
 
-    <Grid
+        <Grid
         ColumnDefinitions="*,4*,4*,*"
-        RowDefinitions="*,*,*,*,*,*,*,*"
-        RowSpacing="10"
-        Padding="10">
+        RowDefinitions="*,*,*,*,*,*,*,*,10"
+        RowSpacing="0"
+        Padding="0,0,0,10">
 
         <Label
             Grid.Row="0"
@@ -31,14 +31,14 @@
             SemanticProperties.Description="Party Play Palace"
         />
         <Entry Placeholder="Enter username"
-               Height="25"
+               HeightRequest="20"
                Grid.Row="3"
                Grid.Column="1"
                Grid.ColumnSpan="2"
                Text="{Binding LoginUsername}" />
 
         <Entry Placeholder="Enter password"
-               Height="25"
+               HeightRequest="20"
                Grid.Row="4"
                Grid.Column="1"
                Grid.ColumnSpan="2"
@@ -46,8 +46,8 @@
 
         <Button
             x:Name="LoginBtn"
-            Text="Login" 
-            Height="20"
+            Style="{StaticResource normalBtn}"
+            Text="Login"
             Grid.Row="5"
             Grid.Column="1"
             Grid.ColumnSpan="2"
@@ -55,20 +55,22 @@
 
         <Button
             x:Name="NewUserBtn"
+            Style="{StaticResource normalBtn}"
             Text="Make a new user" 
-            Height="20"
             Grid.Row="6"
             Grid.Column="1"
             Grid.ColumnSpan="2"
-            Command="{Binding GoToNewUserCommand}"/>
+            Command="{Binding GoToNewUserCommand}">
+            </Button>
 
         <Button
             x:Name="GuestJoinBtn"
+            Style="{StaticResource normalBtn}"
             Text="Join as Guest" 
-            Height="20"
             Grid.Row="7"
             Grid.Column="1"
             Grid.ColumnSpan="2"
-            Command="{Binding JoinAsGuestCommand}"/>
+            Command="{Binding JoinAsGuestCommand}">
+        </Button>
     </Grid>
 </ContentPage>
