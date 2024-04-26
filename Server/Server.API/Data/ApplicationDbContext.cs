@@ -111,19 +111,19 @@ public class ApplicationDbContext : IdentityDbContext<User>
         {
             GameId = 1,
             MaxPlayers = 10,
-            Name = "Hangman"
+            Name = "hangman"
         };
         var game2 = new Game()
         {
             GameId = 2,
             MaxPlayers = 2,
-            Name = "TicTacToe"
+            Name = "krydsogbolle"
         };
         var game3 = new Game()
         {
             GameId = 3,
             MaxPlayers = 2,
-            Name = "Rock, Paper, Scissors"
+            Name = "stensakspapir"
         };
 
         modelBuilder.Entity<Game>().HasData(game1);
