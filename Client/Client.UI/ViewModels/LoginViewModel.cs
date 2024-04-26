@@ -50,7 +50,7 @@ public partial class LoginViewModel : ObservableObject
     {
         if (await _jwtTokenService.IsAuthenticated())
         {
-            await _navigationService.NavigateToPage($"//{nameof(PlatformPage)}");
+            await _navigationService.NavigateToPage(nameof(PlatformPage));
         }
     }
     [ObservableProperty]
@@ -82,7 +82,7 @@ public partial class LoginViewModel : ObservableObject
 
         if (await LoginAsync(LoginUsername, LoginPassword))
         {
-            await _navigationService.NavigateToPage($"//{nameof(PlatformPage)}");
+            await _navigationService.NavigateToPage(nameof(PlatformPage));
         }
         else
         {
