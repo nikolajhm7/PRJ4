@@ -8,6 +8,12 @@
     Shell.FlyoutBehavior="Disabled"
     Title="Client.UI">
 
+
+    <ShellContent
+        Title="Platform"
+        ContentTemplate="{DataTemplate views:PlatformPage}"
+        Route="PlatformPage" />
+        
     <ShellContent
         Title="LoadingPage"
         ContentTemplate="{DataTemplate views:LoadingPage}"

@@ -9,6 +9,8 @@ using Client.UI.Managers;
 using Client.UI.Views;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Client.Library.Models;
+using Client.Library.DTO;
 
 namespace Client.UI.ViewModels
 {
@@ -36,6 +38,15 @@ namespace Client.UI.ViewModels
 
         private IPreferenceManager _preferenceManager;
 
+        private ObservableCollection<string> friendsCollection;
+        public ObservableCollection<string> FriendsCollection
+        {
+            get { return friendsCollection; }
+            set { SetProperty(ref friendsCollection, value); }
+        }
+
+        private readonly IFriendsService _friendsService;
+
         private ObservableCollection<Game> games;
         public ObservableCollection<Game> Games
         {
@@ -43,7 +54,7 @@ namespace Client.UI.ViewModels
             set { SetProperty(ref games, value); }
         }
 
-        public PlatformViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, INavigationService navigationService, ILobbyService lobbyService, IPreferenceManager preferenceManager, IJwtTokenService jwtTokenService, IApiService apiService)
+        public PlatformViewModel(IFriendsService friendsService, IHttpClientFactory httpClientFactory, IConfiguration configuration, INavigationService navigationService, ILobbyService lobbyService, IPreferenceManager preferenceManager, IJwtTokenService jwtTokenService, IApiService apiService)
         {
             _configuration = configuration;
             _lobbyService = lobbyService;
@@ -51,6 +62,7 @@ namespace Client.UI.ViewModels
             _preferenceManager = preferenceManager;
             _jwtTokenService = jwtTokenService;
             _apiService = apiService;
+            _friendsService = friendsService;
             //SetAvatar();
             //pullGames();
         }
@@ -59,6 +71,7 @@ namespace Client.UI.ViewModels
         {
             SetAvatar();
             pullGames();
+            RetrieveFriends();
         }
         public void SetImagesForGames()
         {
@@ -156,6 +169,28 @@ namespace Client.UI.ViewModels
         async Task GoToJoin(string s)
         {
             await _navigationService.NavigateToPage(nameof(JoinPage));
+        }
+        [RelayCommand]
+        public async Task RetrieveFriends()
+        {
+            ActionResult<List<FriendDTO>> temp = await _friendsService.GetFriends(true);
+                if (temp.Success)
+                {
+                foreach (var friendDTO in temp.Value)
+                    {
+                        FriendsCollection.Add(friendDTO.Name);
+                    }
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Error", "Failed to get friends", "OK");
+                }
+        }
+
+        [RelayCommand]
+        public async Task AddNewFriend(string s)
+        {
+            _friendsService.SendFriendRequest(s);
         }
     }
 }

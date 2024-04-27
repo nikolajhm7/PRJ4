@@ -5,9 +5,7 @@
              xmlns:behaviors="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
              xmlns:local="clr-namespace:Client.Library.Models"
              x:Class="Client.UI.Views.PlatformPage"
-             x:DataType="viewModels:PlatformViewModel"
             >
-
     <Grid
         Padding="50,0"
         RowDefinitions="*,*,*,*,10"
@@ -106,6 +104,21 @@
             IsVisible="{Binding GamesShowing}"
             Command ="{Binding GoToLobbyCommand}"
             CommandParameter="{Binding Games[3]}"/>
+
+        <StackLayout Grid.Column="0" Grid.Row="0" Grid.RowSpan="5">
+            <Label Text="Friends List" HorizontalOptions="Center" />
+        
+            <CollectionView
+                ItemsSource="{Binding FriendsCollection}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <Label Text="{Binding}" />
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
 
 
 
