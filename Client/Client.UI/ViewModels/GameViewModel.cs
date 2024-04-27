@@ -34,6 +34,7 @@ namespace Client.UI.ViewModels
         public object Title { get; }
         public object SubmitLetterCommand { get; }
         public object Players { get; }
+        public object ErrorCounter { get; }
 
 
         // Other properties and methods...
@@ -62,6 +63,20 @@ namespace Client.UI.ViewModels
             catch (Exception ex)
             {
                 Console.WriteLine($"Error guessing letter: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        private async Task RestartGame() // Needs LobbyID as parameter, but cant be passed for now
+        {
+            string lobbyId = "YourLobbyId"; // Replace "YourLobbyId" with the actual lobby ID
+            try
+            {
+                //await _hangmanService.RestartGame(lobbyId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error restarting game: {ex.Message}");
             }
         }
 
