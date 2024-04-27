@@ -29,9 +29,6 @@ namespace Client.UI.ViewModels
         private readonly INavigationService _navigationService;
 
         [ObservableProperty] private string? lobbyId;
-        //[ObservableProperty] private string? image;
-        //[ObservableProperty] private string? name;
-        //[ObservableProperty] private int? gameId;
         [ObservableProperty] private Game? recivedgame;
 
         [ObservableProperty] private Lobby lobby = new Lobby();

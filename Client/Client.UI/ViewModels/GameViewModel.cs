@@ -15,64 +15,77 @@ using System.Windows.Input;
 using Microsoft.Maui.Controls;
 namespace Client.UI.ViewModels
 {
-    public partial class GameViewModel : ObservableObject, INotifyPropertyChanged
+    [QueryProperty(nameof(LobbyId), "LobbyId")]
+    public partial class GameViewModel : ObservableObject
     {
-        //private readonly IHangmanService _hangmanService;
+        private readonly IHangmanService _hangmanService;
 
-        public GameViewModel(/*IHangmanService hangmanService*/)
+        public GameViewModel(IHangmanService hangmanService)
         {
-            //_hangmanService = hangmanService;
+            _hangmanService = hangmanService;
+            guessedChars = new ObservableCollection<char>();
 
-            // Initialize commands
-            GuessLetterCommand = new Command<char>(GuessLetter);
-
-
+            //_hangmanService.GameStartedEvent += OnGameStarted;
+            //_hangmanService.GuessResultEvent += OnGuessResult;
+            //_hangmanService.GameOverEvent += OnGameOver;
+            
         }
 
         // Define command properties
-        public ICommand GuessLetterCommand { get; }
-        public object Title { get; }
-        public object SubmitLetterCommand { get; }
-        public object Players { get; }
-        public object ErrorCounter { get; }
+        public string Title { get; }
+        public int Players { get; }
+        [ObservableProperty] private int errorCounter;
+        [ObservableProperty] private string? lobbyId;
+        [ObservableProperty] private char? letter;
+        ObservableCollection<char> guessedChars;
 
+        public ObservableCollection<char> GuessedChars
+        {
+            get { return guessedChars; }
+            set { SetProperty(ref guessedChars, value); }
+        }
+        public void OnPageAppearing()
+        {
+            StartGame();
+        }
 
-        // Other properties and methods...
+        //private void OnGameStart()
+        //{
+        //    _hangmanService.
+        //}
 
         [RelayCommand]
-        private async Task StartGame() // Needs LobbyID as parameter, but cant be passed for now
+        private async Task StartGame()
         {
-            string lobbyId = "YourLobbyId"; // Replace "YourLobbyId" with the actual lobby ID
             try
             {
-                //await _hangmanService.StartGame(lobbyId);
+                await _hangmanService.StartGame(LobbyId);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error starting game: {ex.Message}");
             }
         }
-
-        private async void GuessLetter(char letter)
+        [RelayCommand]
+        private void GuessLetter(char letter)
         {
-            string lobbyId = "YourLobbyId"; // Replace "YourLobbyId" with the actual lobby ID
-            try
-            {
-                //await _hangmanService.GuessLetter(lobbyId, letter);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error guessing letter: {ex.Message}");
-            }
+            guessedChars.Add(letter);
+            //try
+            //{
+            //    await _hangmanService.GuessLetter(LobbyId, letter);
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Error guessing letter: {ex.Message}");
+            //}
         }
 
         [RelayCommand]
-        private async Task RestartGame() // Needs LobbyID as parameter, but cant be passed for now
+        private async Task RestartGame()
         {
-            string lobbyId = "YourLobbyId"; // Replace "YourLobbyId" with the actual lobby ID
             try
             {
-                //await _hangmanService.RestartGame(lobbyId);
+                await _hangmanService.RestartGame(LobbyId);
             }
             catch (Exception ex)
             {
