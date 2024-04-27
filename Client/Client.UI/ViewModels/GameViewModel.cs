@@ -9,79 +9,38 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using System.Collections.ObjectModel;
-
+using System.ComponentModel;
+using Client.Library.Games;
+using System.Windows.Input;
+using Microsoft.Maui.Controls;
 namespace Client.UI.ViewModels
 {
-    public partial class GameViewModel : ObservableObject
+    public partial class GameViewModel : ObservableObject, INotifyPropertyChanged
     {
-        private readonly HubConnection _connection;
+        private readonly IHangmanService _hangmanService;
 
-        [ObservableProperty]
-        string _name;
-
-        [ObservableProperty]
-        string _message;
-
-        [ObservableProperty]
-        ObservableCollection<string> _messages;
-
-        [ObservableProperty]
-        bool _isConnected;
-
-        public GameViewModel()
+        public GameViewModel(IHangmanService hangmanService)
         {
-            _connection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:5008/HangmanGame")
-                .Build();
+            _hangmanService = hangmanService;
 
-            _connection.On<string>("InvalidCategory", (message) =>
-            {
-                Console.WriteLine("Invalid category selected.");
-            });
-
-            _connection.On<int>("GameStarted", (wordLength) =>
-            {
-                Console.WriteLine($"Game started. Word length: {wordLength}");
-            });
-
-            _connection.On<char, bool>("GuessResult", (letter, isCorrect) =>
-            {
-                Console.WriteLine($"Guess result: Letter '{letter}', Correct: {isCorrect}");
-            });
+            // Initialize commands
+            GuessLetterCommand = new Command<char>(GuessLetter);
 
 
-            //_connection.On<int>("GameStarted", (message) => 
-            //{
-            //    for (int i = 0; i < message; i++)
-            //    {
-            //        secretWord.Text += "_ ";
-            //    }
-            //});
-
-            _connection.On<bool, string>("GameOver", (isWin, secretWord) =>
-            {
-                if (isWin)
-                {
-                    Console.WriteLine($"You won! The word was: {secretWord}");
-                }
-                else
-                {
-                    Console.WriteLine($"Game over! The word was: {secretWord}");
-                }
-            });
         }
 
-        public object GuessedWord { get; }
-        public object StartGameCommand { get; }
+        // Define command properties
+        public ICommand GuessLetterCommand { get; }
 
-        private async void StartGame(object sender, EventArgs e)
+        // Other properties and methods...
+
+        [RelayCommand]
+        private async Task StartGame() // Needs LobbyID as parameter, but cant be passed for now
         {
-            string category = "Animals";
-
+            string lobbyId = "YourLobbyId"; // Replace "YourLobbyId" with the actual lobby ID
             try
             {
-                await _connection.StartAsync();
-                await _connection.InvokeAsync("StartGame", category);
+                await _hangmanService.StartGame(lobbyId);
             }
             catch (Exception ex)
             {
@@ -89,22 +48,19 @@ namespace Client.UI.ViewModels
             }
         }
 
-        public async Task GuessLetter(char letter)
+        private async void GuessLetter(char letter)
         {
+            string lobbyId = "YourLobbyId"; // Replace "YourLobbyId" with the actual lobby ID
             try
             {
-                await _connection.InvokeAsync("MakeMove", letter);
+                await _hangmanService.GuessLetter(lobbyId, letter);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error making move: {ex.Message}");
+                Console.WriteLine($"Error guessing letter: {ex.Message}");
             }
         }
 
-        //private async void OnStartClicked(object sender, EventArgs e)
-        //{
-        //    await _connection.InvokeCoreAsync("StartGame", args: new[]
-        //    {});
-        //}
     }
 }
+

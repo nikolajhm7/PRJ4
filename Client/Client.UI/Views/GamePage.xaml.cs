@@ -9,8 +9,8 @@ namespace Client.UI.Views
 
         public GamePage(GameViewModel vm)
         {
+            this.BindingContext = vm;
             InitializeComponent();
-            BindingContext = vm;
         }
         
     }

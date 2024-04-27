@@ -8,7 +8,7 @@
     <ContentPage.Content>
         <StackLayout Padding="20">
             <!-- Guessed word -->
-            <Label Text="{Binding GuessedWord}" FontSize="24" HorizontalOptions="Center" />
+            <Label Text="{Binding GuessLetterCommand}" FontSize="24" HorizontalOptions="Center" />
 
             <!-- Hangman drawing -->
             <Image Source="hangman_0.png" HorizontalOptions="Center" />
