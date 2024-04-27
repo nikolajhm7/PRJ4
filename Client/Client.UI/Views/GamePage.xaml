@@ -5,18 +5,58 @@
              x:Class="Client.UI.Views.GamePage"
              x:DataType="viewModels:GameViewModel"
              Title="GamePage">
-    <Grid RowDefinitions="Auto, *">
+
+    <ScrollView>
+        <Grid RowDefinitions=".6*, .4*">
+
+            <VerticalStackLayout Spacing="10">
+                <Label HorizontalTextAlignment="Center"
+                       FontAttributes="Bold"
+                       Text="{Binding ErrorCounter}"
+                       />
+                <Button
+                    Source="{Binding CurrentImage}"
+                    SemanticProperties.Description="the hanger, specifying how many times the user has made an error!"
+                    HeightRequest="200"/>
+
+                <Label HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       FontSize="30"
+                       Text="{Binding Spotlight}"/>
+
+                <Label HorizontalOptions="Center"
+                       FontSize="35"
+                       Text="{Binding Message}"/>
+
+                <Button HorizontalOptions="Center"
+                        WidthRequest="100"
+                        Text="Reset"
+                        Clicked="Reset_Button_Clicked"/>
+
+            </VerticalStackLayout>
+
+            <Entry Grid.Row="1"
+                   HorizontalOptions="Center"
+                   Placeholder="Enter letter"/>
+
+        </Grid>
+
+    </ScrollView>
+
+
+    <Grid RowDefinitions="1*, 1*, 1*, 1">
         <Label Text="{Binding Title}" />
-        <Button Text="Start Game" Command="{Binding StartGameCommand}" />
+        <Button Text="Start Game Now" Command="{Binding StartGameCommand}" />
 
         <Entry Grid.Row="4"
                HorizontalOptions="Center"
                Placeholder="Enter letter"
                ></Entry>
-        <Button Grid.Row="5"
+        <Button Grid.Row="3"
                 Text="Submit"
                 Command="{Binding SubmitLetterCommand}"
                 ></Button>
+
 
         <!--List of players:-->
         <CollectionView ItemsSource="{Binding Players}">

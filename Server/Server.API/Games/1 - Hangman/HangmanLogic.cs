@@ -7,7 +7,7 @@ namespace Server.API.Games
 {
     public class HangmanLogic(IRandomPicker picker)
     {
-        private readonly int _maxIncorrectGuesses = 5;
+        private readonly int _maxIncorrectGuesses = 6;
         private string _secretWord = "";
         public string SecretWord { get { return _secretWord; } }
         private int _currentGuessCount = 0;

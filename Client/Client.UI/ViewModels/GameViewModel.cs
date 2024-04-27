@@ -17,11 +17,11 @@ namespace Client.UI.ViewModels
 {
     public partial class GameViewModel : ObservableObject, INotifyPropertyChanged
     {
-        private readonly IHangmanService _hangmanService;
+        //private readonly IHangmanService _hangmanService;
 
-        public GameViewModel(IHangmanService hangmanService)
+        public GameViewModel(/*IHangmanService hangmanService*/)
         {
-            _hangmanService = hangmanService;
+            //_hangmanService = hangmanService;
 
             // Initialize commands
             GuessLetterCommand = new Command<char>(GuessLetter);
@@ -44,7 +44,7 @@ namespace Client.UI.ViewModels
             string lobbyId = "YourLobbyId"; // Replace "YourLobbyId" with the actual lobby ID
             try
             {
-                await _hangmanService.StartGame(lobbyId);
+                //await _hangmanService.StartGame(lobbyId);
             }
             catch (Exception ex)
             {
@@ -57,7 +57,7 @@ namespace Client.UI.ViewModels
             string lobbyId = "YourLobbyId"; // Replace "YourLobbyId" with the actual lobby ID
             try
             {
-                await _hangmanService.GuessLetter(lobbyId, letter);
+                //await _hangmanService.GuessLetter(lobbyId, letter);
             }
             catch (Exception ex)
             {
