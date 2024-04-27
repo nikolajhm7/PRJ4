@@ -31,6 +31,10 @@ namespace Client.UI.ViewModels
 
         // Define command properties
         public ICommand GuessLetterCommand { get; }
+        public object Title { get; }
+        public object SubmitLetterCommand { get; }
+        public object Players { get; }
+
 
         // Other properties and methods...
 
