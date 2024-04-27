@@ -28,7 +28,7 @@ namespace Client.UI.ViewModels
             //_hangmanService.GameStartedEvent += OnGameStarted;
             //_hangmanService.GuessResultEvent += OnGuessResult;
             //_hangmanService.GameOverEvent += OnGameOver;
-            
+
         }
 
         // Define command properties
@@ -49,10 +49,10 @@ namespace Client.UI.ViewModels
             StartGame();
         }
 
-        //private void OnGameStart()
-        //{
-        //    _hangmanService.
-        //}
+        private void OnGameStarted(int wordlength)
+        {
+            Console.WriteLine($"Game started with wordlength {wordlength}");
+        }
 
         [RelayCommand]
         private async Task StartGame()
