@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Client.Library.DTO;
 using Client.Library.Interfaces;
 using Client.Library.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
