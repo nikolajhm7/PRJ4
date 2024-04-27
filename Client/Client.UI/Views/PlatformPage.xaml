@@ -107,6 +107,21 @@
             Command ="{Binding GoToLobbyCommand}"
             CommandParameter="{Binding Games[3]}"/>
 
+        <ListView ItemsSource="{Binding Friends}"
+                  Grid.Row="1"
+                  Grid.Column="0"
+                  Grid.RowSpan="4">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout>
+                            <Label Text="{Binding}" />
+                            <!-- You can add more labels or other views here to display other properties of FriendDTO -->
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
 
     </Grid>

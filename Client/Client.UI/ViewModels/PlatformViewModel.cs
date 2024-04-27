@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Client.Library.DTO;
 using Client.Library.Interfaces;
 using Client.Library.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -36,6 +37,17 @@ namespace Client.UI.ViewModels
 
         private IPreferenceManager _preferenceManager;
 
+        private IFriendsService _friendService;
+
+        private ObservableCollection<string> friends;
+
+        public ObservableCollection<string> Friends
+        {
+            get { return friends; }
+            set { SetProperty(ref friends, value); }
+        }
+
+
         private ObservableCollection<Game> games;
         public ObservableCollection<Game> Games
         {
@@ -43,7 +55,7 @@ namespace Client.UI.ViewModels
             set { SetProperty(ref games, value); }
         }
 
-        public PlatformViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, INavigationService navigationService, ILobbyService lobbyService, IPreferenceManager preferenceManager, IJwtTokenService jwtTokenService, IApiService apiService)
+        public PlatformViewModel( IHttpClientFactory httpClientFactory, IConfiguration configuration, INavigationService navigationService, ILobbyService lobbyService, IPreferenceManager preferenceManager, IJwtTokenService jwtTokenService, IApiService apiService)
         {
             _configuration = configuration;
             _lobbyService = lobbyService;
@@ -59,6 +71,7 @@ namespace Client.UI.ViewModels
         {
             SetAvatar();
             pullGames();
+            GetFriendList();
         }
         public void SetImagesForGames()
         {
@@ -156,6 +169,37 @@ namespace Client.UI.ViewModels
         async Task GoToJoin(string s)
         {
             await _navigationService.NavigateToPage(nameof(JoinPage));
+        }
+        [RelayCommand] 
+        async Task Addfriend(string s)
+        {
+            await _friendService.SendFriendRequest(s);
+        }
+        [RelayCommand]
+        async Task RemoveFriends(string s)
+        {
+            await _friendService.RemoveFriend(s);
+        }
+
+        [RelayCommand]
+        async Task AcceptFriend(string s)
+        {
+            await _friendService.AcceptFriendRequest(s);
+        }
+        async Task GetFriendList()
+        {
+            ActionResult<List<FriendDTO>> temp = await _friendService.GetFriends(true);
+            if (temp.Success)
+            {
+                foreach (var friendDTO in temp.Value)
+                {
+                    Friends.Add(friendDTO.Name);
+                }
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Error", "Failed to get friends", "OK");
+            }
         }
     }
 }
