@@ -12,6 +12,7 @@ using System.Diagnostics;
 using Client.Library.DTO;
 using Client.Library.Services;
 using Client.Library.Services.Interfaces;
+using Client.UI.Views;
 
 
 namespace Client.UI.ViewModels
@@ -88,6 +89,12 @@ namespace Client.UI.ViewModels
         async Task GoBack()
         {
             await _navigationService.NavigateBack();
+        }
+
+        [RelayCommand]
+        async Task GoToGame()
+        {
+            await _navigationService.NavigateToPage($"{nameof(GamePage)}?LobbyId={lobbyId}");
         }
 
         //Handle result of different functions, and error log if neccesary:
