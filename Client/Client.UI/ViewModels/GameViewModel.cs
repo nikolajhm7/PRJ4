@@ -20,6 +20,21 @@ namespace Client.UI.ViewModels
     public partial class GameViewModel : ObservableObject
     {
         private readonly IHangmanService _hangmanService;
+        // Define command properties
+        public string Title { get; set; }
+        public string StatusMessage { get; set; }
+        public int Players { get; }
+        [ObservableProperty] private int errorCounter;
+        [ObservableProperty] private string? lobbyId;
+        [ObservableProperty] private char? letter;
+        [ObservableProperty] private ObservableCollection<string> wordLength;
+        ObservableCollection<char> guessedChars;
+        [ObservableProperty] private string imageSource = "HangmanImages/img0.jpg";
+        public ObservableCollection<char> GuessedChars
+        {
+            get { return guessedChars; }
+            set { SetProperty(ref guessedChars, value); }
+        }
 
         public GameViewModel(IHangmanService hangmanService)
         {
@@ -32,23 +47,6 @@ namespace Client.UI.ViewModels
             _hangmanService.LobbyClosedEvent += OnLobbyClosed;
             _hangmanService.UserLeftLobbyEvent += OnUserLeftLobby;
         }
-
-        // Define command properties
-        public string Title { get; set; }
-        public string StatusMessage { get; set; }
-        public int Players { get; }
-        [ObservableProperty] private int errorCounter;
-        [ObservableProperty] private string? lobbyId;
-        [ObservableProperty] private char? letter;
-        [ObservableProperty] private ObservableCollection<string> wordLength;
-        ObservableCollection<char> guessedChars;
-        [ObservableProperty] private string imageSource = "HangmanImages/img0.jpg";
-
-        public ObservableCollection<char> GuessedChars
-        {
-            get { return guessedChars; }
-            set { SetProperty(ref guessedChars, value); }
-        }
         public void OnPageAppearing()
         {
             StartGame();
@@ -59,7 +57,7 @@ namespace Client.UI.ViewModels
             Console.WriteLine($"Game started with wordlength: {wordLength}");
             
             // Set the title
-            Title = "Hangman";
+            Title = "Welcome to Hangman!";
 
             // Set the message
             StatusMessage = "Game started!";
@@ -85,6 +83,7 @@ namespace Client.UI.ViewModels
             if (!isCorrect)
             {
                 ErrorCounter++;
+                ImageSource = $"HangmanImages/img{ErrorCounter}.jpg";
             }
         }
 

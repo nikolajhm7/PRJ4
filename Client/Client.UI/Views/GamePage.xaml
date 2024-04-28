@@ -26,6 +26,7 @@
             <Label
                 Grid.Row="0"
                 Grid.Column="2"
+                FontSize="32"
                 Text="{Binding Title}"/>
             
             <!--måske lav til listview-->
