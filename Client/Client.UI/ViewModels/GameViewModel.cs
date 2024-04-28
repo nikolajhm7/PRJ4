@@ -30,21 +30,21 @@ namespace Client.UI.ViewModels
             //_hangmanService.GuessResultEvent += OnGuessResult;
             //_hangmanService.GameOverEvent += OnGameOver;
 
-            //_hangmanService.GameStartedEvent += (wordLength) =>
-            //{
-            //   // Set the title
-            //   Title = "Hangman";
+            _hangmanService.GameStartedEvent += (wordLength) =>
+            {
+                // Set the title
+                Title = "Hangman";
 
-            //   // Set the message
-            //   Message = "Game started!";
+                // Set the message
+                StatusMessage = "Game started!";
 
-            //   // Set the error counter
-            //   ErrorCounter = 0;
+                // Set the error counter
+                ErrorCounter = 1;
 
-            //   // Set the letters status
-            //   WordLength = new ObservableCollection<string>(new string[wordLength]);
+                // Set the letters status
+                WordLength = new ObservableCollection<string>(new string[wordLength]);
 
-            //};
+            };
 
             //_hangmanService.GuessResultEvent += (letter, isCorrect, positions) =>
             //{
@@ -110,13 +110,15 @@ namespace Client.UI.ViewModels
         }
 
         // Define command properties
-        public string Title { get; }
+        public string Title { get; set; }
+        public string StatusMessage { get; set; }
         public int Players { get; }
         [ObservableProperty] private int errorCounter;
         [ObservableProperty] private string? lobbyId;
         [ObservableProperty] private char? letter;
         [ObservableProperty] private ObservableCollection<string> wordLength;
         ObservableCollection<char> guessedChars;
+        [ObservableProperty] private string imageSource = "HangmanImages/img0.jpg";
 
         public ObservableCollection<char> GuessedChars
         {
@@ -130,7 +132,7 @@ namespace Client.UI.ViewModels
 
         private void OnGameStarted(int wordlength)
         {
-            Console.WriteLine($"Game started with wordlength {wordlength}");
+            Console.WriteLine($"Game started with wordlength: {wordlength}");
         }
 
         [RelayCommand]
