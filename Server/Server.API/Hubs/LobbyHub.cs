@@ -78,6 +78,21 @@ namespace Server.API.Hubs
             }
         }
 
+        public async Task<ActionResult<Lobby>> GetLobbyInfo(string lobbyId)
+        {
+            var result = _lobbyManager.GetLobbyInfo(lobbyId);
+            return new(result.Success, result.Msg, result.Value);
+        }
+
+        public async Task<ActionResult> UserIsHost(string lobbyId)
+        {
+            if(_lobbyManager.IsHost(Context.ConnectionId, lobbyId))
+            {
+                return new(true, "User is the host of the lobby");
+            }
+            return new(false, "User is not the host of the lobby");
+        }
+
         public async Task<ActionResult> LeaveLobby(string lobbyId)
         {
             _logger.LogDebug("Attempting to leave lobby {LobbyId} by user {UserName}.", lobbyId, Context.User?.Identity?.Name);

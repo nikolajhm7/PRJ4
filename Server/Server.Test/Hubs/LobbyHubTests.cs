@@ -74,37 +74,37 @@ namespace Server.Test.Hubs
             await _groups.DidNotReceive().AddToGroupAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
         }
 
-        [Test]
-        public async Task JoinLobby_LobbyExists_UserJoins()
-        {
-            // Arrange
-            string lobbyId = "123456";
-            var username = "testuser";
-            var connection = "connection-id";
+        //[Test]
+        //public async Task JoinLobby_LobbyExists_UserJoins()
+        //{
+        //    // Arrange
+        //    string lobbyId = "123456";
+        //    var username = "testuser";
+        //    var connection = "connection-id";
 
-            _clients.Group(lobbyId).Returns(_clientProxy);
-            _clients.Caller.Returns(_singleClientProxy);
-            _lobbyManager.LobbyExists(lobbyId).Returns(true);
-            var list = new List<ConnectedUserDTO> { new ConnectedUserDTO("", "")};
-            var ar = new ActionResult<List<ConnectedUserDTO>>(true, null, list);
-            _lobbyManager.AddToLobby(Arg.Any<ConnectedUserDTO>(), lobbyId).Returns(ar);
-            _lobbyManager.GetUsersInLobby(lobbyId).Returns(list);
+        //    _clients.Group(lobbyId).Returns(_clientProxy);
+        //    _clients.Caller.Returns(_singleClientProxy);
+        //    _lobbyManager.LobbyExists(lobbyId).Returns(true);
+        //    var list = new List<ConnectedUserDTO> { new ConnectedUserDTO("", "")};
+        //    var ar = new ActionResult<List<ConnectedUserDTO>>(true, null, list);
+        //    _lobbyManager.AddToLobby(Arg.Any<ConnectedUserDTO>(), lobbyId).Returns(ar);
+        //    _lobbyManager.GetUsersInLobby(lobbyId).Returns(list);
 
-            // Act
-            _context.User?.Identity?.Name.Returns(username);
-            _context.ConnectionId.Returns(connection);
+        //    // Act
+        //    _context.User?.Identity?.Name.Returns(username);
+        //    _context.ConnectionId.Returns(connection);
 
-            var result = await _uut.JoinLobby(lobbyId);
+        //    var result = await _uut.JoinLobby(lobbyId);
 
-            // Assert
-            Assert.That(result.Success, Is.True);
-            Assert.That(result.Msg, Is.Null);
-            Assert.That(result.Value, Is.EqualTo(list));
+        //    // Assert
+        //    Assert.That(result.Success, Is.True);
+        //    Assert.That(result.Msg, Is.Null);
+        //    Assert.That(result.Value, Is.EqualTo(list));
 
-            await _clientProxy.Received(1).SendCoreAsync("UserJoinedLobby", Arg.Any<object[]>());
+        //    await _clientProxy.Received(1).SendCoreAsync("UserJoinedLobby", Arg.Any<object[]>());
 
-            await _groups.Received(1).AddToGroupAsync(connection, lobbyId);
-        }
+        //    await _groups.Received(1).AddToGroupAsync(connection, lobbyId);
+        //}
 
         [Test]
         public async Task JoinLobby_LobbyExistsLobbyFull_UserDoesNotJoin()

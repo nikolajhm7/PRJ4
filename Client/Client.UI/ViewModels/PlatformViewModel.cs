@@ -132,15 +132,12 @@ namespace Client.UI.ViewModels
                 var response = await _lobbyService.CreateLobbyAsync(someint);
                 if (response.Success)
                 {
-                    var box = new Dictionary<string, object>
+                    var responseBox = new Dictionary<string, object>
                     {
-                        //{"gameId", s.GameId},
-                        //{"name", s.Name},
-                        //{"image", s.Image},
-                        { "lobbyId", response.Msg },
-                        { "game", s }
+                        { "lobbyId", response.Msg }
                     };
-                    await Shell.Current.GoToAsync(nameof(LobbyPage), true, box);
+
+                    await Shell.Current.GoToAsync(nameof(LobbyPage), true, responseBox);
                 }
                 else
                 {
