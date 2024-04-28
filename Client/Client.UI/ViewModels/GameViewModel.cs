@@ -17,7 +17,7 @@ namespace Client.UI.ViewModels
 {
     [QueryProperty(nameof(LobbyId), "LobbyId")]
     //[QueryProperty(nameof(Players), "Players")]
-    public partial class GameViewModel : ObservableObject
+    public partial class GameViewModel : ObservableObject, INotifyPropertyChanged
     {
         private readonly IHangmanService _hangmanService;
         // Define command properties
@@ -27,20 +27,28 @@ namespace Client.UI.ViewModels
         [ObservableProperty] private int errorCounter;
         [ObservableProperty] private string? lobbyId;
         [ObservableProperty] private char? letter;
-       ObservableCollection<string> hiddenWord;
+        [ObservableProperty] private string hiddenWord;
         ObservableCollection<char> guessedChars;
         [ObservableProperty] private string imageSource = "HangmanImages/img0.jpg";
+
         public ObservableCollection<char> GuessedChars
         {
             get { return guessedChars; }
-            set { SetProperty(ref guessedChars, value); }
+            set 
+            { 
+                SetProperty(ref guessedChars, value); 
+            }
         }
 
-        public ObservableCollection<string> HiddenWord
-        {
-            get { return hiddenWord; }
-            set { SetProperty(ref hiddenWord, value); }
-        }
+        //public ObservableCollection<string> HiddenWord
+        //{
+        //    get { return hiddenWord; }
+        //    set
+        //    {
+        //        SetProperty(ref hiddenWord, value);
+        //        OnPropertyChanged(nameof(HiddenWord));
+        //    }
+        //}
 
         //public string ImageSource
         //{
@@ -52,7 +60,7 @@ namespace Client.UI.ViewModels
         {
             _hangmanService = hangmanService;
             guessedChars = new ObservableCollection<char>();
-            hiddenWord = new ObservableCollection<string>();
+            //hiddenWord = new ObservableCollection<string>();
 
             _hangmanService.GameStartedEvent += OnGameStarted;
             _hangmanService.GuessResultEvent += OnGuessResult;
@@ -87,19 +95,24 @@ namespace Client.UI.ViewModels
         {
             for (int i = 0; i < wordLength; i++)
             {
-                HiddenWord.Add("_");
+                HiddenWord += "_";
             }
         }
         private void OnGuessResult(char letter, bool isCorrect, List<int> positions)
         {
             Console.WriteLine($"Guess result: {letter}, {isCorrect}, {string.Join(",", positions)}");
 
-            // Update the letters status
-            for (int i = 0; i < positions.Count; i++)
-            {
-                HiddenWord[positions[i]] = isCorrect ? letter.ToString() : "_";
-            };
 
+            //Update the letters status
+            if (isCorrect) {
+                var hw = HiddenWord.ToCharArray();
+                for (int i = 0; i < positions.Count; i++)
+                {
+                    //HiddenWord[positions[i]] = isCorrect ? letter.ToString() : "_";
+                    hw[positions[i]] = letter;
+                };
+                HiddenWord = hw.ToString();
+            }
             // Update the error counter
             if (!isCorrect)
             {

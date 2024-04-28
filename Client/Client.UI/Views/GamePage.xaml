@@ -54,7 +54,23 @@
             <Label
                 Grid.Row="1"
                 Grid.Column="1"
-                Text="{Binding HiddenWord}"/>
+                Text="{Binding HiddenWord}"
+                FontSize="Large"
+                CharacterSpacing="10"/>
+
+            <!--<ListView ItemsSource="{Binding HiddenWord}"
+                      Grid.Row="1"
+                      Grid.Column="1">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout>
+                                <Label Text="{Binding}" />
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>-->
 
             <Label
                 Grid.Row="1"
