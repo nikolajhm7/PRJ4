@@ -19,6 +19,7 @@ public class ApiService : IApiService
     {
         _client = httpClientFactory.CreateClient();
         _client.BaseAddress = new Uri(configuration["ConnectionSettings:ApiUrl"]);
+        //_client.BaseAddress = new Uri("https://localhost:7230");
         _logger = logger;
         _preferenceManager = preferenceManager;
     }
@@ -36,8 +37,8 @@ public class ApiService : IApiService
                     new AuthenticationHeaderValue("Bearer", _preferenceManager.Get("auth_token", ""));
                 _client.DefaultRequestHeaders.Add("X-Refresh-Token", _preferenceManager.Get("refresh_token", ""));
             }
-
             
+            Debug.WriteLine(_client.ToString());
 
             switch (method.Method)
             {
