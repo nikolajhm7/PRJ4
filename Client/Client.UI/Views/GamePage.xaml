@@ -36,13 +36,6 @@
                 Text="{Binding Players}"/>
 
 
-        <!--<Button 
-                Style="{StaticResource normalBtn}"
-                Grid.Row="0"   
-                Grid.Column="2"
-                Text="Start Game"
-                Command="{Binding StartGameCommand}"/>-->
-
         <!--Elements for row 1-->
 
             <Entry 
@@ -57,20 +50,6 @@
                 Text="{Binding HiddenWord}"
                 FontSize="Large"
                 CharacterSpacing="10"/>
-
-            <!--<ListView ItemsSource="{Binding HiddenWord}"
-                      Grid.Row="1"
-                      Grid.Column="1">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <StackLayout>
-                                <Label Text="{Binding}" />
-                            </StackLayout>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>-->
 
             <Label
                 Grid.Row="1"
