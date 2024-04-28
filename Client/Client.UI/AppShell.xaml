@@ -11,9 +11,9 @@
     <!--<ShellContent
         Title="LoadingPage"
         ContentTemplate="{DataTemplate views:LoadingPage}"
-        Route="Loading" />-->
+        Route="Loading" />
     
-    <!--<ShellContent
+    <ShellContent
         Title="Login"
         ContentTemplate="{DataTemplate views:LoginPage}"
         Route="LoginPage" />

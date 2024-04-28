@@ -1,4 +1,5 @@
 
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Headers;
 using Client.Library.Interfaces;
@@ -35,6 +36,8 @@ public class ApiService : IApiService
                     new AuthenticationHeaderValue("Bearer", _preferenceManager.Get("auth_token", ""));
                 _client.DefaultRequestHeaders.Add("X-Refresh-Token", _preferenceManager.Get("refresh_token", ""));
             }
+
+            
 
             switch (method.Method)
             {

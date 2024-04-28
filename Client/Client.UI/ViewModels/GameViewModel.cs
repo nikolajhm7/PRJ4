@@ -67,17 +67,21 @@ namespace Client.UI.ViewModels
             }
         }
         [RelayCommand]
-        private void GuessLetter(char letter)
+        private async Task GuessLetter(char letter)
         {
-            guessedChars.Add(letter);
-            //try
-            //{
-            //    await _hangmanService.GuessLetter(LobbyId, letter);
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine($"Error guessing letter: {ex.Message}");
-            //}
+            try
+            {
+                var response = await _hangmanService.GuessLetter(LobbyId, letter);
+
+                if (response.Msg != "No connection to server.")
+                {
+                    guessedChars.Add(letter);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error guessing letter: {ex.Message}");
+            }
         }
 
         [RelayCommand]

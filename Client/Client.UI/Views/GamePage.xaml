@@ -21,12 +21,12 @@
                 FontAttributes="Bold"
                 Text="{Binding ErrorCounter}"
                 />
-            <Button 
+            <!--<Button 
                 Style="{StaticResource normalBtn}"
                 Grid.Row="0"   
                 Grid.Column="2"
                 Text="Start Game"
-                Command="{Binding StartGameCommand}"/>
+                Command="{Binding StartGameCommand}"/>-->
 
             <Button 
                     Grid.Row="3"
