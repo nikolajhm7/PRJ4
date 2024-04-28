@@ -91,7 +91,15 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task GoToGame()
         {
-            await _navigationService.NavigateToPage($"{nameof(GamePage)}?LobbyId={lobbyId}");
+            var res = await _lobbyService.StartGameAsync(LobbyId);
+            if (res.Success)
+            {
+                await _navigationService.NavigateToPage($"{nameof(GamePage)}?LobbyId={LobbyId}");
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Failed", "to join lobby", "OK");
+            }
         }
 
         //Handle result of different functions, and error log if neccesary:

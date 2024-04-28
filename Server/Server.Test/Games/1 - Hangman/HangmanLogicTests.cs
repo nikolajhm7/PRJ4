@@ -177,6 +177,7 @@ public class HangmanLogicTests
         _uut.GuessLetter('c', out var pos3);
         _uut.GuessLetter('d', out var pos4);
         _uut.GuessLetter('f', out var pos5);
+        _uut.GuessLetter('g', out var pos6);
 
         // Act
         var res = _uut.IsGameOver();

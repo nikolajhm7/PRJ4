@@ -25,9 +25,10 @@ namespace Server.API.Games
             var username = Context.User?.Identity?.Name;
             var user = new ConnectedUserDTO(username, Context.ConnectionId);
 
-            var lobbyId = _lobbyManager.GetLobbyIdFromUser(user);
+            var lobbyId = _lobbyManager.GetLobbyIdFromUsername(username);
             if (lobbyId != null && _lobbyManager.GetGameStatus(lobbyId) == GameStatus.InGame)
             {
+                _lobbyManager.UpdateUserInLobby(user, lobbyId);
                 await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
                 await base.OnConnectedAsync();
             }
@@ -90,7 +91,7 @@ namespace Server.API.Games
             var username = Context.User?.Identity?.Name;
             var user = new ConnectedUserDTO(username, Context.ConnectionId);
 
-            var lobbyId = _lobbyManager.GetLobbyIdFromUser(user);
+            var lobbyId = _lobbyManager.GetLobbyIdFromUsername(username);
             if (lobbyId != null)
             {
                 await RemoveUserFromLobby(lobbyId, user);
@@ -103,7 +104,7 @@ namespace Server.API.Games
         private async Task RemoveUserFromLobby(string lobbyId, ConnectedUserDTO user)
         {
             // If host disconnects, close lobby and remove all members.
-            if (_lobbyManager.IsHost(Context.ConnectionId, lobbyId))
+            if (_lobbyManager.IsHost(user.Username, lobbyId))
             {
                 await Clients.Group(lobbyId).SendAsync("LobbyClosed");
 

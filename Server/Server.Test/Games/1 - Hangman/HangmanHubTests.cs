@@ -49,7 +49,7 @@ public class HangmanHubTests
     public async Task OnConnectedAsync_LobbyDoesNotExist_Disconnects()
     {
         // Arrange
-        _lobbyManager.GetLobbyIdFromUser(Arg.Any<ConnectedUserDTO>()).Returns((string?)null);
+        _lobbyManager.GetLobbyIdFromUsername(Arg.Any<string>()).Returns((string?)null);
         
         // Act
         await _uut.OnConnectedAsync();
@@ -63,7 +63,7 @@ public class HangmanHubTests
     {
         // Arrange
         var lobbyId = "Id";
-        _lobbyManager.GetLobbyIdFromUser(Arg.Any<ConnectedUserDTO>()).Returns(lobbyId);
+        _lobbyManager.GetLobbyIdFromUsername(Arg.Any<string>()).Returns(lobbyId);
         _lobbyManager.GetGameStatus(lobbyId).Returns(GameStatus.InLobby);
         
         // Act
@@ -78,7 +78,7 @@ public class HangmanHubTests
     {
         // Arrange
         var lobbyId = "Id";
-        _lobbyManager.GetLobbyIdFromUser(Arg.Any<ConnectedUserDTO>()).Returns(lobbyId);
+        _lobbyManager.GetLobbyIdFromUsername(Arg.Any<string>()).Returns(lobbyId);
         _lobbyManager.GetGameStatus(lobbyId).Returns(GameStatus.InGame);
 
         // Act
@@ -207,7 +207,7 @@ public class HangmanHubTests
         // Arrange
         var lobbyId = "Id";
         _clients.Group(Arg.Any<string>()).Returns(_clientProxy);
-        _lobbyManager.GetLobbyIdFromUser(Arg.Any<ConnectedUserDTO>()).Returns((string?)null);
+        _lobbyManager.GetLobbyIdFromUsername(Arg.Any<string>()).Returns((string?)null);
 
         // Act
         await _uut.OnDisconnectedAsync((Exception?)null);
@@ -224,7 +224,7 @@ public class HangmanHubTests
     {
         // Arrange
         _clients.Group(Arg.Any<string>()).Returns(_clientProxy);
-        _lobbyManager.GetLobbyIdFromUser(Arg.Any<ConnectedUserDTO>()).Returns("test");
+        _lobbyManager.GetLobbyIdFromUsername(Arg.Any<string>()).Returns("test");
         _lobbyManager.IsHost(Arg.Any<string>(), Arg.Any<string>()).Returns(false);
 
         // Act
@@ -243,7 +243,7 @@ public class HangmanHubTests
         var user = new ConnectedUserDTO("", "");
         var list = new List<ConnectedUserDTO> { user }; 
         _clients.Group(Arg.Any<string>()).Returns(_clientProxy);
-        _lobbyManager.GetLobbyIdFromUser(Arg.Any<ConnectedUserDTO>()).Returns("test");
+        _lobbyManager.GetLobbyIdFromUsername(Arg.Any<string>()).Returns("test");
         _lobbyManager.IsHost(Arg.Any<string>(), Arg.Any<string>()).Returns(true);
         _lobbyManager.GetUsersInLobby(Arg.Any<string>()).Returns(list);
 

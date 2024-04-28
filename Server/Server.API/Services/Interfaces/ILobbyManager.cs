@@ -7,7 +7,8 @@ namespace Server.API.Services.Interfaces
     {
         bool LobbyExists(string lobbyId);
         bool IsHost(string connectionId, string lobbyId);
-        string? GetLobbyIdFromUser(ConnectedUserDTO user);
+        void UpdateUserInLobby(ConnectedUserDTO newUser, string lobbyId);
+        string? GetLobbyIdFromUsername(string username);
         List<ConnectedUserDTO> GetUsersInLobby(string lobbyId);
         Task<string> CreateNewLobby(ConnectedUserDTO user, int gameId);
         ActionResult AddToLobby(ConnectedUserDTO user, string lobbyId);
