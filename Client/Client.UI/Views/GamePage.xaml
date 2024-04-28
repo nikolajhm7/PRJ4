@@ -22,7 +22,19 @@
                 FontAttributes="Bold"
                 Text="{Binding ErrorCounter}"
                 />
-            <!--<Button 
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="2"
+                Text="{Binding Title}"/>
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="3"
+                Text="{Binding Players}"/>
+
+
+        <!--<Button 
                 Style="{StaticResource normalBtn}"
                 Grid.Row="0"   
                 Grid.Column="2"
@@ -40,9 +52,9 @@
             <Label
                 Grid.Row="1"
                 Grid.Column="1"
-                Text="{Binding WordToGuess}"/>
+                Text="{Binding WordLength}"/>
 
-            <!--Elements for row 2-->
+        <!--Elements for row 2-->
 
             <Button 
                 Grid.Row="2"
