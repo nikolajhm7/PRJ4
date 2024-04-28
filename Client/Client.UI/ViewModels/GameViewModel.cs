@@ -27,7 +27,7 @@ namespace Client.UI.ViewModels
         [ObservableProperty] private int errorCounter;
         [ObservableProperty] private string? lobbyId;
         [ObservableProperty] private char? letter;
-        [ObservableProperty] private ObservableCollection<string> wordLength;
+       ObservableCollection<string> hiddenWord;
         ObservableCollection<char> guessedChars;
         [ObservableProperty] private string imageSource = "HangmanImages/img0.jpg";
         public ObservableCollection<char> GuessedChars
@@ -36,10 +36,23 @@ namespace Client.UI.ViewModels
             set { SetProperty(ref guessedChars, value); }
         }
 
+        public ObservableCollection<string> HiddenWord
+        {
+            get { return hiddenWord; }
+            set { SetProperty(ref hiddenWord, value); }
+        }
+
+        //public string ImageSource
+        //{
+        //    get { return imageSource; }
+        //    set { SetProperty(ref imageSource, value); }
+        //}
+
         public GameViewModel(IHangmanService hangmanService)
         {
             _hangmanService = hangmanService;
             guessedChars = new ObservableCollection<char>();
+            hiddenWord = new ObservableCollection<string>();
 
             _hangmanService.GameStartedEvent += OnGameStarted;
             _hangmanService.GuessResultEvent += OnGuessResult;
@@ -54,7 +67,7 @@ namespace Client.UI.ViewModels
 
         private void OnGameStarted(int wordLength)
         {
-            Console.WriteLine($"Game started with wordlength: {wordLength}");
+            Console.WriteLine($"Game started with wordLength: {wordLength}");
             
             // Set the title
             Title = "Welcome to Hangman!";
@@ -65,10 +78,18 @@ namespace Client.UI.ViewModels
             // Set the error counter
             ErrorCounter = 0;
 
-            // Set the letters status
-            WordLength = new ObservableCollection<string>(new string[wordLength]);
+            // Set the hidden word length
+            MakeUnderscores(wordLength);
+            
         }
 
+        private void MakeUnderscores(int wordLength)
+        {
+            for (int i = 0; i < wordLength; i++)
+            {
+                HiddenWord.Add("_");
+            }
+        }
         private void OnGuessResult(char letter, bool isCorrect, List<int> positions)
         {
             Console.WriteLine($"Guess result: {letter}, {isCorrect}, {string.Join(",", positions)}");
@@ -76,7 +97,7 @@ namespace Client.UI.ViewModels
             // Update the letters status
             for (int i = 0; i < positions.Count; i++)
             {
-                WordLength[positions[i]] = isCorrect ? letter.ToString() : "_";
+                HiddenWord[positions[i]] = isCorrect ? letter.ToString() : "_";
             };
 
             // Update the error counter
@@ -97,8 +118,8 @@ namespace Client.UI.ViewModels
             // Set the title
             Title = "Game Over";
 
-            // Set the letters status
-            WordLength = new ObservableCollection<string>();
+            //// Set the letters status
+            //WordLength = new ObservableCollection<string>();
         }
 
         private void OnLobbyClosed()
@@ -111,8 +132,8 @@ namespace Client.UI.ViewModels
             // Set the title
             Title = "Game Over";
 
-            // Set the letters status
-            WordLength = new ObservableCollection<string>();
+            //// Set the letters status
+            //WordLength = new ObservableCollection<string>();
         }
 
         private void OnUserLeftLobby(string username)

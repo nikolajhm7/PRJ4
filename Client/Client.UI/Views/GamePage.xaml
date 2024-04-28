@@ -54,7 +54,7 @@
             <Label
                 Grid.Row="1"
                 Grid.Column="1"
-                Text="{Binding WordLength}"/>
+                Text="{Binding HiddenWord}"/>
 
             <Label
                 Grid.Row="1"
