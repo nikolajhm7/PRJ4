@@ -13,11 +13,12 @@ using System.ComponentModel;
 using Client.Library.Games;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
+using System.Diagnostics;
 namespace Client.UI.ViewModels
 {
     [QueryProperty(nameof(LobbyId), "LobbyId")]
     //[QueryProperty(nameof(Players), "Players")]
-    public partial class GameViewModel : ObservableObject, INotifyPropertyChanged
+    public partial class GameViewModel : ObservableObject
     {
         private readonly IHangmanService _hangmanService;
         // Define command properties
@@ -75,7 +76,7 @@ namespace Client.UI.ViewModels
 
         private void OnGameStarted(int wordLength)
         {
-            Console.WriteLine($"Game started with wordLength: {wordLength}");
+            Debug.WriteLine($"Game started with wordLength: {wordLength}");
             
             // Set the title
             Title = "Welcome to Hangman!";

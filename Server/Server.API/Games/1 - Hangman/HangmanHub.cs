@@ -51,11 +51,13 @@ namespace Server.API.Games
 
             var wordLength = logic.StartGame();
             await Clients.Group(lobbyId).SendAsync("GameStarted", wordLength);
+            System.Diagnostics.Debug.WriteLine("LobbyLogic Count: " + LobbyLogic.Count);
             return new(true, null);
         }
 
         public async Task<ActionResult> GuessLetter(string lobbyId, char letter)
         {
+            System.Diagnostics.Debug.WriteLine("LobbyLogic Count: " + LobbyLogic.Count);
             if (LobbyLogic.TryGetValue(lobbyId, out var logic))
             {
                 List<int> positions;
@@ -70,6 +72,7 @@ namespace Server.API.Games
 
                 return new(true, null);
             }
+
             return new(false, "Lobby does not exist.");
         }
 

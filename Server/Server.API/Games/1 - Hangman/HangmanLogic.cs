@@ -20,6 +20,7 @@ namespace Server.API.Games
             _guessedLetters = [];
 
             SelectRandomWord();
+            System.Diagnostics.Debug.WriteLine("Random word: " + _secretWord);
             return _secretWord.Length;
         }
 
