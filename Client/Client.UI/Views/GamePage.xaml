@@ -10,6 +10,7 @@
             RowDefinitions="*,*,*,*"
             ColumnDefinitions="*,*,*,*"
             >
+            <!--Elements for row 0-->
             <Label 
                 Grid.Row="0"
                 Grid.Column="0"
@@ -28,13 +29,7 @@
                 Text="Start Game"
                 Command="{Binding StartGameCommand}"/>
 
-            <Button 
-                    Grid.Row="3"
-                    Grid.Column="3"
-                    Style="{StaticResource normalBtn}"
-                    WidthRequest="100"
-                    Text="Reset"
-                    Command="{Binding RestartGameCommand}"/>
+            <!--Elements for row 1-->
 
             <Entry 
                 Grid.Row="1"
@@ -42,9 +37,34 @@
                 Placeholder="Enter letter"
                 Text="{Binding Letter}"/>
 
-        <ListView ItemsSource="{Binding GuessedChars}"
+            <Label
+                Grid.Row="1"
+                Grid.Column="1"
+                Text="{Binding WordToGuess}"/>
+
+            <!--Elements for row 2-->
+
+            <Button 
+                Grid.Row="2"
+                Grid.Column="0"
+                Style="{StaticResource normalBtn}"
+                Text="Submit"
+                Command="{Binding GuessLetterCommand}"
+                CommandParameter="{Binding Letter}"/>
+
+            <!--Elements for row 3-->
+
+            <Button 
+                Grid.Row="3"
+                Grid.Column="3"
+                Style="{StaticResource normalBtn}"
+                WidthRequest="100"
+                Text="Reset"
+                Command="{Binding RestartGameCommand}"/>
+
+            <ListView ItemsSource="{Binding GuessedChars}"
                   Grid.Row="3"
-                  Grid.Column="1">
+                  Grid.Column="0">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
@@ -55,14 +75,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
-        <Button 
-                Grid.Row="1"
-                Grid.Column="1"
-                Style="{StaticResource normalBtn}"
-                Text="Submit"
-                Command="{Binding GuessLetterCommand}"
-                CommandParameter="{Binding Letter}"/>
 
     </Grid>
 </ContentPage>

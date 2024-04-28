@@ -8,12 +8,12 @@
     Shell.FlyoutBehavior="Disabled"
     Title="Client.UI">
 
-    <ShellContent
+    <!--<ShellContent
         Title="LoadingPage"
         ContentTemplate="{DataTemplate views:LoadingPage}"
         Route="Loading" />
     
-    <!--<ShellContent
+    <ShellContent
         Title="Login"
         ContentTemplate="{DataTemplate views:LoginPage}"
         Route="LoginPage" />
@@ -42,10 +42,10 @@
         Title="Lobby"
         ContentTemplate="{DataTemplate views:LobbyPage}"
         Route="LobbyPage" />
-    <!--<ShellContent
+    <ShellContent
         Title="Game"
         ContentTemplate="{DataTemplate views:GamePage}"
-        Route="GamePage" />-->
+        Route="GamePage" />
     <ShellContent
         Title="ChatApp"
         ContentTemplate="{DataTemplate views:ChatAppPage}"
