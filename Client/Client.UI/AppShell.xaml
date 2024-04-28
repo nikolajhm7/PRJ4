@@ -46,9 +46,9 @@
         Title="Game"
         ContentTemplate="{DataTemplate views:GamePage}"
         Route="GamePage" />
-    <ShellContent
+    <!--<ShellContent
         Title="ChatApp"
         ContentTemplate="{DataTemplate views:ChatAppPage}"
-        Route="ChatAppPage" />
+        Route="ChatAppPage" />-->
 
 </Shell>

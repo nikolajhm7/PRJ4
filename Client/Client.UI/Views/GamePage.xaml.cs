@@ -16,10 +16,11 @@ namespace Client.UI.Views
         private void OnPageAppearing(object sender, EventArgs e)
         {
             // Call the base implementation first
-            if (BindingContext is PlatformViewModel viewModel)
+            if (BindingContext is GameViewModel viewModel)
             {
                 viewModel.OnPageAppearing();
             }
+
         }
 
     }
