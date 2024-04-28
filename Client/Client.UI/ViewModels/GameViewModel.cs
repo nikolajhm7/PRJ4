@@ -26,87 +26,11 @@ namespace Client.UI.ViewModels
             _hangmanService = hangmanService;
             guessedChars = new ObservableCollection<char>();
 
-            //_hangmanService.GameStartedEvent += OnGameStarted;
-            //_hangmanService.GuessResultEvent += OnGuessResult;
-            //_hangmanService.GameOverEvent += OnGameOver;
-
-            _hangmanService.GameStartedEvent += (wordLength) =>
-            {
-                // Set the title
-                Title = "Hangman";
-
-                // Set the message
-                StatusMessage = "Game started!";
-
-                // Set the error counter
-                ErrorCounter = 1;
-
-                // Set the letters status
-                WordLength = new ObservableCollection<string>(new string[wordLength]);
-
-            };
-
-            //_hangmanService.GuessResultEvent += (letter, isCorrect, positions) =>
-            //{
-            //   // Update the letters status
-            //   for (int i = 0; i < positions.Count; i++)
-            //   {
-            //       LettersStatus[positions[i]] = isCorrect ? letter.ToString() : "_";
-            //   };
-
-            //   // Update the error counter
-            //   if (!isCorrect)
-            //   {
-            //       ErrorCounter++;
-            //   }
-            //};
-
-            //_hangmanService.GameOverEvent += (didWin, word) =>
-            //{
-            //   // Set the message
-            //   Message = didWin ? "You won!" : "You lost!";
-
-            //   // Set the title
-            //   Title = "Game Over";
-
-            //   // Set the guess letter command
-            //   GuessLetterCommand = new Command<char>((letter) => { });
-
-            //   // Set the players
-            //   Players = new ObservableCollection<string>();
-
-            //   // Set the letters status
-            //   WordToGuess = new ObservableCollection<string>(word.Select(c => c.ToString()));
-            //};
-
-            //_hangmanService.LobbyClosedEvent += () =>
-            //{
-            //   // Set the message
-            //   Message = "Lobby closed!";
-
-            //   // Set the title
-            //   Title = "Game Over";
-
-            //   // Set the submit letter command
-            //   SubmitLetterCommand = new Command(() => { });
-
-            //   // Set the guess letter command
-            //   GuessLetterCommand = new Command<char>((letter) => { });
-
-            //   // Set the players
-            //   Players = new ObservableCollection<string>();
-
-            //   // Set the letters status
-            //   LettersStatus = new ObservableCollection<string>();
-            //};
-
-            //_hangmanService.UserLeftLobbyEvent += (username) =>
-            //{
-            //   // Remove the player
-            //   Players.Remove(username);
-            //};
-
-
+            _hangmanService.GameStartedEvent += OnGameStarted;
+            _hangmanService.GuessResultEvent += OnGuessResult;
+            _hangmanService.GameOverEvent += OnGameOver;
+            _hangmanService.LobbyClosedEvent += OnLobbyClosed;
+            _hangmanService.UserLeftLobbyEvent += OnUserLeftLobby;
         }
 
         // Define command properties
@@ -130,9 +54,74 @@ namespace Client.UI.ViewModels
             StartGame();
         }
 
-        private void OnGameStarted(int wordlength)
+        private void OnGameStarted(int wordLength)
         {
-            Console.WriteLine($"Game started with wordlength: {wordlength}");
+            Console.WriteLine($"Game started with wordlength: {wordLength}");
+            
+            // Set the title
+            Title = "Hangman";
+
+            // Set the message
+            StatusMessage = "Game started!";
+
+            // Set the error counter
+            ErrorCounter = 0;
+
+            // Set the letters status
+            WordLength = new ObservableCollection<string>(new string[wordLength]);
+        }
+
+        private void OnGuessResult(char letter, bool isCorrect, List<int> positions)
+        {
+            Console.WriteLine($"Guess result: {letter}, {isCorrect}, {string.Join(",", positions)}");
+
+            // Update the letters status
+            for (int i = 0; i < positions.Count; i++)
+            {
+                WordLength[positions[i]] = isCorrect ? letter.ToString() : "_";
+            };
+
+            // Update the error counter
+            if (!isCorrect)
+            {
+                ErrorCounter++;
+            }
+        }
+
+        private void OnGameOver(bool didWin, string word)
+        {
+            Console.WriteLine($"Game over: {didWin}, {word}");
+
+            // Set the message
+            StatusMessage = didWin ? "You won!" : "You lost!";
+
+            // Set the title
+            Title = "Game Over";
+
+            // Set the letters status
+            WordLength = new ObservableCollection<string>();
+        }
+
+        private void OnLobbyClosed()
+        {
+            Console.WriteLine("Lobby closed!");
+
+            // Set the message
+            StatusMessage = "Lobby closed!";
+
+            // Set the title
+            Title = "Game Over";
+
+            // Set the letters status
+            WordLength = new ObservableCollection<string>();
+        }
+
+        private void OnUserLeftLobby(string username)
+        {
+            Console.WriteLine($"User left lobby: {username}");
+
+            //// Remove the player
+            //Players.Remove(username);
         }
 
         [RelayCommand]
@@ -147,6 +136,7 @@ namespace Client.UI.ViewModels
                 Console.WriteLine($"Error starting game: {ex.Message}");
             }
         }
+
         [RelayCommand]
         private async Task GuessLetter(char letter)
         {
