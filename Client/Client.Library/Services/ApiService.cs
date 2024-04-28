@@ -19,7 +19,6 @@ public class ApiService : IApiService
     {
         _client = httpClientFactory.CreateClient();
         _client.BaseAddress = new Uri(configuration["ConnectionSettings:ApiUrl"]);
-        //_client.BaseAddress = new Uri("https://localhost:7230");
         _logger = logger;
         _preferenceManager = preferenceManager;
     }

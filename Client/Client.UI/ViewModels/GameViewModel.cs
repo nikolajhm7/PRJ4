@@ -152,10 +152,11 @@ namespace Client.UI.ViewModels
             {
                 var response = await _hangmanService.GuessLetter(LobbyId, letter);
 
-                if (response.Msg != "No connection to server.")
-                {
-                    guessedChars.Add(letter);
-                }
+                //if (response.Msg != "No connection to server.")
+                //{
+                //    guessedChars.Add(letter);
+                //}
+                guessedChars.Add(letter);
             }
             catch (Exception ex)
             {
