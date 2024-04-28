@@ -17,19 +17,19 @@ namespace Client.UI.ViewModels
 {
     [QueryProperty(nameof(LobbyId), "LobbyId")]
     //[QueryProperty(nameof(Players), "Players")]
-    public partial class GameViewModel : ObservableObject, INotifyPropertyChanged
+    public partial class GameViewModel : ObservableObject
     {
         private readonly IHangmanService _hangmanService;
         // Define command properties
-        public string Title { get; set; }
-        public string StatusMessage { get; set; }
-        public int Players { get; }
         [ObservableProperty] private int errorCounter;
         [ObservableProperty] private string? lobbyId;
+        [ObservableProperty] private string? title;
+        [ObservableProperty] private string? statusMessage;
+        [ObservableProperty] private string? players;
         [ObservableProperty] private char? letter;
         [ObservableProperty] private string hiddenWord;
         ObservableCollection<char> guessedChars;
-        [ObservableProperty] private string imageSource = "HangmanImages/img0.jpg";
+        [ObservableProperty] private string? imageSource;
 
         public ObservableCollection<char> GuessedChars
         {
@@ -50,11 +50,6 @@ namespace Client.UI.ViewModels
         //    }
         //}
 
-        //public string ImageSource
-        //{
-        //    get { return imageSource; }
-        //    set { SetProperty(ref imageSource, value); }
-        //}
 
         public GameViewModel(IHangmanService hangmanService)
         {
@@ -85,6 +80,11 @@ namespace Client.UI.ViewModels
 
             // Set the error counter
             ErrorCounter = 0;
+
+            // List players
+
+            // Set the image
+            ImageSource = $"hangman_img{ErrorCounter}.jpg";
 
             // Set the hidden word length
             MakeUnderscores(wordLength);
@@ -117,7 +117,7 @@ namespace Client.UI.ViewModels
             if (!isCorrect)
             {
                 ErrorCounter++;
-                ImageSource = $"HangmanImages/img{ErrorCounter}.jpg";
+                ImageSource = $"hangman_img{ErrorCounter}.jpg";
             }
         }
 
