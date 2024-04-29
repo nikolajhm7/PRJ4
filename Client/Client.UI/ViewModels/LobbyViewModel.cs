@@ -14,6 +14,7 @@ using Client.Library.Services;
 using Client.Library.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.Linq.Expressions;
+using Client.UI.Views;
 
 
 namespace Client.UI.ViewModels
