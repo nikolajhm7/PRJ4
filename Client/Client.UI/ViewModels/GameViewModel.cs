@@ -106,13 +106,20 @@ namespace Client.UI.ViewModels
 
             //Update the letters status
             if (isCorrect) {
-                var hw = HiddenWord.ToCharArray();
-                for (int i = 0; i < positions.Count; i++)
+                //var hw = HiddenWord.ToCharArray();
+                //for (int i = 0; i < positions.Count; i++)
+                //{
+                //    //HiddenWord[positions[i]] = isCorrect ? letter.ToString() : "_";
+                //    hw[positions[i]] = letter;
+                //};
+                //HiddenWord = hw.ToString();
+
+                var hwChars = HiddenWord.ToCharArray();
+                foreach (var position in positions)
                 {
-                    //HiddenWord[positions[i]] = isCorrect ? letter.ToString() : "_";
-                    hw[positions[i]] = letter;
-                };
-                HiddenWord = hw.ToString();
+                    hwChars[position] = letter;
+                }
+                HiddenWord = new string(hwChars);
             }
             // Update the error counter
             if (!isCorrect)
