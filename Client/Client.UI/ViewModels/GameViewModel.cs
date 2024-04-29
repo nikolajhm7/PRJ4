@@ -21,8 +21,10 @@ namespace Client.UI.ViewModels
     public partial class GameViewModel : ObservableObject
     {
         private readonly IHangmanService _hangmanService;
+        private int ErrorCounter;
+
         // Define command properties
-        [ObservableProperty] private int errorCounter;
+        [ObservableProperty] private string errorLabel;
         [ObservableProperty] private string? lobbyId;
         [ObservableProperty] private string? title;
         [ObservableProperty] private string? statusMessage;
@@ -81,7 +83,8 @@ namespace Client.UI.ViewModels
 
             // Set the error counter
             ErrorCounter = 0;
-
+            ErrorLabel = $"Errors: {ErrorCounter}";
+            
             // List players
 
             // Set the image
@@ -108,14 +111,6 @@ namespace Client.UI.ViewModels
 
             //Update the letters status
             if (isCorrect) {
-                //var hw = HiddenWord.ToCharArray();
-                //for (int i = 0; i < positions.Count; i++)
-                //{
-                //    //HiddenWord[positions[i]] = isCorrect ? letter.ToString() : "_";
-                //    hw[positions[i]] = letter;
-                //};
-                //HiddenWord = hw.ToString();
-
                 var hwChars = HiddenWord.ToCharArray();
                 foreach (var position in positions)
                 {
@@ -127,6 +122,7 @@ namespace Client.UI.ViewModels
             if (!isCorrect && !guessedChars.Contains(letter))
             {
                 ErrorCounter++;
+                ErrorLabel = $"Errors: {ErrorCounter}";
                 ImageSource = $"hangman_img{ErrorCounter}.jpg";
             }
         }
