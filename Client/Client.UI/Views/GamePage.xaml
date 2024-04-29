@@ -14,18 +14,15 @@
             <Label 
                 Grid.Row="0"
                 Grid.Column="0"
-                Text="{Binding LobbyId}"/>
-            
-        <!--måske lav til listview-->
-            <Label 
-                Grid.Row="0"
-                Grid.Column="1"
-                Text="{Binding Players}"/>
+                FontSize="Large"
+                Text="{Binding LobbyIdLabel}"/>
 
             <Label
                 Grid.Row="0"
-                Grid.Column="2"
+                Grid.Column="1"
                 FontSize="32"
+                Grid.ColumnSpan="2"
+                HorizontalOptions="Center"
                 Text="{Binding Title}"/>
 
             <Label 
@@ -49,15 +46,11 @@
             <Label
                 Grid.Row="1"
                 Grid.Column="1"
+                Grid.ColumnSpan="2"
                 Text="{Binding HiddenWord}"
                 FontSize="Large"
                 CharacterSpacing="10"/>
 
-            <Label
-                Grid.Row="1"
-                Grid.Column="2"
-                FontSize="Medium"
-                Text="{Binding StatusMessage}"/>
 
             <Image
                 Grid.Row="1"
@@ -74,9 +67,41 @@
                 Text="Submit"
                 Command="{Binding GuessLetterCommand}"
                 CommandParameter="{Binding Letter}"/>
+            <Label
+                Grid.Row="2"
+                Grid.Column="1"
+                FontSize="Medium"
+                Text="{Binding StatusMessage}"/>
+        <!--View players in game-->
+            <CollectionView 
+                x:Name="PlayersCollectionView" 
+                ItemsSource="{Binding PlayerNames}" 
+                SelectionMode="None" 
+                Grid.Column="2"
+                Grid.ColumnSpan="1"
+                Grid.Row="2"
+                Grid.RowSpan="5">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="2" />
+                <!-- Adjust Span for desired number of columns -->
+                 </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame 
+                        CornerRadius="10" 
+                        Padding="10" 
+                        Margin="5" 
+                        HorizontalOptions="FillAndExpand">
+                        <Label 
+                            Text="{Binding .}" 
+                            HorizontalTextAlignment="Center"/>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
+      
         <!--Elements for row 3-->
-
             <Button 
                 Grid.Row="3"
                 Grid.Column="3"
@@ -84,20 +109,41 @@
                 WidthRequest="100"
                 Text="Reset"
                 Command="{Binding RestartGameCommand}"/>
-
-            <ListView ItemsSource="{Binding GuessedChars}"
-                  Grid.Row="3"
-                  Grid.Column="0">
-            <ListView.ItemTemplate>
+            <!--View List of Guessed Characters-->
+            <CollectionView 
+                ItemsSource="{Binding GuessedChars}" 
+                SelectionMode="None" 
+                Grid.Column="0"
+                Grid.ColumnSpan="1"
+                Grid.Row="3"
+                Grid.RowSpan="5">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="7" />
+                <!-- Adjust Span for desired number of columns -->
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <ViewCell>
-                        <StackLayout>
-                            <Label Text="{Binding}" />
-                        </StackLayout>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                    <Frame 
+                        CornerRadius="10" 
+                        Padding="10" 
+                        Margin="5" 
+                        HorizontalOptions="FillAndExpand">
+                        <Label 
+                            Text="{Binding .}"
+                            FontSize="Medium"
+                            HorizontalTextAlignment="Center"/>
+                    </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label
+                Grid.Row="3"
+                Grid.Column="2"
+                Text="{Binding PlayerStatus}"
+                FontSize="Medium"/>
+
+
 
     </Grid>
 </ContentPage>
