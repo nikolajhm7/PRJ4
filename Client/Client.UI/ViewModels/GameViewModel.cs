@@ -87,6 +87,8 @@ namespace Client.UI.ViewModels
             // Set the image
             ImageSource = $"hangman_img{ErrorCounter}.jpg";
 
+            HiddenWord = "";
+
             // Set the hidden word length
             MakeUnderscores(wordLength);
             
@@ -204,6 +206,7 @@ namespace Client.UI.ViewModels
             try
             {
                 await _hangmanService.RestartGame(LobbyId);
+                GuessedChars.Clear();
             }
             catch (Exception ex)
             {
