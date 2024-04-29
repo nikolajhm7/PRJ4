@@ -108,7 +108,7 @@ namespace Client.UI.ViewModels
         {
             Debug.WriteLine("CloseLobby called");
             await Shell.Current.DisplayAlert(
-                "Confirmation",
+                "Lobby closed",
                 "Host closed lobby",
                 "Ok"
             );
@@ -120,12 +120,24 @@ namespace Client.UI.ViewModels
         async Task GoBack()
         {
 
-            var answer = await Shell.Current.DisplayAlert(
-                "Leaving lobby",
-                "Going back will remove you from the lobby, proceed?",
-                "Yes",
-                "Cancel"
-            );
+            bool answer;
+            if (isHost)
+            {
+                answer = await Shell.Current.DisplayAlert(
+                    "Closing lobby",
+                    "Going back will close the lobby and players will be kicked, proceed?",
+                    "Yes",
+                    "Cancel"
+                );
+            }
+            else {
+                answer = await Shell.Current.DisplayAlert(
+                    "Leaving lobby",
+                    "Going back will remove you from the lobby, proceed?",
+                    "Yes",
+                    "Cancel"
+                );
+            }
 
             if (answer)
             {
