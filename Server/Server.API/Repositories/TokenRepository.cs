@@ -3,7 +3,7 @@ using Server.API.Data;
 using Server.API.Models;
 using Server.API.Repository.Interfaces;
 
-namespace Server.API.Repository;
+namespace Server.API.Repositories;
 
 public class TokenRepository : ITokenRepository
 {

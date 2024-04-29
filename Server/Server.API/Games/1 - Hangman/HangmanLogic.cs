@@ -7,7 +7,7 @@ namespace Server.API.Games
 {
     public class HangmanLogic(IRandomPicker picker)
     {
-        private readonly int _maxIncorrectGuesses = 6;
+        public readonly int MaxIncorrectGuesses = 6;
         private string _secretWord = "";
         public string SecretWord { get { return _secretWord; } }
         private int _currentGuessCount = 0;
@@ -45,13 +45,13 @@ namespace Server.API.Games
         {
             var isWin = !SecretWord.Any(c => !_guessedLetters.Contains(c));
 
-            return isWin || _currentGuessCount >= _maxIncorrectGuesses;
+            return isWin || _currentGuessCount >= MaxIncorrectGuesses;
         }
 
         public bool DidUserWin()
         {
-            if (_currentGuessCount < _maxIncorrectGuesses)
-                return !SecretWord.Any(c => !_guessedLetters.Contains(c));
+            if (_currentGuessCount < MaxIncorrectGuesses)
+                return SecretWord.All(c => _guessedLetters.Contains(c));
             return false;
         }
 

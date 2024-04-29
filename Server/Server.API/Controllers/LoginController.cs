@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using Server.API.Repository.Interfaces;
 using Server.API.Services.Interfaces;
 
+namespace Server.API.Controllers;
 public class LoginController : ControllerBase
 {
 

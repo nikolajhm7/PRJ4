@@ -230,11 +230,10 @@ public class HangmanLogicTests
         _randomPicker.PickRandomItem(Arg.Any<List<string>>()).Returns(word);
         _uut.StartGame();
 
-        _uut.GuessLetter('a', out var pos1);
-        _uut.GuessLetter('b', out var pos2);
-        _uut.GuessLetter('c', out var pos3);
-        _uut.GuessLetter('d', out var pos4);
-        _uut.GuessLetter('f', out var pos5);
+        for(int i = 0; i < _uut.MaxIncorrectGuesses; i++)
+        {
+            _uut.GuessLetter('a', out var pos1);    
+        }
 
         // Act
         var res = _uut.DidUserWin();
