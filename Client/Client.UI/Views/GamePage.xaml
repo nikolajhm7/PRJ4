@@ -15,25 +15,25 @@
                 Grid.Row="0"
                 Grid.Column="0"
                 Text="{Binding LobbyId}"/>
-
+            
+        <!--måske lav til listview-->
             <Label 
                 Grid.Row="0"
                 Grid.Column="1"
-                FontAttributes="Bold"
-                Text="{Binding ErrorCounter}"
-                />
+                Text="{Binding Players}"/>
 
             <Label
                 Grid.Row="0"
                 Grid.Column="2"
                 FontSize="32"
                 Text="{Binding Title}"/>
-            
-            <!--måske lav til listview-->
+
             <Label 
                 Grid.Row="0"
                 Grid.Column="3"
-                Text="{Binding Players}"/>
+                FontSize="Large"
+                FontAttributes="Bold"
+                Text="{Binding ErrorCounter}"/>
 
 
         <!--Elements for row 1-->
@@ -42,6 +42,8 @@
                 Grid.Row="1"
                 Grid.Column="0"
                 Placeholder="Enter letter"
+                FontSize="Large"
+                ClearButtonVisibility="WhileEditing"
                 Text="{Binding Letter}"/>
 
             <Label
@@ -54,6 +56,7 @@
             <Label
                 Grid.Row="1"
                 Grid.Column="2"
+                FontSize="Large"
                 Text="{Binding StatusMessage}"/>
 
             <Image

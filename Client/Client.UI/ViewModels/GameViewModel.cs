@@ -136,13 +136,11 @@ namespace Client.UI.ViewModels
             Console.WriteLine($"Game over: {didWin}, {word}");
 
             // Set the message
-            StatusMessage = didWin ? "You won!" : "You lost!";
+            StatusMessage = didWin ? $"You won! The Hidden Word was: {word} " : $"You lost! The Hidden Word was: {word}";
 
             // Set the title
             Title = "Game Over";
 
-            //// Set the letters status
-            //WordLength = new ObservableCollection<string>();
         }
 
         private void OnLobbyClosed()
