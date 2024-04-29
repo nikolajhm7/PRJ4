@@ -6,7 +6,6 @@ namespace Server.API.DTO
     {
         public string Username { get; set; } = username;
         public string ConnectionId { get; set; } = connectionId;
-
         public override bool Equals(object? obj)
         {
             return obj is ConnectedUserDTO user && ConnectionId == user.ConnectionId;

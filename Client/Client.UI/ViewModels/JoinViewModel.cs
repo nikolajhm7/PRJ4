@@ -12,6 +12,7 @@ using Client.Library.Services;
 using System.Diagnostics;
 using Client.Library.Services.Interfaces;
 using Client.UI.Views;
+using Client.Library.DTO;
 
 namespace Client.UI.ViewModels
 {
@@ -29,11 +30,16 @@ namespace Client.UI.ViewModels
         [RelayCommand]
        public async Task GoToLobby()
        {
-            var result = await _lobbyService.JoinLobbyAsync(_lobbyId);
+            var response = await _lobbyService.JoinLobbyAsync(_lobbyId);
 
-            if (result.Success)
+            if (response.Success)
             {
-                await Shell.Current.GoToAsync($"//LobbyPage?LobbyId={_lobbyId}");
+                //Parse lobbyId and responseValue to dictionary
+                var responseBox = new Dictionary<string, object>
+                    {
+                        { "lobbyId", _lobbyId }
+                    };
+                await Shell.Current.GoToAsync(nameof(LobbyPage), true, responseBox);
             }
             else
             {

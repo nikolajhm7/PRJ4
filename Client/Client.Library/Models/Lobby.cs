@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Client.Library.DTO;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -7,9 +8,19 @@ using System.Threading.Tasks;
 
 namespace Client.Library.Models
 {
-    public class Lobby
+    public enum GameStatus
     {
-        public ObservableCollection<string> PlayerNames { get; set; } = new ObservableCollection<string>();
-        public string LobbyId { get; set; }
+        NO_LOBBY,
+        InLobby,
+        InGame
+    }
+    public class Lobby(string lobbyId, string hostConnectionId, int gameId, int maxPlayers)
+    {
+        public string LobbyId { get; set; } = lobbyId;
+        public HashSet<ConnectedUserDTO> Members { get; set; } = new HashSet<ConnectedUserDTO>();
+        public string HostConnectionId { get; } = hostConnectionId;
+        public GameStatus Status { get; set; } = GameStatus.InLobby;
+        public int GameId { get; set; } = gameId;
+        public int MaxPlayers { get; set; } = maxPlayers;
     }
 }

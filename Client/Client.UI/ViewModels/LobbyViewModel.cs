@@ -12,82 +12,139 @@ using System.Diagnostics;
 using Client.Library.DTO;
 using Client.Library.Services;
 using Client.Library.Services.Interfaces;
+using Microsoft.IdentityModel.Tokens;
+using System.Linq.Expressions;
 
 
 namespace Client.UI.ViewModels
 {
+    
     [QueryProperty(nameof(LobbyId), "lobbyId")]
-    //[QueryProperty(nameof(Image), "image")]
-    //[QueryProperty(nameof(Name), "name")]
-    //[QueryProperty(nameof(GameId), "gameId")]
-    //Test
-    [QueryProperty(nameof(Recivedgame), "game")]
     public partial class LobbyViewModel : ObservableObject
     {
         private readonly ILobbyService _lobbyService;
         private readonly INavigationService _navigationService;
+        private Lobby _lobby;
+        bool isHost = false;
+        public string HostName { get; set; }
 
-        [ObservableProperty] private string? lobbyId;
-        //[ObservableProperty] private string? image;
-        //[ObservableProperty] private string? name;
-        //[ObservableProperty] private int? gameId;
-        [ObservableProperty] private Game? recivedgame;
+        [ObservableProperty] 
+        private string image = "";
 
-        [ObservableProperty] private Lobby lobby = new Lobby();
+        // Observable properties
+        [ObservableProperty] 
+        private string lobbyId = "000000";
+
+        [ObservableProperty]
+        public ObservableCollection<string> playerNames = new ObservableCollection<string> { };
 
         public LobbyViewModel(ILobbyService lobbyService, INavigationService navigationService)
         {
             _lobbyService = lobbyService;
             _navigationService = navigationService;
-            Recivedgame = null;
-            LobbyId = "00000";
-           
-            _navigationService = new NavigationService();
-
-            // Example initialization, replace with actual dynamic data loading
-            if(lobbyId != null)
-                Lobby.LobbyId = lobbyId; // Example Lobby ID
-            else
-                Lobby.LobbyId = "00000"; // Example Lobby ID
-
-            // Add the current player
-            Lobby.PlayerNames.Add(User.Instance.Username);
-
-            // Add the current player
-            Lobby.PlayerNames.Add(User.Instance.Username);
 
             // Subscribe to events
             _lobbyService.UserJoinedLobbyEvent += OnUserJoinedLobby;
             _lobbyService.UserLeftLobbyEvent += OnUserLeftLobby;
+            _lobbyService.GameStartedEvent += OnGameStarted;
+            _lobbyService.LobbyClosedEvent += OnLobbyClosed;
+        }
+
+        public async Task OnPageappearing()
+        {
+            var isHostResult = await _lobbyService.UserIsHost(lobbyId);
+            if (isHostResult.Success)
+            {
+                isHost = true;
+            }
+            await LoadUsersInLobby();
+        }
+
+        private async Task LoadUsersInLobby()
+        {
+            var result = await _lobbyService.GetUsersInLobby(lobbyId);
+            if (result.Success)
+            {
+                foreach (var user in result.Value)
+                {
+                    playerNames.Add(user.Username);
+                }
+            }
+            else
+            {
+                Debug.WriteLine("Failed to get users in lobby: " + result.Msg);
+            }
         }
 
         private void OnUserJoinedLobby(ConnectedUserDTO user)
         {
-            Lobby.PlayerNames.Add(user.Username);
+            playerNames.Add(user.Username);
         }
 
         private void OnUserLeftLobby(ConnectedUserDTO user)
         {
-            Lobby.PlayerNames.Remove(user.Username);
+            playerNames.Remove(user.Username);
         }
 
-
-        [RelayCommand]
-        public async Task TestAddPlayer()
+        private void OnGameStarted()
         {
-            Lobby.PlayerNames.Add("Player 4");
+            // Navigate to game page
         }
 
-        [RelayCommand]
-        public async Task TestRemovePlayer()
+        private void OnLobbyClosed()
         {
-            Lobby.PlayerNames.Remove("Player 4");
+            if(!isHost)
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    //remove event listeners
+                    _lobbyService.LobbyClosedEvent -= OnLobbyClosed;
+                    CloseLobby();
+                });
+            }
         }
+
+        private async Task CloseLobby()
+        {
+            Debug.WriteLine("CloseLobby called");
+            await Shell.Current.DisplayAlert(
+                "Lobby closed",
+                "Host closed lobby",
+                "Ok"
+            );
+            await _navigationService.NavigateBack();
+        }
+
 
         [RelayCommand]
         async Task GoBack()
         {
-            await _navigationService.NavigateBack();
+
+            bool answer;
+            if (isHost)
+            {
+                answer = await Shell.Current.DisplayAlert(
+                    "Closing lobby",
+                    "Going back will close the lobby and players will be kicked, proceed?",
+                    "Yes",
+                    "Cancel"
+                );
+            }
+            else {
+                answer = await Shell.Current.DisplayAlert(
+                    "Leaving lobby",
+                    "Going back will remove you from the lobby, proceed?",
+                    "Yes",
+                    "Cancel"
+                );
+            }
+
+            if (answer)
+            {
+                
+                await _lobbyService.LeaveLobbyAsync(lobbyId);
+                await _navigationService.NavigateBack();
+            }
         }
 
         //Handle result of different functions, and error log if neccesary:

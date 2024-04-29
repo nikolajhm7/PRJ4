@@ -10,10 +10,12 @@ namespace Server.API.Services.Interfaces
         string? GetLobbyIdFromUser(ConnectedUserDTO user);
         List<ConnectedUserDTO> GetUsersInLobby(string lobbyId);
         Task<string> CreateNewLobby(ConnectedUserDTO user, int gameId);
-        ActionResult AddToLobby(ConnectedUserDTO user, string lobbyId);
+        ActionResult<List<ConnectedUserDTO>> AddToLobby(ConnectedUserDTO user, string lobbyId);
         void RemoveFromLobby(ConnectedUserDTO user, string lobbyId);
         void RemoveLobby(string lobbyId);
         void StartGame(string lobbyId);
         GameStatus GetGameStatus(string lobbyId);
+        ActionResult<Lobby> GetLobbyInfo(string lobbyId);
+
     }
 }
