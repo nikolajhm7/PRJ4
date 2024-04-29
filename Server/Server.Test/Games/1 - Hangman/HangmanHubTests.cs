@@ -6,6 +6,7 @@ using Server.API.DTO;
 using Server.API.Games;
 using Server.API.Models;
 using Server.API.Repositories.Interfaces;
+using Server.API.Services;
 using Server.API.Services.Interfaces;
 
 namespace Server.Test.Games;
@@ -23,6 +24,8 @@ public class HangmanHubTests
     private ISingleClientProxy _singleClientProxy;
     private ILobbyManager _lobbyManager;
     private IRandomPicker _randomPicker;
+    private ILogicManager<IHangmanLogic> _logicManager;
+    private IHangmanLogic _logic;
 
     [SetUp]
     public void Setup()
@@ -34,10 +37,11 @@ public class HangmanHubTests
         _singleClientProxy = Substitute.For<ISingleClientProxy>();
         _lobbyManager = Substitute.For<ILobbyManager>();
         _randomPicker = Substitute.For<IRandomPicker>();
-
+        _logicManager = Substitute.For<ILogicManager<IHangmanLogic>>();
+        _logic = Substitute.For<IHangmanLogic>();
         _logger = Substitute.For<ILogger<HangmanHub>>();
 
-        _uut = new HangmanHub(_lobbyManager, _logger, _randomPicker)
+        _uut = new HangmanHub(_lobbyManager, _logicManager, _logger, _randomPicker)
         {
             Clients = _clients,
             Groups = _groups,
@@ -94,6 +98,7 @@ public class HangmanHubTests
         // Arrange
         var lobbyId = "Id";
         _clients.Group(Arg.Any<string>()).Returns(_clientProxy);
+        _logicManager.LobbyExists(lobbyId).Returns(false);
 
         // Act
         var res = await _uut.StartGame(lobbyId);
@@ -108,7 +113,7 @@ public class HangmanHubTests
     {
         // Arrange
         var lobbyId = "Id";
-        await _uut.StartGame(lobbyId);
+        _logicManager.LobbyExists(Arg.Any<string>()).Returns(true);
 
         // Act
         var res = await _uut.StartGame(lobbyId);
@@ -122,6 +127,7 @@ public class HangmanHubTests
     {
         // Arrange
         var lobbyId = "Id";
+        _logicManager.LobbyExists(lobbyId).Returns(false);
 
         // Act
         var res = await _uut.GuessLetter(lobbyId, 'c');
@@ -138,8 +144,12 @@ public class HangmanHubTests
         var lobbyId = "Id";
         _clients.Group(Arg.Any<string>()).Returns(_clientProxy);
         _randomPicker.PickRandomItem(Arg.Any<List<string>>()).Returns("word");
-        await _uut.StartGame(lobbyId);
-        _clientProxy.ClearReceivedCalls();
+        _logicManager.TryGetValue(Arg.Any<string>(), out Arg.Any<IHangmanLogic>()).Returns(x =>
+        {
+            x[1] = _logic;
+            return true;
+        });
+        _logic.IsGameOver().Returns(false);
 
         // Act
         var res = await _uut.GuessLetter(lobbyId, 'c');
@@ -156,8 +166,12 @@ public class HangmanHubTests
         // Arrange
         var lobbyId = "Id";
         _clients.Group(Arg.Any<string>()).Returns(_clientProxy);
-        await _uut.StartGame(lobbyId);
-        _clientProxy.ClearReceivedCalls();
+        _logicManager.TryGetValue(Arg.Any<string>(), out Arg.Any<IHangmanLogic>()).Returns(x =>
+        {
+            x[1] = _logic;
+            return true;
+        });
+        _logic.IsGameOver().Returns(true);
 
         // Act
         var res = await _uut.GuessLetter(lobbyId, 'c');
@@ -188,9 +202,11 @@ public class HangmanHubTests
         // Arrange
         var lobbyId = "Id";
         _clients.Group(Arg.Any<string>()).Returns(_clientProxy);
-        await _uut.StartGame(lobbyId);
-        
-        _clientProxy.ClearReceivedCalls();
+        _logicManager.TryGetValue(Arg.Any<string>(), out Arg.Any<IHangmanLogic>()).Returns(x =>
+        {
+            x[1] = _logic;
+            return true;
+        });
 
         // Act
         var res = await _uut.RestartGame(lobbyId);

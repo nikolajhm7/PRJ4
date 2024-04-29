@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Server.API.Games
 {
-    public class HangmanLogic(IRandomPicker picker)
+    public class HangmanLogic(IRandomPicker picker) : IHangmanLogic
     {
         public readonly int MaxIncorrectGuesses = 6;
         private string _secretWord = "";

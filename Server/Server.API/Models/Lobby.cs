@@ -16,5 +16,6 @@ namespace Server.API.Models
         public GameStatus Status { get; set; } = GameStatus.InLobby;
         public int GameId { get; set; } = gameId;
         public int MaxPlayers { get; set; } = maxPlayers;
+        
     }
 }

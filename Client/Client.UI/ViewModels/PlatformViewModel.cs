@@ -128,8 +128,8 @@ namespace Client.UI.ViewModels
         {
             if (s != null)
             {
-                int someint = 1;
-                var response = await _lobbyService.CreateLobbyAsync(someint);
+                
+                var response = await _lobbyService.CreateLobbyAsync(1);
                 if (response.Success)
                 {
                     var box = new Dictionary<string, object>

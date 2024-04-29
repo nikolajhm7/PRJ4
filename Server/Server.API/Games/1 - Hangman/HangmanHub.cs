@@ -10,13 +10,14 @@ namespace Server.API.Games
     {
         private readonly ILogger<HangmanHub> _logger;
         private readonly ILobbyManager _lobbyManager;
-        public readonly Dictionary<string, HangmanLogic> LobbyLogic = [];
         private readonly IRandomPicker _randomPicker;
+        private readonly ILogicManager<IHangmanLogic> _logicManager;
 
-        public HangmanHub(ILobbyManager lobbyManager, ILogger<HangmanHub> logger, IRandomPicker randomPicker)
+        public HangmanHub(ILobbyManager lobbyManager, ILogicManager<IHangmanLogic> logicManager, ILogger<HangmanHub> logger, IRandomPicker randomPicker)
         {
             _logger = logger;
             _lobbyManager = lobbyManager;
+            _logicManager = logicManager;
             _randomPicker = randomPicker;
         }
 
@@ -41,24 +42,22 @@ namespace Server.API.Games
 
         public async Task<ActionResult> StartGame(string lobbyId)
         {
-            if (LobbyLogic.ContainsKey(lobbyId))
+            if (_logicManager.LobbyExists(lobbyId))
             {
                 return new(false, "Game lobby already exists, and started.");
             }
 
             var logic = new HangmanLogic(_randomPicker);
-            LobbyLogic.Add(lobbyId, logic);
+            _logicManager.Add(lobbyId, logic);
 
             var wordLength = logic.StartGame();
             await Clients.Group(lobbyId).SendAsync("GameStarted", wordLength);
-            System.Diagnostics.Debug.WriteLine("LobbyLogic Count: " + LobbyLogic.Count);
             return new(true, null);
         }
 
         public async Task<ActionResult> GuessLetter(string lobbyId, char letter)
         {
-            System.Diagnostics.Debug.WriteLine("LobbyLogic Count: " + LobbyLogic.Count);
-            if (LobbyLogic.TryGetValue(lobbyId, out var logic))
+            if (_logicManager.TryGetValue(lobbyId, out var logic))
             {
                 List<int> positions;
                 var isCorrect = logic.GuessLetter(letter, out positions);
@@ -78,7 +77,7 @@ namespace Server.API.Games
 
         public async Task<ActionResult> RestartGame(string lobbyId)
         {
-            if (LobbyLogic.TryGetValue(lobbyId, out var logic))
+            if (_logicManager.TryGetValue(lobbyId, out var logic))
             {
                 var wordLength = logic.StartGame();
                 await Clients.Group(lobbyId).SendAsync("GameStarted", wordLength);
@@ -116,6 +115,7 @@ namespace Server.API.Games
                     await Groups.RemoveFromGroupAsync(member.ConnectionId, lobbyId);
                 }
 
+                _logicManager.Remove(lobbyId);
                 _lobbyManager.RemoveLobby(lobbyId);
             }
             else
