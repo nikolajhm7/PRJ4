@@ -124,7 +124,7 @@ namespace Client.UI.ViewModels
                 HiddenWord = new string(hwChars).ToUpper();
             }
             // Update the error counter
-            if (!isCorrect)
+            if (!isCorrect && !guessedChars.Contains(letter))
             {
                 ErrorCounter++;
                 ImageSource = $"hangman_img{ErrorCounter}.jpg";
