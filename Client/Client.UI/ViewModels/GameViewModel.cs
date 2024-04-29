@@ -14,6 +14,8 @@ using Client.Library.Games;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
 using System.Diagnostics;
+using System.Threading;
+
 namespace Client.UI.ViewModels
 {
     [QueryProperty(nameof(LobbyId), "LobbyId")]
@@ -57,7 +59,7 @@ namespace Client.UI.ViewModels
         public GameViewModel(IHangmanService hangmanService)
         {
             _hangmanService = hangmanService;
-            guessedChars = new ObservableCollection<char>();
+            guessedChars = [];
             //hiddenWord = new ObservableCollection<string>();
 
             _hangmanService.GameStartedEvent += OnGameStarted;
@@ -69,6 +71,7 @@ namespace Client.UI.ViewModels
         public void OnPageAppearing()
         {
             StartGame();
+            GuessedChars.Clear();
         }
 
         private void OnGameStarted(int wordLength)
@@ -119,11 +122,14 @@ namespace Client.UI.ViewModels
                 HiddenWord = new string(hwChars).ToUpper();
             }
             // Update the error counter
-            if (!isCorrect && !guessedChars.Contains(letter))
+            if (!isCorrect)
             {
-                ErrorCounter++;
-                ErrorLabel = $"Errors: {ErrorCounter}";
-                ImageSource = $"hangman_img{ErrorCounter}.jpg";
+                if (!GuessedChars.Contains(letter))
+                {
+                    ErrorCounter++;
+                    ErrorLabel = $"Errors: {ErrorCounter}";
+                    ImageSource = $"hangman_img{ErrorCounter}.jpg";
+                }
             }
         }
 
@@ -185,8 +191,12 @@ namespace Client.UI.ViewModels
                 //{
                 //    guessedChars.Add(letter);
                 //}
-                if (!guessedChars.Contains(letter)) { guessedChars.Add(letter); }
-                else { await Shell.Current.DisplayAlert("Fejl", "Bogstav er allerede gættet på!", "OK"); }
+                if(guessedChars.Contains(letter) ) { await Shell.Current.DisplayAlert("Fejl", "Bogstav er allerede gættet på!", "OK"); }
+                else if (response.Success)
+                {
+                    Thread.Sleep(10); // 100% ikke den bedste løsning
+                    GuessedChars.Add(letter);
+                }
             }
             catch (Exception ex)
             {
