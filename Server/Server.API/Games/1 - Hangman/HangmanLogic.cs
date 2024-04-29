@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
+using NUnit.Framework;
 using Server.API.Models;
 using Server.API.Services.Interfaces;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Server.API.Games
 {
@@ -26,16 +28,18 @@ namespace Server.API.Games
 
         public bool GuessLetter(char letter, out List<int> positions)
         {
-            _currentGuessCount++;
 
             letter = char.ToLower(letter);
-            if (!char.IsLetter(letter) || _guessedLetters.Contains(letter))
+            if (!char.IsLetter(letter))
             {
                 positions = [];
                 return false;
             }
 
+            if (!_guessedLetters.Contains(letter) && !SecretWord.Contains(letter)) { _currentGuessCount++; }
+
             _guessedLetters.Add(letter);
+            Debug.WriteLine("current guess count: " + _currentGuessCount);
 
             positions = FindLetterPositions(letter);
             return SecretWord.Contains(letter);

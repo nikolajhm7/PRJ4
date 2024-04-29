@@ -119,7 +119,7 @@ namespace Client.UI.ViewModels
                 {
                     hwChars[position] = letter;
                 }
-                HiddenWord = new string(hwChars);
+                HiddenWord = new string(hwChars).ToUpper();
             }
             // Update the error counter
             if (!isCorrect)
@@ -189,7 +189,8 @@ namespace Client.UI.ViewModels
                 //{
                 //    guessedChars.Add(letter);
                 //}
-                guessedChars.Add(letter);
+                if (!guessedChars.Contains(letter)) { guessedChars.Add(letter); }
+                else { await Shell.Current.DisplayAlert("Fejl", "Bogstav er allerede gættet på!", "OK"); }
             }
             catch (Exception ex)
             {
