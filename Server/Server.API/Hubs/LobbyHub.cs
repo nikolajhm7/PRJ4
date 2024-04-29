@@ -156,7 +156,7 @@ namespace Server.API.Hubs
                 return new ActionResult(false, "Authentication context is not available.");
             }
 
-            if (_lobbyManager.IsHost(Context.ConnectionId, lobbyId))
+            if (_lobbyManager.IsHost(username, lobbyId))
             {
                 _lobbyManager.StartGame(lobbyId);
                 // TODO: ADD START GAME LOGIC HERE
@@ -180,7 +180,7 @@ namespace Server.API.Hubs
             var username = Context.User?.Identity?.Name;
             var user = new ConnectedUserDTO(username, Context.ConnectionId);
 
-            var lobbyId = _lobbyManager.GetLobbyIdFromUser(user);
+            var lobbyId = _lobbyManager.GetLobbyIdFromUsername(username);
             if (lobbyId != null)
             {
                 // If game is started we expect users to disconnect
@@ -201,7 +201,7 @@ namespace Server.API.Hubs
         private async Task RemoveUserFromLobby(string lobbyId, ConnectedUserDTO user)
         {
             // If host disconnects, close lobby and remove all members.
-            if (_lobbyManager.IsHost(Context.ConnectionId, lobbyId))
+            if (_lobbyManager.IsHost(user.Username, lobbyId))
             {
                 await Clients.Group(lobbyId).SendAsync("LobbyClosed");
 

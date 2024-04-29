@@ -1,5 +1,6 @@
 ﻿using Client.Library.Models;
 using Client.Library.Services;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace Client.Library.Games
 {
     public class HangmanService : ConnectionService, IHangmanService
     {
-        public HangmanService(string url) : base(url)
+        public HangmanService(IConfiguration configuration) : base(configuration["ConnectionSettings:ApiUrl"] + configuration["ConnectionSettings:HangmanEndpoint"])
         {
             On<int>("GameStarted", (wordLength) =>
                            GameStartedEvent?.Invoke(wordLength));

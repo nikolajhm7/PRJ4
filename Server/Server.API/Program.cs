@@ -274,6 +274,7 @@ void ConfigureServices(IServiceCollection services)
     services.AddScoped<IGameRepository, GameRepository>();
     services.AddSingleton<ILobbyManager, LobbyManager>();
     services.AddScoped<IRandomPicker, RandomGenerator>();
+    services.AddSingleton(typeof(ILogicManager<>), typeof(LogicManager<>));
 }
 
 

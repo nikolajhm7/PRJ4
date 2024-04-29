@@ -10,8 +10,18 @@ namespace Client.UI.Views
         public GamePage(GameViewModel vm)
         {
             this.BindingContext = vm;
+            this.Appearing += OnPageAppearing;
             InitializeComponent();
         }
-        
+        private void OnPageAppearing(object sender, EventArgs e)
+        {
+            // Call the base implementation first
+            if (BindingContext is GameViewModel viewModel)
+            {
+                viewModel.OnPageAppearing();
+            }
+
+        }
+
     }
 }

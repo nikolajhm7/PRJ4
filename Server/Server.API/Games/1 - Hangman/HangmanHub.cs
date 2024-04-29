@@ -11,13 +11,14 @@ namespace Server.API.Games
     {
         private readonly ILogger<HangmanHub> _logger;
         private readonly ILobbyManager _lobbyManager;
-        public readonly Dictionary<string, HangmanLogic> LobbyLogic = [];
         private readonly IRandomPicker _randomPicker;
+        private readonly ILogicManager<IHangmanLogic> _logicManager;
 
-        public HangmanHub(ILobbyManager lobbyManager, ILogger<HangmanHub> logger, IRandomPicker randomPicker)
+        public HangmanHub(ILobbyManager lobbyManager, ILogicManager<IHangmanLogic> logicManager, ILogger<HangmanHub> logger, IRandomPicker randomPicker)
         {
             _logger = logger;
             _lobbyManager = lobbyManager;
+            _logicManager = logicManager;
             _randomPicker = randomPicker;
         }
 
@@ -26,9 +27,10 @@ namespace Server.API.Games
             var username = Context.User?.Identity?.Name;
             var user = new ConnectedUserDTO(username, Context.ConnectionId);
 
-            var lobbyId = _lobbyManager.GetLobbyIdFromUser(user);
+            var lobbyId = _lobbyManager.GetLobbyIdFromUsername(username);
             if (lobbyId != null && _lobbyManager.GetGameStatus(lobbyId) == GameStatus.InGame)
             {
+                _lobbyManager.UpdateUserInLobby(user, lobbyId);
                 await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
                 await base.OnConnectedAsync();
             }
@@ -41,13 +43,13 @@ namespace Server.API.Games
 
         public async Task<ActionResult> StartGame(string lobbyId)
         {
-            if (LobbyLogic.ContainsKey(lobbyId))
+            if (_logicManager.LobbyExists(lobbyId))
             {
                 return new(false, "Game lobby already exists, and started.");
             }
 
             var logic = new HangmanLogic(_randomPicker);
-            LobbyLogic.Add(lobbyId, logic);
+            _logicManager.Add(lobbyId, logic);
 
             var wordLength = logic.StartGame();
             await Clients.Group(lobbyId).SendAsync("GameStarted", wordLength);
@@ -56,7 +58,7 @@ namespace Server.API.Games
 
         public async Task<ActionResult> GuessLetter(string lobbyId, char letter)
         {
-            if (LobbyLogic.TryGetValue(lobbyId, out var logic))
+            if (_logicManager.TryGetValue(lobbyId, out var logic))
             {
                 List<int> positions;
                 var isCorrect = logic.GuessLetter(letter, out positions);
@@ -70,12 +72,13 @@ namespace Server.API.Games
 
                 return new(true, null);
             }
+
             return new(false, "Lobby does not exist.");
         }
 
         public async Task<ActionResult> RestartGame(string lobbyId)
         {
-            if (LobbyLogic.TryGetValue(lobbyId, out var logic))
+            if (_logicManager.TryGetValue(lobbyId, out var logic))
             {
                 var wordLength = logic.StartGame();
                 await Clients.Group(lobbyId).SendAsync("GameStarted", wordLength);
@@ -91,7 +94,7 @@ namespace Server.API.Games
             var username = Context.User?.Identity?.Name;
             var user = new ConnectedUserDTO(username, Context.ConnectionId);
 
-            var lobbyId = _lobbyManager.GetLobbyIdFromUser(user);
+            var lobbyId = _lobbyManager.GetLobbyIdFromUsername(username);
             if (lobbyId != null)
             {
                 await RemoveUserFromLobby(lobbyId, user);
@@ -104,7 +107,7 @@ namespace Server.API.Games
         private async Task RemoveUserFromLobby(string lobbyId, ConnectedUserDTO user)
         {
             // If host disconnects, close lobby and remove all members.
-            if (_lobbyManager.IsHost(Context.ConnectionId, lobbyId))
+            if (_lobbyManager.IsHost(user.Username, lobbyId))
             {
                 await Clients.Group(lobbyId).SendAsync("LobbyClosed");
 
@@ -113,6 +116,7 @@ namespace Server.API.Games
                     await Groups.RemoveFromGroupAsync(member.ConnectionId, lobbyId);
                 }
 
+                _logicManager.Remove(lobbyId);
                 _lobbyManager.RemoveLobby(lobbyId);
             }
             else

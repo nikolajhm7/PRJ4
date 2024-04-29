@@ -14,6 +14,7 @@ using Client.Library.Services;
 using Client.Library.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.Linq.Expressions;
+using Client.UI.Views;
 
 
 namespace Client.UI.ViewModels
@@ -144,6 +145,20 @@ namespace Client.UI.ViewModels
                 
                 await _lobbyService.LeaveLobbyAsync(lobbyId);
                 await _navigationService.NavigateBack();
+            }
+        }
+
+        [RelayCommand]
+        async Task GoToGame()
+        {
+            var res = await _lobbyService.StartGameAsync(LobbyId);
+            if (res.Success)
+            {
+                await _navigationService.NavigateToPage($"{nameof(GamePage)}?LobbyId={LobbyId}");
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Failed", "to join lobby", "OK");
             }
         }
 

@@ -13,7 +13,7 @@
         ContentTemplate="{DataTemplate views:LoadingPage}"
         Route="Loading" />
     
-    <!--<ShellContent
+    <ShellContent
         Title="Login"
         ContentTemplate="{DataTemplate views:LoginPage}"
         Route="LoginPage" />
@@ -41,14 +41,14 @@
     <ShellContent
         Title="Lobby"
         ContentTemplate="{DataTemplate views:LobbyPage}"
-        Route="LobbyPage" />-->
+        Route="LobbyPage" />
     <ShellContent
         Title="Game"
         ContentTemplate="{DataTemplate views:GamePage}"
         Route="GamePage" />
-    <ShellContent
+    <!--<ShellContent
         Title="ChatApp"
         ContentTemplate="{DataTemplate views:ChatAppPage}"
-        Route="ChatAppPage" />
+        Route="ChatAppPage" />-->
 
 </Shell>

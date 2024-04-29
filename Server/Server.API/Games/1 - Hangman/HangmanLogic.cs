@@ -1,13 +1,15 @@
 ﻿using Newtonsoft.Json.Linq;
+using NUnit.Framework;
 using Server.API.Models;
 using Server.API.Services.Interfaces;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Server.API.Games
 {
-    public class HangmanLogic(IRandomPicker picker)
+    public class HangmanLogic(IRandomPicker picker) : IHangmanLogic
     {
-        private readonly int _maxIncorrectGuesses = 5;
+        public readonly int MaxIncorrectGuesses = 6;
         private string _secretWord = "";
         public string SecretWord { get { return _secretWord; } }
         private int _currentGuessCount = 0;
@@ -25,13 +27,17 @@ namespace Server.API.Games
 
         public bool GuessLetter(char letter, out List<int> positions)
         {
-            _currentGuessCount++;
 
             letter = char.ToLower(letter);
             if (!char.IsLetter(letter) || _guessedLetters.Contains(letter))
             {
                 positions = [];
                 return false;
+            }
+
+            if (!SecretWord.Contains(letter)) 
+            {
+                _currentGuessCount++; 
             }
 
             _guessedLetters.Add(letter);
@@ -44,13 +50,13 @@ namespace Server.API.Games
         {
             var isWin = !SecretWord.Any(c => !_guessedLetters.Contains(c));
 
-            return isWin || _currentGuessCount >= _maxIncorrectGuesses;
+            return isWin || _currentGuessCount >= MaxIncorrectGuesses;
         }
 
         public bool DidUserWin()
         {
-            if (_currentGuessCount < _maxIncorrectGuesses)
-                return !SecretWord.Any(c => !_guessedLetters.Contains(c));
+            if (_currentGuessCount < MaxIncorrectGuesses)
+                return SecretWord.All(c => _guessedLetters.Contains(c));
             return false;
         }
 

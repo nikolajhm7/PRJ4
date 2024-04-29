@@ -9,6 +9,7 @@ using NSubstitute;
 using Server.API.DTO;
 using Server.API.Models;
 using Server.API.Repository.Interfaces;
+using Server.API.Controllers;
 
 namespace Server.Test;
 

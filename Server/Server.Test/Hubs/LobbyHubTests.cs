@@ -212,13 +212,13 @@ namespace Server.Test.Hubs
         {
             // Arrange
             string lobbyId = "123456";
-            var hostuser = "hostuser";
-            var hostconnection = "host-connection-id";
+            var hostUser = "hostuser";
+            var hostConnection = "host-connection-id";
 
             _clients.Group(lobbyId).Returns(_clientProxy);
-            _lobbyManager.IsHost(hostconnection, lobbyId).Returns(true);
-            _context.User?.Identity?.Name.Returns(hostuser);
-            _context.ConnectionId.Returns(hostconnection);
+            _lobbyManager.IsHost(hostUser, lobbyId).Returns(true);
+            _context.User?.Identity?.Name.Returns(hostUser);
+            _context.ConnectionId.Returns(hostConnection);
 
             // Act
             var result = await _uut.StartGame(lobbyId);
@@ -234,10 +234,10 @@ namespace Server.Test.Hubs
         {
             // Arrange
             string lobbyId = "123456";
-            var connection = "connection-id";
+            var username = "username-id";
 
             _clients.Group(lobbyId).Returns(_clientProxy);
-            _lobbyManager.IsHost(connection, lobbyId).Returns(false);
+            _lobbyManager.IsHost(username, lobbyId).Returns(false);
 
             // Act
             var result = await _uut.StartGame(lobbyId);
@@ -269,9 +269,9 @@ namespace Server.Test.Hubs
             _context.User?.Identity?.Name.Returns(username);
             _context.ConnectionId.Returns(connection);
             _clients.Group(lobbyId).Returns(_clientProxy);
-            _lobbyManager.GetLobbyIdFromUser(user).Returns(lobbyId);
+            _lobbyManager.GetLobbyIdFromUsername(username).Returns(lobbyId);
             _lobbyManager.GetGameStatus(lobbyId).Returns(GameStatus.InLobby);
-            _lobbyManager.IsHost(connection, lobbyId).Returns(false);
+            _lobbyManager.IsHost(username, lobbyId).Returns(false);
 
             // Act
             await _uut.OnDisconnectedAsync(null);
@@ -294,8 +294,8 @@ namespace Server.Test.Hubs
             _clients.Group(lobbyId).Returns(_clientProxy);
             _context.User?.Identity?.Name.Returns(username);
             _context.ConnectionId.Returns(connection);
-            _lobbyManager.IsHost(connection, lobbyId).Returns(true);
-            _lobbyManager.GetLobbyIdFromUser(user).Returns(lobbyId);
+            _lobbyManager.IsHost(username, lobbyId).Returns(true);
+            _lobbyManager.GetLobbyIdFromUsername(username).Returns(lobbyId);
             _lobbyManager.GetGameStatus(lobbyId).Returns(GameStatus.InLobby);
             var list = new List<ConnectedUserDTO> { user, new ConnectedUserDTO("", "") };
             _lobbyManager.GetUsersInLobby(lobbyId).Returns(list);
@@ -322,8 +322,8 @@ namespace Server.Test.Hubs
             _clients.Group(lobbyId).Returns(_clientProxy);
             _context.User?.Identity?.Name.Returns(username);
             _context.ConnectionId.Returns(connection);
-            _lobbyManager.IsHost(connection, lobbyId).Returns(true);
-            _lobbyManager.GetLobbyIdFromUser(user).Returns(lobbyId);
+            _lobbyManager.IsHost(username, lobbyId).Returns(true);
+            _lobbyManager.GetLobbyIdFromUsername(username).Returns(lobbyId);
             _lobbyManager.GetGameStatus(lobbyId).Returns(GameStatus.InGame);
 
             // Act

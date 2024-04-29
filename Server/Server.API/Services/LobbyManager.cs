@@ -23,23 +23,36 @@ namespace Server.API.Services
             return lobbies.ContainsKey(lobbyId);
         }
 
-        public bool IsHost(string connectionId, string lobbyId)
+        public bool IsHost(string username, string lobbyId)
         {
             if (lobbies.TryGetValue(lobbyId, out Lobby? lobby))
             {
-                return lobby.HostConnectionId == connectionId;
+                return lobby.HostUsername == username;
             }
             return false;
         }
 
-        public string? GetLobbyIdFromUser(ConnectedUserDTO user)
+        public string? GetLobbyIdFromUsername(string username)
         {
-            var lobby = lobbies.FirstOrDefault(x => x.Value.Members.Contains(user)).Value;
+            var lobby = lobbies.FirstOrDefault(x => x.Value.Members.Any(member => member.Username == username)).Value;
             if (lobby != null)
             {
                 return lobby.LobbyId;
             }
             else return null;
+        }
+
+        public void UpdateUserInLobby(ConnectedUserDTO newUser, string lobbyId)
+        {
+            if(lobbies.TryGetValue(lobbyId, out Lobby? lobby))
+            {
+                var oldUser = lobby.Members.FirstOrDefault(x => x.Username == newUser.Username);
+                if (oldUser != null)
+                {
+                    lobby.Members.Remove(oldUser);
+                    lobby.Members.Add(newUser);
+                }
+            }
         }
 
         public List<ConnectedUserDTO> GetUsersInLobby(string lobbyId)
@@ -66,7 +79,7 @@ namespace Server.API.Services
             var gameRepository = _serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IGameRepository>();
 
             var maxPlayers = await gameRepository.GetMaxPlayers(gameId);
-            var lobby = new Lobby(lobbyId, user.ConnectionId, gameId, maxPlayers);
+            var lobby = new Lobby(lobbyId, user.Username, gameId, maxPlayers);
             lobby.Members.Add(user);
             lobbies.Add(lobbyId, lobby);
 

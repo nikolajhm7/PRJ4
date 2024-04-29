@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using Server.API.Data;
 using Server.API.Models;
+using Server.API.Repositories;
 using Server.API.Repository;
 
 namespace Server.Test.Repositories;

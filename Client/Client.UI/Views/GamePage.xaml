@@ -5,27 +5,99 @@
              x:Class="Client.UI.Views.GamePage"
              x:DataType="viewModels:GameViewModel"
              Title="GamePage">
-    <Grid RowDefinitions="Auto, *">
-        <Label Text="{Binding Title}" />
-        <Button Text="Start Game" Command="{Binding StartGameCommand}" />
 
-        <Entry Grid.Row="4"
-               HorizontalOptions="Center"
-               Placeholder="Enter letter"
-               ></Entry>
-        <Button Grid.Row="5"
+        <Grid 
+            RowDefinitions="*,*,*,*"
+            ColumnDefinitions="*,*,*,*">
+
+        <!--Elements for row 0-->
+            <Label 
+                Grid.Row="0"
+                Grid.Column="0"
+                Text="{Binding LobbyId}"/>
+            
+        <!--måske lav til listview-->
+            <Label 
+                Grid.Row="0"
+                Grid.Column="1"
+                Text="{Binding Players}"/>
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="2"
+                FontSize="32"
+                Text="{Binding Title}"/>
+
+            <Label 
+                Grid.Row="0"
+                Grid.Column="3"
+                FontSize="Large"
+                FontAttributes="Bold"
+                Text="{Binding ErrorLabel}"/>
+
+
+        <!--Elements for row 1-->
+
+            <Entry 
+                Grid.Row="1"
+                Grid.Column="0"
+                Placeholder="Enter letter"
+                FontSize="Large"
+                ClearButtonVisibility="WhileEditing"
+                Text="{Binding Letter}"/>
+
+            <Label
+                Grid.Row="1"
+                Grid.Column="1"
+                Text="{Binding HiddenWord}"
+                FontSize="Large"
+                CharacterSpacing="10"/>
+
+            <Label
+                Grid.Row="1"
+                Grid.Column="2"
+                FontSize="Medium"
+                Text="{Binding StatusMessage}"/>
+
+            <Image
+                Grid.Row="1"
+                Grid.Column="3"
+                Source="{Binding ImageSource}"
+                HeightRequest="200"/>
+
+        <!--Elements for row 2-->
+
+            <Button 
+                Grid.Row="2"
+                Grid.Column="0"
+                Style="{StaticResource normalBtn}"
                 Text="Submit"
-                Command="{Binding SubmitLetterCommand}"
-                ></Button>
+                Command="{Binding GuessLetterCommand}"
+                CommandParameter="{Binding Letter}"/>
 
-        <!--List of players:-->
-        <CollectionView ItemsSource="{Binding Players}">
-            <CollectionView.ItemTemplate>
-                <!--<DataTemplate>
-                    <Label Text="{Binding Name}" />
-                </DataTemplate>-->
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+        <!--Elements for row 3-->
+
+            <Button 
+                Grid.Row="3"
+                Grid.Column="3"
+                Style="{StaticResource normalBtn}"
+                WidthRequest="100"
+                Text="Reset"
+                Command="{Binding RestartGameCommand}"/>
+
+            <ListView ItemsSource="{Binding GuessedChars}"
+                  Grid.Row="3"
+                  Grid.Column="0">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout>
+                            <Label Text="{Binding}" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
     </Grid>
 </ContentPage>
