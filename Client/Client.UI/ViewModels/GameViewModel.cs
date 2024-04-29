@@ -194,7 +194,7 @@ namespace Client.UI.ViewModels
                 if(guessedChars.Contains(letter) ) { await Shell.Current.DisplayAlert("Fejl", "Bogstav er allerede gættet på!", "OK"); }
                 else if (response.Success)
                 {
-                    Thread.Sleep(10); // 100% ikke den bedste løsning
+                    await Task.Delay(1); 
                     GuessedChars.Add(letter);
                 }
             }
