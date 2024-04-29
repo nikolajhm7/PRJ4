@@ -124,7 +124,7 @@ namespace Client.UI.ViewModels
             // Update the error counter
             if (!isCorrect)
             {
-                if (!GuessedChars.Contains(letter))
+                if (!GuessedChars.Contains(char.ToUpper(letter)))
                 {
                     ErrorCounter++;
                     ErrorLabel = $"Errors: {ErrorCounter}";
@@ -191,11 +191,11 @@ namespace Client.UI.ViewModels
                 //{
                 //    guessedChars.Add(letter);
                 //}
-                if(guessedChars.Contains(letter) ) { await Shell.Current.DisplayAlert("Fejl", "Bogstav er allerede gættet på!", "OK"); }
+                if(guessedChars.Contains(char.ToUpper(letter)) ) { await Shell.Current.DisplayAlert("Fejl", $"'{char.ToUpper(letter)}' er allerede gættet på!", "OK"); }
                 else if (response.Success)
                 {
                     await Task.Delay(1); 
-                    GuessedChars.Add(letter);
+                    GuessedChars.Add(char.ToUpper(letter));
                 }
             }
             catch (Exception ex)
