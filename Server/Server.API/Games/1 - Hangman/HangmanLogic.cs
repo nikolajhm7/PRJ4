@@ -30,13 +30,16 @@ namespace Server.API.Games
         {
 
             letter = char.ToLower(letter);
-            if (!char.IsLetter(letter))
+            if (!char.IsLetter(letter) || _guessedLetters.Contains(letter))
             {
                 positions = [];
                 return false;
             }
 
-            if (!_guessedLetters.Contains(letter) && !SecretWord.Contains(letter)) { _currentGuessCount++; }
+            if (!SecretWord.Contains(letter)) 
+            {
+                _currentGuessCount++; 
+            }
 
             _guessedLetters.Add(letter);
             Debug.WriteLine("current guess count: " + _currentGuessCount);
