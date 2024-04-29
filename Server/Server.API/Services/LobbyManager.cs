@@ -86,16 +86,17 @@ namespace Server.API.Services
             return lobbyId;
         }
 
-        public ActionResult AddToLobby(ConnectedUserDTO user, string lobbyId)
+        public ActionResult<List<ConnectedUserDTO>> AddToLobby(ConnectedUserDTO user, string lobbyId)
         {
             if (lobbies.TryGetValue(lobbyId, out Lobby? lobby))
             {
-                if (lobby.Members.Count >= lobby.MaxPlayers) return new(false, "Lobby is full");
+                if (lobby.Members.Count >= lobby.MaxPlayers) return new(false, "Lobby is full", []);
 
+                var users = lobby.Members.ToList();
                 lobby.Members.Add(user);
-                return new(true, null);
+                return new(true, null, users);
             }
-            else return new(false, "Could not find lobby");
+            else return new(false, "Could not find lobby", []);
         }
 
         public void RemoveFromLobby(ConnectedUserDTO user, string lobbyId)
@@ -124,6 +125,17 @@ namespace Server.API.Services
                 return lobby.Status;
             }
             return GameStatus.NoLobby;
+        }
+        public ActionResult<Lobby> GetLobbyInfo(string lobbyId)
+        {
+            if (lobbies.TryGetValue(lobbyId, out Lobby? lobby))
+            {
+                return new(true, "Succesfully returned lobby", lobby);
+            }
+            else
+            {
+                return new(false, "Could not find lobby", null);
+            }
         }
     }
 }

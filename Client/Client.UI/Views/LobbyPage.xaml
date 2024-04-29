@@ -21,7 +21,7 @@
         />
 
         <Image
-            Source="{Binding Recivedgame.Image}"
+            Source="{Binding Image}"
             Grid.Row="1"
             Grid.Column="1"
             Grid.RowSpan="1"
@@ -38,7 +38,7 @@
 
         <CollectionView 
             x:Name="PlayersCollectionView" 
-            ItemsSource="{Binding Lobby.PlayerNames}" 
+            ItemsSource="{Binding PlayerNames}" 
             SelectionMode="None" 
             HeightRequest="200"
             Grid.Column="2"

@@ -42,9 +42,24 @@ namespace Client.Library.Services
 
         }
 
+        public async Task<ActionResult<Lobby>> GetLobbyInfo(string lobbyId)
+        {
+            return await InvokeAsync<Lobby>("GetLobbyInfo", lobbyId);
+        }
+
+        public async Task<ActionResult> UserIsHost(string lobbyId)
+        {
+            return await InvokeAsync("UserIsHost", lobbyId);
+        }
+
         public async Task<ActionResult> LeaveLobbyAsync(string lobbyId)
         {
             return await InvokeAsync("LeaveLobby", lobbyId);
+        }
+
+        public async Task<ActionResult<List<ConnectedUserDTO>>> GetUsersInLobby(string lobbyId)
+        {
+            return await InvokeAsync<List<ConnectedUserDTO>>("GetUsersInLobby", lobbyId);
         }
 
         public async Task<ActionResult> StartGameAsync(string lobbyId)
