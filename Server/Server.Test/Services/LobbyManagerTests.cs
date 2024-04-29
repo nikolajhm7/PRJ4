@@ -90,6 +90,20 @@ namespace Server.Test.Services
             // Assert
             Assert.That(result, Is.False);
         }
+        
+        [Test]
+        public void IsHost_LobbyDoesNotExist_ReturnsFalse()
+        {
+            // Arrange
+            string lobbyId = "123";
+            string connectionId = "123";
+
+            // Act
+            var result = _uut.IsHost(connectionId, lobbyId);
+
+            // Assert
+            Assert.That(result, Is.False);
+        }
 
         [Test]
         public void GetLobbyIdFromUser_UserInLobby_ReturnsLobbyId()
@@ -167,6 +181,26 @@ namespace Server.Test.Services
             // Assert
             Assert.That(result, Is.EqualTo(lobbyId));
             Assert.That(_uut.lobbies[lobbyId].Members, Contains.Item(user));
+        }
+        
+        [Test]
+        public async Task CreateNewLobby_FirstIDExists_CreatesNewId()
+        {
+            // Arrange
+            string lobbyId1 = "123";
+            string lobbyId2 = "456";
+            ConnectedUserDTO user = new ConnectedUserDTO("name", "123");
+            var lobby = new Lobby(lobbyId1, "123", 1, 10);
+            _uut.lobbies.Add(lobbyId1, lobby);
+            _idGenerator.GenerateRandomLobbyId().Returns(lobbyId1, lobbyId2);
+            _gameRepository.GetMaxPlayers(1).Returns(10);
+
+            // Act
+            var result = await _uut.CreateNewLobby(user, 1);
+
+            // Assert
+            Assert.That(result, Is.EqualTo(lobbyId2));
+            Assert.That(_uut.lobbies[lobbyId2].Members, Contains.Item(user));
         }
 
         [Test]
@@ -292,7 +326,7 @@ namespace Server.Test.Services
             var result = _uut.GetGameStatus(lobbyId);
 
             // Assert
-            Assert.That(result, Is.EqualTo(GameStatus.NO_LOBBY));
+            Assert.That(result, Is.EqualTo(GameStatus.NoLobby));
         }
     }
 }

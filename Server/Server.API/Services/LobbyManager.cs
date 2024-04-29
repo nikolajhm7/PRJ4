@@ -111,7 +111,7 @@ namespace Server.API.Services
             {
                 return lobby.Status;
             }
-            return GameStatus.NO_LOBBY;
+            return GameStatus.NoLobby;
         }
         public ActionResult<Lobby> GetLobbyInfo(string lobbyId)
         {

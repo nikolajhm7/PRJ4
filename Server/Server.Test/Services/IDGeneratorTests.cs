@@ -8,12 +8,12 @@ namespace Server.Test.Services
     [TestFixture]
     public class IDGeneratorTests
     {
-        private IdGenerator _uut;
+        private RandomGenerator _uut;
 
         [SetUp]
         public void Setup()
         {
-            _uut = new IdGenerator();
+            _uut = new RandomGenerator();
         }
 
         [Test]

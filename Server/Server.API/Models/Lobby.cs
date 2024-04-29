@@ -4,7 +4,7 @@ namespace Server.API.Models
 {
     public enum GameStatus
     {
-        NO_LOBBY,
+        NoLobby,
         InLobby,
         InGame
     }

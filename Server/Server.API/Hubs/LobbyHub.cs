@@ -176,10 +176,6 @@ namespace Server.API.Hubs
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             _logger.LogDebug("Handling disconnect of user {UserName}.", Context.User?.Identity?.Name);
-            if (exception != null)
-            {
-                _logger.LogError(exception, "Error on disconnect by {UserName}.", Context.User?.Identity?.Name);
-            }
 
             var username = Context.User?.Identity?.Name;
             var user = new ConnectedUserDTO(username, Context.ConnectionId);

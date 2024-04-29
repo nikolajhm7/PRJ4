@@ -65,7 +65,7 @@ namespace Server.Test.Hubs
         [Test]
         public async Task CreateLobby_UserNotAuthenticated_ReturnsError()
         {
-            _context.User?.Identity?.Name.Returns((string)null);
+            _context.User?.Identity?.Name.Returns((string?)null);
 
             var result = await _uut.CreateLobby(1);
 
@@ -148,6 +148,19 @@ namespace Server.Test.Hubs
         }
 
         [Test]
+        public async Task LeaveLobby_UserNotAuthenticated_ReturnsError()
+        {
+            // Arrange
+            _context.User?.Identity?.Name.Returns((string?)null);
+            // Act
+            var result = await _uut.LeaveLobby("");
+
+            // Assert
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Msg, Is.EqualTo("Authentication context is not available."));
+        }
+        
+        [Test]
         public async Task LeaveLobby_LobbyExists_UserLeavesSuccessfully()
         {
             // Arrange
@@ -181,6 +194,19 @@ namespace Server.Test.Hubs
             Assert.That(result.Msg, Is.EqualTo("Lobby does not exist."));
         }
 
+        [Test]
+        public async Task StartGame_UserNotAuthenticated_ReturnsError()
+        {
+            // Arrange
+            _context.User?.Identity?.Name.Returns((string?)null);
+            // Act
+            var result = await _uut.StartGame("");
+
+            // Assert
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Msg, Is.EqualTo("Authentication context is not available."));
+        }
+        
         [Test]
         public async Task StartGame_IsHostAndLobbyExists_ShouldStartGame()
         {
