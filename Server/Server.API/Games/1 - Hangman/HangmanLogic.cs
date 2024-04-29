@@ -22,7 +22,6 @@ namespace Server.API.Games
             _guessedLetters = [];
 
             SelectRandomWord();
-            System.Diagnostics.Debug.WriteLine("Random word: " + _secretWord);
             return _secretWord.Length;
         }
 
@@ -42,7 +41,6 @@ namespace Server.API.Games
             }
 
             _guessedLetters.Add(letter);
-            Debug.WriteLine("current guess count: " + _currentGuessCount);
 
             positions = FindLetterPositions(letter);
             return SecretWord.Contains(letter);
