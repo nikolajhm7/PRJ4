@@ -19,8 +19,15 @@ namespace Client.Library.Services
 
         Task<ActionResult> JoinLobbyAsync(string lobbyId);
 
+        Task<ActionResult<Lobby>> GetLobbyInfo(string lobbyId);
+
+        Task<ActionResult> UserIsHost(string lobbyId);
+
         Task<ActionResult> LeaveLobbyAsync(string lobbyId);
 
+        Task<ActionResult<List<ConnectedUserDTO>>> GetUsersInLobby(string lobbyId);
+
         Task<ActionResult> StartGameAsync(string lobbyId);
+
     }
 }

@@ -12,7 +12,7 @@ namespace Client.Library.Games
     {
         event Action<int>? GameStartedEvent;
         event Action<char, bool, List<int>>? GuessResultEvent;
-        event Action<bool>? GameOverEvent;
+        event Action<bool, string>? GameOverEvent;
         event Action? LobbyClosedEvent;
         event Action<string>? UserLeftLobbyEvent;
         Task<ActionResult> StartGame(string lobbyId);

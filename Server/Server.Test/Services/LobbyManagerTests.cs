@@ -66,11 +66,11 @@ namespace Server.Test.Services
         {
             // Arrange
             string lobbyId = "123";
-            string connectionId = "123";
-            _uut.lobbies.Add(lobbyId, new Lobby(lobbyId, connectionId, 1, 10));
+            string username = "123";
+            _uut.lobbies.Add(lobbyId, new Lobby(lobbyId, username, 1, 10));
 
             // Act
-            var result = _uut.IsHost(connectionId, lobbyId);
+            var result = _uut.IsHost(username, lobbyId);
 
             // Assert
             Assert.That(result, Is.True);
@@ -81,11 +81,25 @@ namespace Server.Test.Services
         {
             // Arrange
             string lobbyId = "123";
-            string connectionId = "123";
+            string username = "123";
             _uut.lobbies.Add(lobbyId, new Lobby(lobbyId, "456", 1, 10));
 
             // Act
-            var result = _uut.IsHost(connectionId, lobbyId);
+            var result = _uut.IsHost(username, lobbyId);
+
+            // Assert
+            Assert.That(result, Is.False);
+        }
+        
+        [Test]
+        public void IsHost_LobbyDoesNotExist_ReturnsFalse()
+        {
+            // Arrange
+            string lobbyId = "123";
+            string username = "123";
+
+            // Act
+            var result = _uut.IsHost(username, lobbyId);
 
             // Assert
             Assert.That(result, Is.False);
@@ -96,14 +110,15 @@ namespace Server.Test.Services
         {
             // Arrange
             string lobbyId = "123456";
-            ConnectedUserDTO user = new ConnectedUserDTO("name", "123");
-            var lobby = new Lobby(lobbyId, "123", 1, 10);
+            var username = "name";
+            ConnectedUserDTO user = new ConnectedUserDTO(username, "123");
+            var lobby = new Lobby(lobbyId, username, 1, 10);
             lobby.Members.Add(user);
             _uut.lobbies.Add(lobbyId, lobby);
            
 
             // Act
-            var result = _uut.GetLobbyIdFromUser(user);
+            var result = _uut.GetLobbyIdFromUsername(username);
 
             // Assert
             Assert.That(result, Is.EqualTo(lobbyId));
@@ -113,10 +128,10 @@ namespace Server.Test.Services
         public void GetLobbyIdFromUser_UserNotInLobby_ReturnsNull()
         {
             // Arrange
-            ConnectedUserDTO user = new ConnectedUserDTO("name", "123");
+            string username = "name";
 
             // Act
-            var result = _uut.GetLobbyIdFromUser(user);
+            var result = _uut.GetLobbyIdFromUsername(username);
 
             // Assert
             Assert.That(result, Is.Null);
@@ -168,6 +183,26 @@ namespace Server.Test.Services
             Assert.That(result, Is.EqualTo(lobbyId));
             Assert.That(_uut.lobbies[lobbyId].Members, Contains.Item(user));
         }
+        
+        [Test]
+        public async Task CreateNewLobby_FirstIDExists_CreatesNewId()
+        {
+            // Arrange
+            string lobbyId1 = "123";
+            string lobbyId2 = "456";
+            ConnectedUserDTO user = new ConnectedUserDTO("name", "123");
+            var lobby = new Lobby(lobbyId1, "123", 1, 10);
+            _uut.lobbies.Add(lobbyId1, lobby);
+            _idGenerator.GenerateRandomLobbyId().Returns(lobbyId1, lobbyId2);
+            _gameRepository.GetMaxPlayers(1).Returns(10);
+
+            // Act
+            var result = await _uut.CreateNewLobby(user, 1);
+
+            // Assert
+            Assert.That(result, Is.EqualTo(lobbyId2));
+            Assert.That(_uut.lobbies[lobbyId2].Members, Contains.Item(user));
+        }
 
         [Test]
         public void AddToLobby_LobbyExists_ReturnsTrue()
@@ -176,7 +211,7 @@ namespace Server.Test.Services
             string lobbyId = "123";
             ConnectedUserDTO user = new("name", "123");
             
-            _uut.lobbies.Add(lobbyId, new Lobby(lobbyId, "123", 1, 10));
+            _uut.lobbies.Add(lobbyId, new Lobby(lobbyId, "name", 1, 10));
             
             // Act
             var result = _uut.AddToLobby(user, lobbyId);
@@ -209,7 +244,7 @@ namespace Server.Test.Services
             string lobbyId = "123";
             ConnectedUserDTO user1 = new("name", "123");
             ConnectedUserDTO user2 = new("name1", "1234");
-            var lobby = new Lobby(lobbyId, "123", 1, 1);
+            var lobby = new Lobby(lobbyId, "name", 1, 1);
             lobby.Members.Add(user1);
             _uut.lobbies.Add(lobbyId, lobby);
 
@@ -227,7 +262,7 @@ namespace Server.Test.Services
             // Arrange
             string lobbyId = "123";
             ConnectedUserDTO user = new("name", "123");
-            var lobby = new Lobby(lobbyId, "123", 1, 1);
+            var lobby = new Lobby(lobbyId, "name", 1, 1);
             lobby.Members.Add(user);
             _uut.lobbies.Add(lobbyId, lobby);
 
@@ -243,7 +278,7 @@ namespace Server.Test.Services
         {
             // Arrange
             string lobbyId = "123";
-            var lobby = new Lobby(lobbyId, "123", 1, 1);
+            var lobby = new Lobby(lobbyId, "name", 1, 1);
             _uut.lobbies.Add(lobbyId, lobby);
 
             // Act
@@ -257,7 +292,7 @@ namespace Server.Test.Services
         public void StartGame_LobbyExists_StatusUpdated()
         {
             string lobbyId = "123";
-            var lobby = new Lobby(lobbyId, "123", 1, 1);
+            var lobby = new Lobby(lobbyId, "name", 1, 1);
             _uut.lobbies.Add(lobbyId, lobby);
 
             // Act
@@ -271,7 +306,7 @@ namespace Server.Test.Services
         public void GetGameStatus_LobbyExists_ReturnsStatus()
         {
             string lobbyId = "123";
-            var lobby = new Lobby(lobbyId, "123", 1, 1);
+            var lobby = new Lobby(lobbyId, "name", 1, 1);
             var s = GameStatus.InGame;
             lobby.Status = s;
             _uut.lobbies.Add(lobbyId, lobby);
@@ -292,7 +327,7 @@ namespace Server.Test.Services
             var result = _uut.GetGameStatus(lobbyId);
 
             // Assert
-            Assert.That(result, Is.EqualTo(GameStatus.NO_LOBBY));
+            Assert.That(result, Is.EqualTo(GameStatus.NoLobby));
         }
     }
 }

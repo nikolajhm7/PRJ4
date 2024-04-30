@@ -12,6 +12,7 @@ using Client.Library.Services;
 using System.Diagnostics;
 using Client.Library.Services.Interfaces;
 using Client.UI.Views;
+using Client.Library.DTO;
 
 namespace Client.UI.ViewModels
 {
@@ -19,21 +20,30 @@ namespace Client.UI.ViewModels
     {
         private readonly ILobbyService _lobbyService;
         private readonly INavigationService _navigationService;
+        private IJwtTokenService _jwtTokenService;
+        
         [ObservableProperty]
         private string _lobbyId;
-        public JoinViewModel(ILobbyService lobbyService, INavigationService navigationService)
+        
+        public JoinViewModel(ILobbyService lobbyService, INavigationService navigationService, IJwtTokenService jwtTokenService)
         { 
             _lobbyService = lobbyService;
             _navigationService = navigationService;
+            _jwtTokenService = jwtTokenService;
         }
         [RelayCommand]
        public async Task GoToLobby()
        {
-            var result = await _lobbyService.JoinLobbyAsync(_lobbyId);
+            var response = await _lobbyService.JoinLobbyAsync(_lobbyId);
 
-            if (result.Success)
+            if (response.Success)
             {
-                await Shell.Current.GoToAsync($"//LobbyPage?LobbyId={_lobbyId}");
+                //Parse lobbyId and responseValue to dictionary
+                var responseBox = new Dictionary<string, object>
+                    {
+                        { "lobbyId", _lobbyId }
+                    };
+                await Shell.Current.GoToAsync(nameof(LobbyPage), true, responseBox);
             }
             else
             {
@@ -44,8 +54,8 @@ namespace Client.UI.ViewModels
         public async Task GoBack()
         {
                 string authToken = Preferences.Get("auth_token", defaultValue: string.Empty);
-
-                if(!string.IsNullOrEmpty(authToken))
+                
+                if(!string.IsNullOrEmpty(authToken) && !_jwtTokenService.IsUserRoleGuest())
                 {
                     await _navigationService.NavigateToPage(nameof(PlatformPage));
                 }

@@ -10,21 +10,22 @@ public class ApplicationDbContext : IdentityDbContext<User>
         : base(options)
     {
     }
-    private const string DbName = "PartyPlayPalaceDB";
-    private const string ConnectionString = $"Data Source=localhost;Initial Catalog={DbName};User ID=SA;Password=abc123AB;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+    //private const string DbName = "PartyPlayPalaceDB";
+    //private const string ConnectionString = $"Data Source=localhost;Initial Catalog={DbName};User ID=SA;Password=abc123AB;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+
 
     public DbSet<User> Users { get; set; }
     public DbSet<Game> Games { get; set; }
     public DbSet<UserGame> UserGames { get; set; }
     public DbSet<Friendship> Friendships { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
-    {
-        if (!options.IsConfigured)
-        {
-            options.UseSqlServer(ConnectionString);
-        }
-    }
+    //protected override void OnConfiguring(DbContextOptionsBuilder options)
+    //{
+    //    if (!options.IsConfigured)
+    //    {
+    //        options.UseSqlServer(ConnectionString);
+    //    }
+    //} 
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -103,13 +104,13 @@ public class ApplicationDbContext : IdentityDbContext<User>
 
         //set user passwords
         PasswordHasher<User> ph1 = new PasswordHasher<User>();
-        appUser1.PasswordHash = ph1.HashPassword(appUser1, "abc123ABC123!");
+        appUser1.PasswordHash = ph1.HashPassword(appUser1, "FrankFrank1!");
 
         PasswordHasher<User> ph2 = new PasswordHasher<User>();
-        appUser2.PasswordHash = ph2.HashPassword(appUser2, "AbCdEfGhIj123!");
+        appUser2.PasswordHash = ph2.HashPassword(appUser2, "PeterPeter1!");
 
         PasswordHasher<User> ph3 = new PasswordHasher<User>();
-        appUser3.PasswordHash = ph3.HashPassword(appUser3, "HansTheBigGuy123!");
+        appUser3.PasswordHash = ph3.HashPassword(appUser3, "HansHans1!");
 
         //seed users
         modelBuilder.Entity<User>().HasData(appUser1);
@@ -123,19 +124,19 @@ public class ApplicationDbContext : IdentityDbContext<User>
         {
             GameId = 1,
             MaxPlayers = 10,
-            Name = "Hangman"
+            Name = "hangman"
         };
         var game2 = new Game()
         {
             GameId = 2,
             MaxPlayers = 2,
-            Name = "TicTacToe"
+            Name = "krydsogbolle"
         };
         var game3 = new Game()
         {
             GameId = 3,
             MaxPlayers = 2,
-            Name = "Rock, Paper, Scissors"
+            Name = "stensakspapir"
         };
 
         modelBuilder.Entity<Game>().HasData(game1);

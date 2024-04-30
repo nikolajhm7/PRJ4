@@ -1,9 +1,11 @@
 using NSubstitute;
 using System.Net;
+using System.Text;
 using Client.Library;
 using Client.Library.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace Client.Test;
 public class ApiServiceTests
@@ -79,6 +81,33 @@ public class ApiServiceTests
         _preferenceManager.Received().Set("auth_token", "new_access_token");
         _preferenceManager.Received().Set("refresh_token", "new_refresh_token");
     }
+    
+    [Test]
+    public async Task MakeApiCall_PostMethod_Success()
+    {
+        var someObject = new { name = "test" };
+        var json = JsonConvert.SerializeObject(someObject);
+        // Opsæt data til POST-anmodningen
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        // Opsæt en forventet respons
+        var expectedResponse = new HttpResponseMessage(HttpStatusCode.OK);
+        _handler.SetFakeResponse(expectedResponse);
+
+        // Udfør API kald
+        var response = await _apiService.MakeApiCall("/posttest", HttpMethod.Post, content);
+
+        // Kontroller at metoden er POST
+        Assert.That(_handler.LastRequest.Method, Is.EqualTo(HttpMethod.Post));
+
+        // Kontroller at indholdet blev sendt korrekt
+        var requestContent = await _handler.LastRequest.Content.ReadAsStringAsync();
+        Assert.That(requestContent, Is.EqualTo("{\"name\":\"test\"}"));
+
+        // Kontroller at statuskode for respons er som forventet
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+
 
     
     [TearDown]

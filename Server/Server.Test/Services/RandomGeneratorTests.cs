@@ -6,14 +6,14 @@ namespace Server.Test.Services
 
 
     [TestFixture]
-    public class IDGeneratorTests
+    public class RandomGeneratorTests
     {
-        private IdGenerator _uut;
+        private RandomGenerator _uut;
 
         [SetUp]
         public void Setup()
         {
-            _uut = new IdGenerator();
+            _uut = new RandomGenerator();
         }
 
         [Test]
@@ -39,6 +39,19 @@ namespace Server.Test.Services
             var idNumber = int.Parse(id);
 
             Assert.That(idNumber, Is.InRange(0, 999999), "The generated number should be between 0 and 999999.");
+        }
+
+        [Test]
+        public void PickRandomItem_ReturnsItemFromList()
+        {
+            // Arrange
+            var list = new List<string> { "string1", "string2", "string3", "string4" };
+            
+            // Act
+            var item = _uut.PickRandomItem(list);
+            
+            // Assert
+            Assert.That(list, Does.Contain(item));
         }
     }
 

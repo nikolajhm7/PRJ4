@@ -215,9 +215,9 @@ namespace Server.API.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName", "coins" },
                 values: new object[,]
                 {
-                    { "1c7e97d3-a982-4a1b-8d8e-b6b9d7e32c0f", 0, "a649e50c-ebeb-4168-9ed7-0708050753a3", "Hans@gmail.com", true, false, null, "HANS@GMAIL.COM", "HANS", "AQAAAAIAAYagAAAAEHDNaGCMw+3rzd4s9zw1K8989QQGvCEHWvi/wb54Ahih2+x4D6hRKr4MsV7W9msizw==", null, false, "843e9e1b-06f5-4f97-81c7-1e5026cbebc6", false, "Hans", 0 },
-                    { "3de1a4b2-2b03-4b9d-b04d-d02cbef1f447", 0, "075bfb6d-56bf-42ae-9503-2b496cfc16e5", "Peter@gmail.com", true, false, null, "PETER@GMAIL.COM", "PETER", "AQAAAAIAAYagAAAAENtuLVFoeOOgQM37uwRcHtija0smC74T2ejZ/+vIzJtzaHcx0lYCwdYgPQ+k856pzQ==", null, false, "6fdc264b-f195-48a0-8286-bac37ec14a23", false, "Peter", 0 },
-                    { "59fbd0c8-0e0b-4cba-980e-f196b905a249", 0, "6642bff1-f83f-443f-8ce0-53b1a3cf8052", "frank@gmail.com", true, false, null, "FRANK@GMAIL.COM", "FRANK", "AQAAAAIAAYagAAAAEJG0S05v4sdXYbPjLVpDkW0OtqES0cN89zOB8JWmMiZCWAvw2Hm2pvwEemNu47dMDA==", null, false, "94c3cf4c-d506-4bc3-b93c-9eab6eb6b08f", false, "Frank", 0 }
+                    { "1c7e97d3-a982-4a1b-8d8e-b6b9d7e32c0f", 0, "751daeb4-9aea-469f-9773-51b6b8fa8b48", "Hans@gmail.com", true, false, null, "HANS@GMAIL.COM", "HANS", "AQAAAAIAAYagAAAAEHllCw9HY8axsfKyjdWs0r1s3V+xgD/k3ApSqSFeFwCM0O640+hjRaJNlMkLK+Zcrw==", null, false, "0c51f13e-ca3d-4a95-8ab9-3ba7b1ab8338", false, "Hans", 0 },
+                    { "3de1a4b2-2b03-4b9d-b04d-d02cbef1f447", 0, "8b2240d6-f153-4a0a-bbd5-c5a6d04ce544", "Peter@gmail.com", true, false, null, "PETER@GMAIL.COM", "PETER", "AQAAAAIAAYagAAAAEPaeehFkm0hZUFNwQ6elb0fEfIh9HQHMnmP+7FwPzrCJBCkXuhDzbqTgAt4cQGyeiQ==", null, false, "54e412be-48d7-470c-8191-60beaab39064", false, "Peter", 0 },
+                    { "59fbd0c8-0e0b-4cba-980e-f196b905a249", 0, "08ac1e46-a7db-40c2-9bc7-dedc1fd14a06", "frank@gmail.com", true, false, null, "FRANK@GMAIL.COM", "FRANK", "AQAAAAIAAYagAAAAEBByMrXjw9e+ZnlFjTvYClJGsv6iQ9PMRouyTAFNpp3ySjq1GfEInrBfY2ywsJalCg==", null, false, "cd3557ae-e910-4839-a53d-f37f23236538", false, "Frank", 0 }
                 });
 
             migrationBuilder.InsertData(
@@ -225,15 +225,15 @@ namespace Server.API.Migrations
                 columns: new[] { "GameId", "MaxPlayers", "Name" },
                 values: new object[,]
                 {
-                    { 1, 10, "Hangman" },
-                    { 2, 2, "TicTacToe" },
-                    { 3, 2, "Rock, Paper, Scissors" }
+                    { 1, 10, "hangman" },
+                    { 2, 2, "krydsogbolle" },
+                    { 3, 2, "stensakspapir" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Friendships",
                 columns: new[] { "User1Id", "User2Id", "Status", "date" },
-                values: new object[] { "59fbd0c8-0e0b-4cba-980e-f196b905a249", "3de1a4b2-2b03-4b9d-b04d-d02cbef1f447", "Accepted", new DateTime(2024, 4, 26, 9, 23, 6, 606, DateTimeKind.Utc).AddTicks(8467) });
+                values: new object[] { "59fbd0c8-0e0b-4cba-980e-f196b905a249", "3de1a4b2-2b03-4b9d-b04d-d02cbef1f447", "Accepted", new DateTime(2024, 4, 26, 10, 16, 58, 566, DateTimeKind.Utc).AddTicks(263) });
 
             migrationBuilder.InsertData(
                 table: "UserGames",

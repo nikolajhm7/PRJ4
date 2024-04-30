@@ -6,4 +6,5 @@ public interface IJwtTokenService
     public string GetUsernameFromToken();
     
     public bool SetTokensFromResponse(HttpResponseMessage response);
+    public bool IsUserRoleGuest();
 }

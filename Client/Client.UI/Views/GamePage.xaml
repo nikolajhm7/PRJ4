@@ -5,72 +5,99 @@
              x:Class="Client.UI.Views.GamePage"
              x:DataType="viewModels:GameViewModel"
              Title="GamePage">
-    <ContentPage.Content>
-        <StackLayout Padding="20">
-            <!-- Guessed word -->
-            <Label Text="{Binding GuessedWord}" FontSize="24" HorizontalOptions="Center" />
 
-            <!-- Hangman drawing -->
-            <Image Source="hangman_0.png" HorizontalOptions="Center" />
+        <Grid 
+            RowDefinitions="*,*,*,*"
+            ColumnDefinitions="*,*,*,*">
 
-            <!-- Start button -->
-            <Button Text="Start Game" Command="{Binding StartGameCommand}" HorizontalOptions="Center" Margin="0,20,0,0" />
+        <!--Elements for row 0-->
+            <Label 
+                Grid.Row="0"
+                Grid.Column="0"
+                Text="{Binding LobbyId}"/>
+            
+        <!--måske lav til listview-->
+            <Label 
+                Grid.Row="0"
+                Grid.Column="1"
+                Text="{Binding Players}"/>
 
-            <!-- Keyboard layout -->
-            <Grid Margin="0,20,0,0" RowSpacing="10" ColumnSpacing="10" HorizontalOptions="CenterAndExpand">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <Label
+                Grid.Row="0"
+                Grid.Column="2"
+                FontSize="32"
+                Text="{Binding Title}"/>
 
-                <!-- Vowels -->
-                <Button Text="A" Grid.Row="0" Grid.Column="0" />
-                <Button Text="E" Grid.Row="0" Grid.Column="1" />
-                <Button Text="I" Grid.Row="0" Grid.Column="2" />
-                <Button Text="O" Grid.Row="0" Grid.Column="3" />
-                <Button Text="U" Grid.Row="0" Grid.Column="4" />
+            <Label 
+                Grid.Row="0"
+                Grid.Column="3"
+                FontSize="Large"
+                FontAttributes="Bold"
+                Text="{Binding ErrorLabel}"/>
 
-                <!-- Consonants -->
-                <Button Text="Q" Grid.Row="1" Grid.Column="0" />
-                <Button Text="W" Grid.Row="1" Grid.Column="1" />
-                <Button Text="R" Grid.Row="1" Grid.Column="2" />
-                <Button Text="T" Grid.Row="1" Grid.Column="3" />
-                <Button Text="Y" Grid.Row="1" Grid.Column="4" />
-                <Button Text="P" Grid.Row="1" Grid.Column="5" />
 
-                <Button Text="S" Grid.Row="2" Grid.Column="0" />
-                <Button Text="D" Grid.Row="2" Grid.Column="1" />
-                <Button Text="F" Grid.Row="2" Grid.Column="2" />
-                <Button Text="G" Grid.Row="2" Grid.Column="3" />
-                <Button Text="H" Grid.Row="2" Grid.Column="4" />
-                <Button Text="J" Grid.Row="2" Grid.Column="5" />
+        <!--Elements for row 1-->
 
-                <Button Text="K" Grid.Row="3" Grid.Column="0" />
-                <Button Text="L" Grid.Row="3" Grid.Column="1" />
-                <Button Text="Z" Grid.Row="3" Grid.Column="2" />
-                <Button Text="X" Grid.Row="3" Grid.Column="3" />
-                <Button Text="C" Grid.Row="3" Grid.Column="4" />
-                <Button Text="V" Grid.Row="3" Grid.Column="5" />
-                <Button Text="B" Grid.Row="3" Grid.Column="6" />
-                <Button Text="N" Grid.Row="3" Grid.Column="7" />
-                <Button Text="M" Grid.Row="3" Grid.Column="8" />
+            <Entry 
+                Grid.Row="1"
+                Grid.Column="0"
+                Placeholder="Enter letter"
+                FontSize="Large"
+                ClearButtonVisibility="WhileEditing"
+                Text="{Binding Letter}"/>
 
-            </Grid>
+            <Label
+                Grid.Row="1"
+                Grid.Column="1"
+                Text="{Binding HiddenWord}"
+                FontSize="Large"
+                CharacterSpacing="10"/>
 
-        </StackLayout>
-    </ContentPage.Content>
+            <Label
+                Grid.Row="1"
+                Grid.Column="2"
+                FontSize="Medium"
+                Text="{Binding StatusMessage}"/>
+
+            <Image
+                Grid.Row="1"
+                Grid.Column="3"
+                Source="{Binding ImageSource}"
+                HeightRequest="200"/>
+
+        <!--Elements for row 2-->
+
+            <Button 
+                Grid.Row="2"
+                Grid.Column="0"
+                Style="{StaticResource normalBtn}"
+                Text="Submit"
+                Command="{Binding GuessLetterCommand}"
+                CommandParameter="{Binding Letter}"/>
+
+        <!--Elements for row 3-->
+
+            <Button 
+                Grid.Row="3"
+                Grid.Column="3"
+                Style="{StaticResource normalBtn}"
+                WidthRequest="100"
+                Text="Reset"
+                Command="{Binding RestartGameCommand}"/>
+
+            <ListView ItemsSource="{Binding GuessedChars}"
+                  Grid.Row="3"
+                  Grid.Column="0">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout>
+                            <Label Text="{Binding}" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+    </Grid>
 </ContentPage>

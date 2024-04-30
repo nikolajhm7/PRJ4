@@ -1,25 +1,33 @@
 ﻿using Newtonsoft.Json.Linq;
+using NUnit.Framework;
+using Server.API.Models;
+using Server.API.Services.Interfaces;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Server.API.Games
 {
-    public class HangmanLogic(string lobbyId)
+    public class HangmanLogic(IRandomPicker picker) : IHangmanLogic
     {
-        public string LobbyId { get; set; } = lobbyId;
-        private readonly int _maxIncorrectGuesses = 5;
+        public readonly int MaxIncorrectGuesses = 6;
         private string _secretWord = "";
+        public string SecretWord { get { return _secretWord; } }
         private int _currentGuessCount = 0;
         private List<char> _guessedLetters = [];
-        private readonly Random _rand = new();
+        private readonly IRandomPicker _picker = picker;
 
-        public string StartGame()
+        public int StartGame()
         {
+            _currentGuessCount = 0;
+            _guessedLetters = [];
+
             SelectRandomWord();
-            return _secretWord;
+            return _secretWord.Length;
         }
 
         public bool GuessLetter(char letter, out List<int> positions)
         {
+
             letter = char.ToLower(letter);
             if (!char.IsLetter(letter) || _guessedLetters.Contains(letter))
             {
@@ -27,44 +35,48 @@ namespace Server.API.Games
                 return false;
             }
 
+            if (!SecretWord.Contains(letter)) 
+            {
+                _currentGuessCount++; 
+            }
+
             _guessedLetters.Add(letter);
 
             positions = FindLetterPositions(letter);
-            return _secretWord.Contains(letter);
-        }
-
-        public string RestartGame()
-        {
-            _currentGuessCount = 0;
-            _guessedLetters = [];
-
-            SelectRandomWord();
-            return _secretWord;
+            return SecretWord.Contains(letter);
         }
         
         public bool IsGameOver()
         {
-            var isWin = !_secretWord.Any(c => !_guessedLetters.Contains(c));
-            return isWin || _currentGuessCount >= _maxIncorrectGuesses;
+            var isWin = !SecretWord.Any(c => !_guessedLetters.Contains(c));
+
+            return isWin || _currentGuessCount >= MaxIncorrectGuesses;
+        }
+
+        public bool DidUserWin()
+        {
+            if (_currentGuessCount < MaxIncorrectGuesses)
+                return SecretWord.All(c => _guessedLetters.Contains(c));
+            return false;
         }
 
         private void SelectRandomWord()
         {
             // Dette skal kun bruges så længe kategorien skal være random:
-            List<List<string>> values = Words.CategoryMap.Values.ToList();
-            List<string> wordsInCategory = values[_rand.Next(values.Count)];
+            var values = Words.CategoryMap.Values.ToList();
+            var words = _picker.PickRandomItem(values);
             //
 
             //List<string> wordsInCategory = wordCategories[category];
-            _secretWord = wordsInCategory[_rand.Next(wordsInCategory.Count)].ToUpper();
+            _secretWord = _picker.PickRandomItem(words);
         }
 
         private List<int> FindLetterPositions(char letter)
         {
             List<int> positions = new List<int>();
-            for (int i = 0; i < _secretWord.Length; i++)
+            for (int i = 0; i < SecretWord.Length; i++)
             {
-                if (_secretWord[i] == letter)
+                if (SecretWord[i] == letter)
                 {
                     positions.Add(i);
                 }
