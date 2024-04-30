@@ -116,7 +116,7 @@ public partial class LoginViewModel : ObservableObject
             {
                 // Log fejlresponsen for diagnosticeringsformål
                 var errorResponse = await response.Content.ReadAsStringAsync();
-                    
+                
                 _logger.LogError($"Login fejlede med status kode {response.StatusCode}: {errorResponse}");
             }
         }

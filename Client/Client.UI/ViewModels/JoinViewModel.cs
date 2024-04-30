@@ -20,12 +20,16 @@ namespace Client.UI.ViewModels
     {
         private readonly ILobbyService _lobbyService;
         private readonly INavigationService _navigationService;
+        private IJwtTokenService _jwtTokenService;
+        
         [ObservableProperty]
         private string _lobbyId;
-        public JoinViewModel(ILobbyService lobbyService, INavigationService navigationService)
+        
+        public JoinViewModel(ILobbyService lobbyService, INavigationService navigationService, IJwtTokenService jwtTokenService)
         { 
             _lobbyService = lobbyService;
             _navigationService = navigationService;
+            _jwtTokenService = jwtTokenService;
         }
         [RelayCommand]
        public async Task GoToLobby()
@@ -50,7 +54,8 @@ namespace Client.UI.ViewModels
         public async Task GoBack()
         {
                 string authToken = Preferences.Get("auth_token", defaultValue: string.Empty);
-                if(!string.IsNullOrEmpty(authToken))
+                
+                if(!string.IsNullOrEmpty(authToken) && !_jwtTokenService.IsUserRoleGuest())
                 {
                     await _navigationService.NavigateToPage(nameof(PlatformPage));
                 }
