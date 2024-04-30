@@ -24,9 +24,9 @@ namespace Client.UI.Views
             if (BindingContext is PlatformViewModel viewModel)
             {
                 viewModel.OnPageAppearing();
+        
             }
-
-            // Perform actions when the page appears
+        
         }
     }
 }

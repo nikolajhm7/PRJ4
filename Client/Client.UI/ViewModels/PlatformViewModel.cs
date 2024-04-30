@@ -27,7 +27,7 @@ namespace Client.UI.ViewModels
         //}
         [ObservableProperty] 
         private bool _gamesShowing = false;
-        [ObservableProperty] 
+        [ObservableProperty]
         private bool _showhost = true;
         [ObservableProperty] 
         private string _avatar;
@@ -188,8 +188,13 @@ namespace Client.UI.ViewModels
                     
                 foreach (var friendDTO in res.Value)
                     {
-                        var temp = friendDTO;
-                        FriendsCollection.Add(temp);
+                        if (FriendsCollection.Any(f => f.Name == friendDTO.Name))
+                        {}
+                        else
+                        {
+                            var temp = friendDTO;
+                            FriendsCollection.Add(temp);
+                        }
                     }
                 }
                 else
@@ -215,13 +220,21 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         public async Task AcceptFriendRequest(string s)
         {
-            var res = await _friendsService.AcceptFriendRequest(s);
+            await _friendsService.AcceptFriendRequest(s);
+             var friend = FriendsCollection.FirstOrDefault(f => f.Name == s);
+            if (friend != null)
+                {
+                    friend.IsPending = false;
+                }
+            
         }
 
         [RelayCommand]
         public async Task DeclineFriendRequest(string s)
         {
-            _friendsService.RemoveFriend(s);
+
+           await _friendsService.RemoveFriend(s);
+           FriendsCollection.Remove(FriendsCollection.FirstOrDefault(f => f.Name == s));
         }
     }
 }
