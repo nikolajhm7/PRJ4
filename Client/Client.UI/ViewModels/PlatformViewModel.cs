@@ -17,13 +17,22 @@ namespace Client.UI.ViewModels
 {
     public partial class PlatformViewModel : ObservableObject
     {
-        public User UserInstance => User.Instance;
         [ObservableProperty]
-        private bool gamesShowing = false;
-        [ObservableProperty]
-        private bool showhost = true;
-        [ObservableProperty]
+        private string? _username;
+
+        //public string? Username
+        //{
+        //    get => _username;
+        //    set => SetProperty(ref _username, value);
+        //}
+        [ObservableProperty] 
+        private bool _gamesShowing = false;
+        [ObservableProperty] 
+        private bool _showhost = true;
+        [ObservableProperty] 
         private string _avatar;
+        [ObservableProperty]
+        private string _addFriend = "";
 
         private readonly ILobbyService _lobbyService;
 
@@ -64,12 +73,11 @@ namespace Client.UI.ViewModels
             _jwtTokenService = jwtTokenService;
             _apiService = apiService;
             _friendsService = friendsService;
-            //SetAvatar();
-            //pullGames();
         }
 
         public void OnPageAppearing()
         {
+            Username = _jwtTokenService.GetUsernameFromToken();
             SetAvatar();
             pullGames();
             RetrieveFriends();
@@ -85,7 +93,7 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         public async Task pullGames()
         {
-            string endpoint = $"/Game/getGamesForUser/{User.Instance.Username}";
+            string endpoint = $"/Game/getGamesForUser/{_jwtTokenService.GetUsernameFromToken()}";
             var response = await _apiService.MakeApiCall(endpoint, HttpMethod.Get);
             if (response.IsSuccessStatusCode)
             {
@@ -102,7 +110,10 @@ namespace Client.UI.ViewModels
 
         public void SetAvatar()
         {
-            switch (UserInstance.Avatar)
+            int i = 0;
+            Random random = new Random();
+            i = random.Next(1, 4);
+            switch (i)
             {
                 case 1:
                     Avatar = "charizard.png";
@@ -185,7 +196,7 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         public async Task AddNewFriend(string s)
         {
-            _friendsService.SendFriendRequest(s);
+            await _friendsService.SendFriendRequest(s);
         }
 
         [RelayCommand]

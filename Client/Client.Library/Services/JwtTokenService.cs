@@ -41,7 +41,7 @@ public class JwtTokenService : IJwtTokenService
         var token = _preferenceManager.Get("auth_token", defaultValue: string.Empty);
         var handler = new JwtSecurityTokenHandler();
         var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
-        return jsonToken.Claims.First(claim => claim.Type == "unique_name").Value;
+        return jsonToken.Claims.First(claim => claim.Type == ClaimTypes.Name).Value;
     }
     
     private void GetTokensFromResponse(HttpResponseMessage response, out string jwtToken, out string refreshToken)

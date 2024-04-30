@@ -27,11 +27,6 @@
         Title="NewUser"
         ContentTemplate="{DataTemplate views:NewUserPage}"
         Route="NewUserPage" />
-    
-    <ShellContent
-        Title="Test"
-        ContentTemplate="{DataTemplate views:TestPage}"
-        Route="TestPage" />
 
     <ShellContent
         Title="Join"
