@@ -21,7 +21,7 @@
         />
 
         <Image
-            Source="{Binding Image}"
+            Source="{Binding ImagePath}"
             Grid.Row="1"
             Grid.Column="1"
             Grid.RowSpan="1"
@@ -76,6 +76,7 @@
                 Grid.Column="1" 
                 Style="{StaticResource normalBtn}"
                 Text="Start spil" 
-                Command="{Binding GoToGameCommand}"/>
+                Command="{Binding GoToGameCommand}"
+                IsVisible="{Binding IsGoToGameButtonVisible}"/>
     </Grid>
 </ContentPage>

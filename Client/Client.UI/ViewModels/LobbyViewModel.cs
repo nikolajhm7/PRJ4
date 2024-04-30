@@ -15,6 +15,7 @@ using Client.Library.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.Linq.Expressions;
 using Client.UI.Views;
+using Client.Library.Constants;
 
 
 namespace Client.UI.ViewModels
@@ -25,12 +26,12 @@ namespace Client.UI.ViewModels
     {
         private readonly ILobbyService _lobbyService;
         private readonly INavigationService _navigationService;
-        private Lobby _lobby;
-        bool isHost = false;
-        public string HostName { get; set; }
+        private GameInfo _gameInfo;
+        private int gameId;
+        private bool isHost = false;
 
         [ObservableProperty] 
-        private string image = "";
+        private string imagePath = "";
 
         // Observable properties
         [ObservableProperty] 
@@ -38,6 +39,9 @@ namespace Client.UI.ViewModels
 
         [ObservableProperty]
         public ObservableCollection<string> playerNames = new ObservableCollection<string> { };
+
+        [ObservableProperty]
+        private bool isGoToGameButtonVisible = false;
 
         public LobbyViewModel(ILobbyService lobbyService, INavigationService navigationService)
         {
@@ -53,12 +57,32 @@ namespace Client.UI.ViewModels
 
         public async Task OnPageappearing()
         {
+            await InitializeLobby();
             var isHostResult = await _lobbyService.UserIsHost(lobbyId);
             if (isHostResult.Success)
             {
                 isHost = true;
+                IsGoToGameButtonVisible = true;
             }
             await LoadUsersInLobby();
+        }
+
+        private async Task InitializeLobby()
+        {
+            var gameIdResult = await _lobbyService.GetLobbyGameId(lobbyId);
+            if (!gameIdResult.Success)
+            {
+                Debug.WriteLine("Failed to get gameid in lobby: " + gameIdResult.Msg);
+            }
+            gameId = gameIdResult.Value;
+            if (GameInfMapper.GameInfoDictionary.TryGetValue(gameId, out GameInfo? _gameInfo))
+            {
+                ImagePath = _gameInfo.ImagePath;
+            }
+            else
+            {
+                Debug.WriteLine("Lobby info not defined for gameid " + gameId);
+            }
         }
 
         private async Task LoadUsersInLobby()

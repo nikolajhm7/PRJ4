@@ -78,9 +78,9 @@ namespace Server.API.Hubs
             }
         }
 
-        public async Task<ActionResult<Lobby>> GetLobbyInfo(string lobbyId)
+        public async Task<ActionResult<int>> GetLobbyGameId(string lobbyId)
         {
-            var result = _lobbyManager.GetLobbyInfo(lobbyId);
+            var result = _lobbyManager.GetLobbyGameId(lobbyId);
             return new(result.Success, result.Msg, result.Value);
         }
 
