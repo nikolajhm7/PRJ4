@@ -185,6 +185,7 @@ namespace Client.UI.ViewModels
             ActionResult<List<FriendDTO>> res = await _friendsService.GetFriends(true);
                 if (res.Success)
                 {
+                    
                 foreach (var friendDTO in res.Value)
                     {
                         var temp = friendDTO;
