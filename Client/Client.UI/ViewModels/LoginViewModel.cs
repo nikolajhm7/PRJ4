@@ -106,8 +106,8 @@ public partial class LoginViewModel : ObservableObject
             {
                 if (_jwtTokenService.SetTokensFromResponse(response))
                 {
-                    _preferenceManager.Set("username", username);
-                    User.Instance.Username = username;
+                    //_preferenceManager.Set("username", username);
+                    //User.Instance.Username = username;
                     return true;
                 }
 
