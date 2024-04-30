@@ -45,7 +45,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .HasOne(fs => fs.User2)
             .WithMany(u => u.Invitees)
             .HasForeignKey(fs => fs.User2Id)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Configure primary key for IdentityUserLogin<string>
         modelBuilder.Entity<IdentityUserLogin<string>>()
