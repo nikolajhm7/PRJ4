@@ -114,6 +114,11 @@
                     <DataTemplate>
                         <StackLayout>
                             <Label Text="{Binding Name}" />
+                            <Button 
+                                    Text="{Binding Accept}"
+                                    Command="{Binding AcceptFriendCommand}"
+                                    CommandParameter="{Binding .}"
+                                    IsVisible="{Binding IsPeding}"/>
                         </StackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
