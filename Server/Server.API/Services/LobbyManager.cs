@@ -126,15 +126,15 @@ namespace Server.API.Services
             }
             return GameStatus.NoLobby;
         }
-        public ActionResult<Lobby> GetLobbyInfo(string lobbyId)
+        public ActionResult<int> GetLobbyGameId(string lobbyId)
         {
             if (lobbies.TryGetValue(lobbyId, out Lobby? lobby))
             {
-                return new(true, "Succesfully returned lobby", lobby);
+                return new(true, "Succesfully returned lobby", lobby.GameId);
             }
             else
             {
-                return new(false, "Could not find lobby", null);
+                return new(false, "Could not find lobby", 0);
             }
         }
     }

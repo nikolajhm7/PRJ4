@@ -129,7 +129,7 @@ namespace Client.UI.ViewModels
             if (s != null)
             {
                 
-                var response = await _lobbyService.CreateLobbyAsync(1);
+                var response = await _lobbyService.CreateLobbyAsync(s.GameId);
                 if (response.Success)
                 {
                     await _navigationService.NavigateToPage($"{nameof(LobbyPage)}?LobbyId={response.Msg}");
