@@ -26,6 +26,7 @@ namespace Client.UI.ViewModels
         private readonly IHangmanService _hangmanService;
         //private readonly ILobbyService _lobbyService;
         private int ErrorCounter;
+        private Queue<string> userQueue;
 
         // Define command properties
         [ObservableProperty]
@@ -93,6 +94,16 @@ namespace Client.UI.ViewModels
             }
         }
 
+        private async Task LoadPlayerQueue()
+        {
+            await Task.Delay(1);
+            var result = await _hangmanService.GetQueueForGame(LobbyId);
+            if (result.Success)
+            {
+                userQueue = result.Value;
+            }
+        }
+
         private void OnGameStarted(int wordLength)
         {
             Debug.WriteLine($"Game started with wordLength: {wordLength}");
@@ -120,7 +131,11 @@ namespace Client.UI.ViewModels
 
             // Set the hidden word length
             MakeUnderscores(wordLength);
-            
+
+            GuessedChars.Clear();
+
+            LoadPlayerQueue();
+
         }
 
         private void MakeUnderscores(int wordLength)
@@ -143,6 +158,7 @@ namespace Client.UI.ViewModels
                     hwChars[position] = letter;
                 }
                 HiddenWord = new string(hwChars).ToUpper();
+
             }
             // Update the error counter
             if (!isCorrect)
@@ -154,6 +170,9 @@ namespace Client.UI.ViewModels
                     ImageSource = $"hangman_img{ErrorCounter}.jpg";
                 }
             }
+
+            if (!guessedChars.Contains(char.ToUpper(letter))) { GuessedChars.Add(char.ToUpper(letter)); }
+            
         }
 
         private void OnGameOver(bool didWin, string word)
@@ -191,6 +210,8 @@ namespace Client.UI.ViewModels
             playerNames.Remove("user.Username");
         }
 
+        
+
         [RelayCommand]
         private async Task StartGame()
         {
@@ -207,25 +228,20 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         private async Task GuessLetter(char letter)
         {
+
             try
             {
                 var response = await _hangmanService.GuessLetter(LobbyId, letter);
-
-                //if (response.Msg != "No connection to server.")
-                //{
-                //    guessedChars.Add(letter);
+                //if(guessedChars.Contains(char.ToUpper(letter)) ) 
+                //{ 
+                //    await Shell.Current.DisplayAlert("Fejl", $"'{char.ToUpper(letter)}' er allerede gættet på!", "OK"); 
                 //}
-                if(guessedChars.Contains(char.ToUpper(letter)) ) { await Shell.Current.DisplayAlert("Fejl", $"'{char.ToUpper(letter)}' er allerede gættet på!", "OK"); }
-                else if (response.Success)
-                {
-                    await Task.Delay(1); 
-                    GuessedChars.Add(char.ToUpper(letter));
-                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error guessing letter: {ex.Message}");
             }
+
         }
 
         [RelayCommand]
@@ -234,7 +250,6 @@ namespace Client.UI.ViewModels
             try
             {
                 await _hangmanService.RestartGame(LobbyId);
-                GuessedChars.Clear();
             }
             catch (Exception ex)
             {

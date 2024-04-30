@@ -52,5 +52,14 @@ namespace Client.Library.Games
         {
             return await InvokeAsync<List<ConnectedUserDTO>>("GetUsersInGame", lobbyId);
         }
+
+        public async Task<ActionResult<Queue<string>>> GetQueueForGame(string lobbyId)
+        {
+            return await InvokeAsync<Queue<string>>("GetQueueForGame", lobbyId);
+        }
+        public async Task<ActionResult<List<char>>> GetGuessedLetters(string lobbyId)
+        {
+            return await InvokeAsync<List<char>>("GetGuessedChars", lobbyId);
+        }
     }
 }

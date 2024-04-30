@@ -58,19 +58,31 @@ namespace Server.API.Games
 
         public async Task<ActionResult> GuessLetter(string lobbyId, char letter)
         {
+            var currentUser = Context.User?.Identity?.Name;
             if (_logicManager.TryGetValue(lobbyId, out var logic))
             {
                 List<int> positions;
-                var isCorrect = logic.GuessLetter(letter, out positions);
-                await Clients.Group(lobbyId).SendAsync("GuessResult", letter, isCorrect, positions);
-
-                var res = logic.IsGameOver();
-                if (res)
+                var userQueue = logic.GetQueue();
+                if (currentUser == userQueue.Peek())
                 {
-                    await Clients.Group(lobbyId).SendAsync("GameOver", logic.DidUserWin(), logic.SecretWord);
-                }
+                    userQueue.Dequeue();
+                    userQueue.Enqueue(currentUser);
+                    logic.SetQueue(userQueue);
+                    var isCorrect = logic.GuessLetter(letter, out positions);
+                    await Clients.Group(lobbyId).SendAsync("GuessResult", letter, isCorrect, positions);
 
-                return new(true, null);
+                    var res = logic.IsGameOver();
+                    if (res)
+                    {
+                        await Clients.Group(lobbyId).SendAsync("GameOver", logic.DidUserWin(), logic.SecretWord);
+                    }
+
+                    return new(true, null);
+                }
+                else
+                {
+                    return new(false, "Not the users turn!");
+                }
             }
 
             return new(false, "Lobby does not exist.");
@@ -152,5 +164,54 @@ namespace Server.API.Games
                 return new(false, "Lobby does not exist.", []);
             }
         }
+
+        public async Task<ActionResult<Queue<string>>> GetQueueForGame(string lobbyId)
+        {
+            _logger.LogDebug("Attempting to get user queue for game with LobbyId {LobbyId}", lobbyId);
+
+            var username = Context.User?.Identity?.Name;
+            if (username == null)
+            {
+                _logger.LogWarning("Context.User or Context.User.Identity is null.");
+                return new(false, "Authentication context is not available.", []);
+            }
+            if (_logicManager.TryGetValue(lobbyId, out var logic))
+            {
+                var users = _lobbyManager.GetUsersInLobby(lobbyId);
+                Queue<string> userOrder = [];
+                foreach (var user in users)
+                {
+                    if (!userOrder.Contains(user.Username))
+                    {
+                        userOrder.Enqueue(user.Username);
+                    }
+                }
+                logic.SetQueue(userOrder);
+
+
+                _logger.LogInformation("{UserName} successfully got user queue in game {LobbyId}.", Context.User?.Identity?.Name, lobbyId);
+                return new(true, null, userOrder);
+            }
+
+            else
+            {
+                _logger.LogError("Attempt to get user queue in non-existing lobby {LobbyId}.", lobbyId);
+                return new(false, "Lobby does not exist.", []);
+            }
+        }
+
+        //public async Task<ActionResult<List<char>>> GetGuessedChars(string lobbyId)
+        //{
+        //    if (_logicManager.TryGetValue(lobbyId, out var logic))
+        //    {
+        //        var guessedLetters = logic.GetGuessedLetters();
+        //        return new(true, null, guessedLetters);
+        //    }
+        //    else
+        //    {
+        //        return new(false, "Lobby does not exist", []);
+        //    }
+
+        //}
     }
 }
