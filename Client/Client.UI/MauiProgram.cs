@@ -59,9 +59,6 @@ namespace Client.UI
             builder.Services.AddTransient<GuestLoginViewModel>();
             builder.Services.AddTransient<GuestLoginPage>();
 
-            builder.Services.AddTransient<TestViewModel>();
-            builder.Services.AddTransient<TestPage>();
-
             builder.Services.AddTransient<LobbyPage>();
             builder.Services.AddTransient<LobbyViewModel>();
 

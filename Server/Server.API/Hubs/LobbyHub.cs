@@ -86,7 +86,14 @@ namespace Server.API.Hubs
 
         public async Task<ActionResult> UserIsHost(string lobbyId)
         {
-            if(_lobbyManager.IsHost(Context.ConnectionId, lobbyId))
+            var username = Context.User?.Identity?.Name;
+            if (username == null)
+            {
+                _logger.LogWarning("Context.User or Context.User.Identity is null.");
+                return new(false, "Authentication context is not available.");
+            }
+
+            if (_lobbyManager.IsHost(username, lobbyId))
             {
                 return new(true, "User is the host of the lobby");
             }

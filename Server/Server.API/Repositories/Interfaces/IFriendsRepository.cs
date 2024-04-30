@@ -4,9 +4,10 @@ namespace Server.API.Repositories.Interfaces
 {
     public interface IFriendsRepository
     {
-        Task AddFriendRequest(string userId, string friendId);
-        Task AcceptFriendRequest(string userId, string friendId);
-        Task RemoveFriend(string userId, string friendId);
-        Task<List<FriendDTO>> GetFriendsOf(string userId, bool getInvites);
+        Task AddFriendRequest(string username, string friendName);
+        Task AcceptFriendRequest(string username, string friendName);
+        Task RemoveFriend(string username, string friendName);
+        Task<List<FriendDTO>> GetFriendsOf(string username);
+        Task<List<FriendDTO>> GetInvitesOf(string userName);
     }
 }
