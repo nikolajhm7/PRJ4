@@ -80,6 +80,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Games\1 - Hangman\HangmanPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Games\2 - ChatApp\ChatAppPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\ChatAppPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -114,6 +120,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Games\2 - ChatApp\ChatAppPage.xaml.cs">
+	    <DependentUpon>%(Filename)</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\ChatAppPage.xaml.cs">
 	    <DependentUpon>ChatAppPage.xaml</DependentUpon>
 	  </Compile>
@@ -137,7 +146,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Games\1 - Hangman\" />
 	  <Folder Include="Logs\" />
 	  <Folder Include="Resources\Images\HangmanImages\" />
 	</ItemGroup>
