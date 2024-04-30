@@ -8,9 +8,9 @@ namespace Server.API.DTO
         public DateTime FriendsSince { get; set; }
 
         public bool IsAccepted { get; set; }
-        public static FriendDTO FromFriendship(string userId, Friendship f)
+        public static FriendDTO FormFriendship(string userName, Friendship f)
         {
-            var friendId = f.User1Id == userId ? f.User2Id : f.User1Id;
+            var friendId = f.User1.UserName == userName ? f.User2.UserName : f.User1.UserName;
             FriendDTO friendDTO = new FriendDTO
             {
                 FriendId = friendId,
