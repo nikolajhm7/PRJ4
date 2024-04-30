@@ -18,5 +18,6 @@ namespace Client.Library.Games
         Task<ActionResult> StartGame(string lobbyId);
         Task<ActionResult> GuessLetter(string lobbyId, char letter);
         Task<ActionResult> RestartGame(string lobbyId);
+        Task<ActionResult<List<ConnectedUserDTO>>> GetUsersInGame(string lobbyId);
     }
 }

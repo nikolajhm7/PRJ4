@@ -24,6 +24,7 @@ namespace Client.UI.ViewModels
     public partial class GameViewModel : ObservableObject
     {
         private readonly IHangmanService _hangmanService;
+        //private readonly ILobbyService _lobbyService;
         private int ErrorCounter;
 
         // Define command properties
@@ -42,6 +43,7 @@ namespace Client.UI.ViewModels
         ObservableCollection<char> guessedChars;
         [ObservableProperty] private string? imageSource;
 
+
         public ObservableCollection<char> GuessedChars
         {
             get { return guessedChars; }
@@ -55,11 +57,12 @@ namespace Client.UI.ViewModels
         public GameViewModel(IHangmanService hangmanService)
         {
             _hangmanService = hangmanService;
+            //_lobbyService = lobbyService;
             guessedChars = [];
-            playerNames.Add("Anthony");
-            playerNames.Add("Nikolaj");
-            playerNames.Add("user.Username");
-            playerNames.Add("user.Username");
+            //playerNames.Add("Anthony");
+            //playerNames.Add("Nikolaj");
+            //playerNames.Add("user.Username");
+            //playerNames.Add("user.Username");
             _hangmanService.GameStartedEvent += OnGameStarted;
             _hangmanService.GuessResultEvent += OnGuessResult;
             _hangmanService.GameOverEvent += OnGameOver;
@@ -70,6 +73,24 @@ namespace Client.UI.ViewModels
         {
             StartGame();
             GuessedChars.Clear();
+            LoadUsersInGame();
+        }
+
+        private async Task LoadUsersInGame()
+        {
+            await Task.Delay(1);
+            var result = await _hangmanService.GetUsersInGame(LobbyId);
+            if (result.Success)
+            {
+                foreach (var user in result.Value)
+                {
+                    PlayerNames.Add(user.Username);
+                }
+            }
+            else
+            {
+                Debug.WriteLine("Failed to get users in lobby: " + result.Msg);
+            }
         }
 
         private void OnGameStarted(int wordLength)
