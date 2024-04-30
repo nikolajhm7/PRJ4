@@ -38,12 +38,7 @@ namespace Client.UI.ViewModels
 
             if (response.Success)
             {
-                //Parse lobbyId and responseValue to dictionary
-                var responseBox = new Dictionary<string, object>
-                    {
-                        { "lobbyId", _lobbyId }
-                    };
-                await Shell.Current.GoToAsync(nameof(LobbyPage), true, responseBox);
+                await _navigationService.NavigateToPage($"{nameof(LobbyPage)}?LobbyId={response.Msg}");
             }
             else
             {

@@ -19,8 +19,8 @@ using Client.UI.Views;
 
 namespace Client.UI.ViewModels
 {
-    
-    [QueryProperty(nameof(LobbyId), "lobbyId")]
+
+    [QueryProperty(nameof(LobbyId), "LobbyId")]
     public partial class LobbyViewModel : ObservableObject
     {
         private readonly ILobbyService _lobbyService;
