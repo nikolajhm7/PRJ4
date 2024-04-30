@@ -4,6 +4,6 @@
     {
         public string? Name { get; set; }
         public DateTime FriendsSince { get; set; }
-        public bool IsAccepted { get; set; }
+        public bool IsPending { get; set; }
     }
 }

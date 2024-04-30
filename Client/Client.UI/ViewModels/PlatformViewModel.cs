@@ -39,8 +39,8 @@ namespace Client.UI.ViewModels
 
         private IPreferenceManager _preferenceManager;
 
-        private ObservableCollection<string> friendsCollection;
-        public ObservableCollection<string> FriendsCollection
+        private ObservableCollection<FriendDTO> friendsCollection = [];
+        public ObservableCollection<FriendDTO> FriendsCollection
         {
             get { return friendsCollection; }
             set { SetProperty(ref friendsCollection, value); }
@@ -167,13 +167,13 @@ namespace Client.UI.ViewModels
         public async Task RetrieveFriends()
         {
             
-            ActionResult<List<FriendDTO>> temp = await _friendsService.GetFriends(true);
-                if (temp.Success)
+            ActionResult<List<FriendDTO>> res = await _friendsService.GetFriends(true);
+                if (res.Success)
                 {
-                foreach (var friendDTO in temp.Value)
+                foreach (var friendDTO in res.Value)
                     {
-
-                        FriendsCollection.Add(friendDTO.Name);
+                        var temp = friendDTO;
+                        FriendsCollection.Add(temp);
                     }
                 }
                 else

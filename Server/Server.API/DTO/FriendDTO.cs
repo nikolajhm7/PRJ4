@@ -7,7 +7,7 @@ namespace Server.API.DTO
         public string? Name { get; set; }
         public DateTime FriendsSince { get; set; }
 
-        public bool IsAccepted { get; set; }
+        public bool IsPending { get; set; }
         public static FriendDTO FormFriendship(string userName, Friendship f)
         {
             var friendName = f.User1.UserName == userName ? f.User2.UserName : f.User1.UserName;
@@ -15,7 +15,7 @@ namespace Server.API.DTO
             {
                 Name = friendName,
                 FriendsSince = f.date,
-                IsAccepted = f.Status == "Accepted"
+                IsPending = f.Status == "Pending"
             };
             return friendDTO;
         }

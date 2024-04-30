@@ -113,7 +113,7 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <StackLayout>
-                            <Label Text="{Binding}" />
+                            <Label Text="{Binding Name}" />
                         </StackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
