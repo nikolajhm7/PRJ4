@@ -130,7 +130,7 @@ namespace Server.API.Repositories
         }
         
         
-        public async Task<List<FriendDTO>> GetFriendsOf(string userName, bool getInvites = false)
+        public async Task<List<FriendDTO>> GetFriendsOf(string userName)
         {
             List<Friendship> friends;
             List<Friendship> friends2;
