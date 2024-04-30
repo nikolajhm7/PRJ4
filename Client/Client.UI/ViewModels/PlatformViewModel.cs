@@ -32,7 +32,9 @@ namespace Client.UI.ViewModels
         [ObservableProperty] 
         private string _avatar;
         [ObservableProperty]
-        private string _addFriend = "";
+        private string _addFriendText;
+        [ObservableProperty]
+        private string _addFriendPlaceholder;
 
         private readonly ILobbyService _lobbyService;
 
@@ -139,6 +141,8 @@ namespace Client.UI.ViewModels
         {
             _preferenceManager.Remove("auth_token");
             _preferenceManager.Remove("refresh_token");
+            await _friendsService.DisconnectAsync();
+            await _lobbyService.DisconnectAsync();
             await _navigationService.NavigateToPage(nameof(LoginPage));
         }
 
@@ -195,15 +199,23 @@ namespace Client.UI.ViewModels
         }
 
         [RelayCommand]
-        public async Task AddNewFriend(string s)
+        public async Task AddNewFriend()
         {
-            await _friendsService.SendFriendRequest(s);
+            var text = AddFriendText;
+            AddFriendText = string.Empty;
+
+            var res = await _friendsService.SendFriendRequest(text);
+
+            if (!res.Success)
+            {
+                await Shell.Current.DisplayAlert("Error", "Failed to send friend request", "OK");
+            }
         }
 
         [RelayCommand]
         public async Task AcceptFriendRequest(string s)
         {
-            _friendsService.AcceptFriendRequest(s);
+            var res = await _friendsService.AcceptFriendRequest(s);
         }
 
         [RelayCommand]

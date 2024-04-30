@@ -139,7 +139,13 @@
             </CollectionView>
         </StackLayout>
 
-
+        <StackLayout Grid.Row="3" Grid.Column="0">
+            <Entry Placeholder="Enter friends username"
+                   Text="{Binding AddFriendText}"/>
+            <Button Text="Add Friend"
+                    Command="{Binding AddNewFriendCommand}"
+                    Style="{StaticResource normalBtn}"/>
+        </StackLayout>
 
     </Grid>
 </ContentPage>
