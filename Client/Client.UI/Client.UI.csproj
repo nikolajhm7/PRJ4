@@ -67,10 +67,10 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.20" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.20" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.21" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.21" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.20" />
+		<PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.21" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Serilog" Version="3.1.1" />
 		<PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
@@ -80,6 +80,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Games\1 - Hangman\HangmanPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Games\2 - ChatApp\ChatAppPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\ChatAppPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -101,9 +107,6 @@
 	  <MauiXaml Update="Views\SettingsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\TestPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="Views\PlatformPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -114,6 +117,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Games\2 - ChatApp\ChatAppPage.xaml.cs">
+	    <DependentUpon>%(Filename)</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\ChatAppPage.xaml.cs">
 	    <DependentUpon>ChatAppPage.xaml</DependentUpon>
 	  </Compile>
@@ -127,9 +133,6 @@
 	  <Compile Update="Views\SettingsPage.xaml.cs">
 	    <DependentUpon>SettingsPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\TestPage.xaml.cs">
-	    <DependentUpon>TestPage.xaml</DependentUpon>
-	  </Compile>
 	  <Compile Update="Views\GuestLoginPage.xaml.cs">
 	    <DependentUpon>LoginAsGuest.xaml</DependentUpon>
 	    <SubType>Code</SubType>
@@ -137,7 +140,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Games\1 - Hangman\" />
 	  <Folder Include="Logs\" />
 	  <Folder Include="Resources\Images\HangmanImages\" />
 	</ItemGroup>
