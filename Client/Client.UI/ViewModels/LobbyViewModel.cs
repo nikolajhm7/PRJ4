@@ -19,8 +19,8 @@ using Client.UI.Views;
 
 namespace Client.UI.ViewModels
 {
-    
-    [QueryProperty(nameof(LobbyId), "lobbyId")]
+
+    [QueryProperty(nameof(LobbyId), "LobbyId")]
     public partial class LobbyViewModel : ObservableObject
     {
         private readonly ILobbyService _lobbyService;
@@ -89,7 +89,17 @@ namespace Client.UI.ViewModels
 
         private void OnGameStarted()
         {
-            // Navigate to game page
+            if (!isHost)
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                    GoToGameAsync()
+                );
+            }
+        }
+
+        private async void GoToGameAsync()
+        {
+            await _navigationService.NavigateToPage($"{nameof(GamePage)}?LobbyId={LobbyId}");
         }
 
         private void OnLobbyClosed()
@@ -105,7 +115,7 @@ namespace Client.UI.ViewModels
             }
         }
 
-        private async Task CloseLobby()
+        private async void CloseLobby()
         {
             Debug.WriteLine("CloseLobby called");
             await Shell.Current.DisplayAlert(

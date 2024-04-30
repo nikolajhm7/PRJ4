@@ -141,12 +141,7 @@ namespace Client.UI.ViewModels
                 var response = await _lobbyService.CreateLobbyAsync(1);
                 if (response.Success)
                 {
-                    var responseBox = new Dictionary<string, object>
-                    {
-                        { "lobbyId", response.Msg }
-                    };
-
-                    await Shell.Current.GoToAsync(nameof(LobbyPage), true, responseBox);
+                    await _navigationService.NavigateToPage($"{nameof(LobbyPage)}?LobbyId={response.Msg}");
                 }
                 else
                 {
