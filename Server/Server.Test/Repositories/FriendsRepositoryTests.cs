@@ -106,7 +106,7 @@ public class FriendsRepositoryTests : TestBase
 
         // Assert
         Assert.That(friends.Count, Is.EqualTo(1));
-        Assert.That(friends[0].FriendId, Is.EqualTo(user2.Id));
+        Assert.That(friends[0].Name, Is.EqualTo(user2.Id));
         Assert.That(friends[0].FriendsSince, Is.EqualTo(friendship.date));
     }
 
@@ -187,8 +187,8 @@ public class FriendsRepositoryTests : TestBase
 
         // Assert
         Assert.That(friends.Count, Is.EqualTo(2));
-        Assert.That(friends[0].FriendId, Is.EqualTo(user2.Id));
-        Assert.That(friends[1].FriendId, Is.EqualTo(user3.Id));
+        Assert.That(friends[0].Name, Is.EqualTo(user2.Id));
+        Assert.That(friends[1].Name, Is.EqualTo(user3.Id));
     }
 
 }

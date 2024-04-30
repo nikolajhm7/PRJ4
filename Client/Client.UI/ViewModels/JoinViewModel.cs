@@ -45,6 +45,7 @@ namespace Client.UI.ViewModels
                 await Shell.Current.DisplayAlert("Failed", "to join lobby", "OK");
             }
         }
+       
         [RelayCommand]
         public async Task GoBack()
         {
