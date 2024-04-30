@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using Client.Library.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -61,5 +62,13 @@ public class JwtTokenService : IJwtTokenService
         }
 
         return false;
+    }
+    
+    public bool IsUserRoleGuest()
+    {
+        var token = _preferenceManager.Get("auth_token", defaultValue: string.Empty);
+        var handler = new JwtSecurityTokenHandler();
+        var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+        return jsonToken.Claims.First(claim => claim.Type == ClaimTypes.Role).Value == "Guest";
     }
 }
