@@ -51,7 +51,7 @@ namespace Client.Library.Services
                 {
                     // Log the exception or handle it accordingly
                     Debug.WriteLine($"Error while trying to start connection: {ex.Message}");
-                    throw;  // Rethrow or handle as necessary
+                    return;
                 }
             }
         }
@@ -84,7 +84,15 @@ namespace Client.Library.Services
 
             if (IsConnected)
             {
-                return await _hubConnection.InvokeAsync<ActionResult>(methodName, arg1);
+                try
+                {
+                    return await _hubConnection.InvokeAsync<ActionResult>(methodName, arg1);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error while trying to invoke method: {ex.Message}");
+                    return new ActionResult(false, ex.Message);
+                }
             }
             else
             {
@@ -98,7 +106,15 @@ namespace Client.Library.Services
 
             if (IsConnected)
             {
-                return await _hubConnection.InvokeAsync<ActionResult>(methodName, arg1, arg2);
+                try
+                {
+                    return await _hubConnection.InvokeAsync<ActionResult>(methodName, arg1, arg2);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error while trying to invoke method: {ex.Message}");
+                    return new ActionResult(false, ex.Message);
+                }
             }
             else
             {
@@ -126,11 +142,19 @@ namespace Client.Library.Services
 
             if (IsConnected)
             {
-                return await _hubConnection.InvokeAsync<ActionResult<T>>(methodName, arg1);
+                try
+                {
+                    return await _hubConnection.InvokeAsync<ActionResult<T>>(methodName, arg1);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error while trying to invoke method: {ex.Message}");
+                    return new ActionResult<T>(false, ex.Message, default);
+                }
             }
             else
             {   
-                ActionResult<T> actionResult = new(false, "No connection to server.", default(T));
+                ActionResult<T> actionResult = new(false, "No connection to server.", default);
                 return actionResult;
             }
         }

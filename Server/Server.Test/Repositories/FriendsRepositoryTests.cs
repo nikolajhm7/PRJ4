@@ -20,14 +20,14 @@ public class FriendsRepositoryTests : TestBase
     public void AddFriendRequest_AddsRequestWhenBothUsersExistAndDifferent()
     {
         // Arrange
-        var user1 = new User { Id = "user1" };
-        var user2 = new User { Id = "user2" };
+        var user1 = new User { Id = "user1", UserName = "User1" };
+        var user2 = new User { Id = "user2", UserName = "User2" };
         Context.Users.Add(user1);
         Context.Users.Add(user2);
         Context.SaveChanges();
 
         // Act
-        _friendsRepository.AddFriendRequest(user1.Id, user2.Id);
+        _friendsRepository.AddFriendRequest(user1.UserName, user2.UserName);
 
         // Assert
         var request = Context.Friendships.FirstOrDefault();
@@ -55,15 +55,15 @@ public class FriendsRepositoryTests : TestBase
     public void AcceptFriendRequest_ChangesStatusToAccepted()
     {
         // Arrange
-        var user1 = new User { Id = "user1" };
-        var user2 = new User { Id = "user2" };
-        var friendship = new Friendship { User1Id = user1.Id, User2Id = user2.Id, Status = "Pending" };
+        var user1 = new User { Id = "user1", UserName = "User1" };
+        var user2 = new User { Id = "user2", UserName = "User2" };
+        var friendship = new Friendship { User1Id = user1.Id, User2Id = user2.Id, Status = "Pending", User1 = user1, User2 = user2 };
         Context.Users.AddRange(user1, user2);
         Context.Friendships.Add(friendship);
         Context.SaveChanges();
 
         // Act
-        _friendsRepository.AcceptFriendRequest(user2.Id, user1.Id);
+        _friendsRepository.AcceptFriendRequest(user2.UserName, user1.UserName);
 
         // Assert
         var updatedFriendship = Context.Friendships.FirstOrDefault();
@@ -75,15 +75,15 @@ public class FriendsRepositoryTests : TestBase
     public void RemoveFriend_RemovesFriendship()
     {
         // Arrange
-        var user1 = new User { Id = "user1" };
-        var user2 = new User { Id = "user2" };
-        var friendship = new Friendship { User1Id = user1.Id, User2Id = user2.Id, Status = "Accepted" };
+        var user1 = new User { Id = "user1", UserName = "User1" };
+        var user2 = new User { Id = "user2", UserName = "User2" };
+        var friendship = new Friendship { User1Id = user1.Id, User2Id = user2.Id, Status = "Accepted", User1 = user1, User2 = user2 };
         Context.Users.AddRange(user1, user2);
         Context.Friendships.Add(friendship);
         Context.SaveChanges();
 
         // Act
-        _friendsRepository.RemoveFriend(user1.Id, user2.Id);
+        _friendsRepository.RemoveFriend(user1.UserName, user2.UserName);
 
         // Assert
         var remainingFriendships = Context.Friendships.ToList();
@@ -102,11 +102,11 @@ public class FriendsRepositoryTests : TestBase
         Context.SaveChanges();
 
         // Act
-        var friends = await _friendsRepository.GetFriendsOf(user1.Id);
+        var friends = await _friendsRepository.GetFriendsOf(user1.UserName);
 
         // Assert
         Assert.That(friends.Count, Is.EqualTo(1));
-        Assert.That(friends[0].FriendId, Is.EqualTo(user2.Id));
+        Assert.That(friends[0].Name, Is.EqualTo(user2.UserName));
         Assert.That(friends[0].FriendsSince, Is.EqualTo(friendship.date));
     }
 
@@ -176,19 +176,39 @@ public class FriendsRepositoryTests : TestBase
         var user1 = new User { Id = "user1", UserName = "User1" };
         var user2 = new User { Id = "user2", UserName = "User2" };
         var user3 = new User { Id = "user3", UserName = "User3" };
-        var friendship1 = new Friendship { User1Id = user1.Id, User2Id = user2.Id, Status = "Accepted", date = DateTime.Now };
-        var friendship2 = new Friendship { User1Id = user3.Id, User2Id = user1.Id, Status = "Accepted", date = DateTime.Now };
+        var friendship1 = new Friendship { User1Id = user1.Id, User2Id = user2.Id, Status = "Accepted", date = DateTime.Now, User1 = user1, User2 = user2 };
+        var friendship2 = new Friendship { User1Id = user3.Id, User2Id = user1.Id, Status = "Accepted", date = DateTime.Now, User1 = user3, User2 = user1 };
         Context.Users.AddRange(user1, user2, user3);
         Context.Friendships.AddRange(friendship1, friendship2);
         Context.SaveChanges();
 
         // Act
-        var friends = await _friendsRepository.GetFriendsOf(user1.Id);
+        var friends = await _friendsRepository.GetFriendsOf(user1.UserName);
 
         // Assert
         Assert.That(friends.Count, Is.EqualTo(2));
-        Assert.That(friends[0].FriendId, Is.EqualTo(user2.Id));
-        Assert.That(friends[1].FriendId, Is.EqualTo(user3.Id));
+        Assert.That(friends[0].Name, Is.EqualTo(user2.UserName));
+        Assert.That(friends[1].Name, Is.EqualTo(user3.UserName));
+    }
+    
+    [Test]
+    public async Task GetInvitesOf_ReturnsCorrectInvites()
+    {
+        // Arrange
+        var user1 = new User { Id = "user1", UserName = "User1" };
+        var user2 = new User { Id = "user2", UserName = "User2" };
+        var friendship = new Friendship { User1Id = user1.Id, User2Id = user2.Id, Status = "Pending", date = DateTime.Now, User1 = user1, User2 = user2 };
+        Context.Users.AddRange(user1, user2);
+        Context.Friendships.Add(friendship);
+        Context.SaveChanges();
+
+        // Act
+        var invites = await _friendsRepository.GetInvitesOf(user2.UserName);
+
+        // Assert
+        Assert.That(invites.Count, Is.EqualTo(1));
+        Assert.That(invites[0].Name, Is.EqualTo(user1.UserName));
+        Assert.That(invites[0].FriendsSince, Is.EqualTo(friendship.date));
     }
 
 }
