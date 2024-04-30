@@ -15,6 +15,7 @@ using System.Windows.Input;
 using Microsoft.Maui.Controls;
 using System.Diagnostics;
 using System.Threading;
+using Client.Library.Models;
 
 namespace Client.UI.ViewModels
 {
@@ -26,10 +27,15 @@ namespace Client.UI.ViewModels
         private int ErrorCounter;
 
         // Define command properties
+        [ObservableProperty]
+        public ObservableCollection<string> playerNames = new ObservableCollection<string> { };
+
         [ObservableProperty] private string errorLabel;
+        [ObservableProperty] private string lobbyIdLabel;
         [ObservableProperty] private string? lobbyId;
         [ObservableProperty] private string? title;
         [ObservableProperty] private string? statusMessage;
+        [ObservableProperty] private string? playerStatus;
         [ObservableProperty] private string? players;
         [ObservableProperty] private char? letter;
         [ObservableProperty] private string hiddenWord;
@@ -45,23 +51,15 @@ namespace Client.UI.ViewModels
             }
         }
 
-        //public ObservableCollection<string> HiddenWord
-        //{
-        //    get { return hiddenWord; }
-        //    set
-        //    {
-        //        SetProperty(ref hiddenWord, value);
-        //        OnPropertyChanged(nameof(HiddenWord));
-        //    }
-        //}
-
 
         public GameViewModel(IHangmanService hangmanService)
         {
             _hangmanService = hangmanService;
             guessedChars = [];
-            //hiddenWord = new ObservableCollection<string>();
-
+            playerNames.Add("Anthony");
+            playerNames.Add("Nikolaj");
+            playerNames.Add("user.Username");
+            playerNames.Add("user.Username");
             _hangmanService.GameStartedEvent += OnGameStarted;
             _hangmanService.GuessResultEvent += OnGuessResult;
             _hangmanService.GameOverEvent += OnGameOver;
@@ -83,6 +81,10 @@ namespace Client.UI.ViewModels
 
             // Set the message
             StatusMessage = "Game started!";
+            PlayerStatus = $"Players: {playerNames.Count}/{playerNames.Count}";
+
+            // Set the lobby id
+            LobbyIdLabel = $"Lobby ID: {LobbyId}";
 
             // Set the error counter
             ErrorCounter = 0;
@@ -124,7 +126,7 @@ namespace Client.UI.ViewModels
             // Update the error counter
             if (!isCorrect)
             {
-                if (!GuessedChars.Contains(letter))
+                if (!GuessedChars.Contains(char.ToUpper(letter)))
                 {
                     ErrorCounter++;
                     ErrorLabel = $"Errors: {ErrorCounter}";
@@ -138,10 +140,10 @@ namespace Client.UI.ViewModels
             Console.WriteLine($"Game over: {didWin}, {word}");
 
             // Set the message
-            StatusMessage = didWin ? $"You won! The Hidden Word was: {word} " : $"You lost! The Hidden Word was: {word}";
+            StatusMessage = didWin ? $"You won!\nThe Hidden Word was: {word} " : $"You lost!\nThe Hidden Word was: {word}";
 
             // Set the title
-            Title = "Game Over";
+            Title = "HangMan: Game Over";
 
         }
 
@@ -153,18 +155,19 @@ namespace Client.UI.ViewModels
             StatusMessage = "Lobby closed!";
 
             // Set the title
-            Title = "Game Over";
-
-            //// Set the letters status
-            //WordLength = new ObservableCollection<string>();
+            Title = "HangMan: Game Over";
         }
 
         private void OnUserLeftLobby(string username)
         {
             Console.WriteLine($"User left lobby: {username}");
 
+
+
             //// Remove the player
-            //Players.Remove(username);
+            PlayerStatus = $"Players: {playerNames.Count}/4 - {username} has left";
+            playerNames.Remove(username);
+            playerNames.Remove("user.Username");
         }
 
         [RelayCommand]
@@ -191,11 +194,11 @@ namespace Client.UI.ViewModels
                 //{
                 //    guessedChars.Add(letter);
                 //}
-                if(guessedChars.Contains(letter) ) { await Shell.Current.DisplayAlert("Fejl", "Bogstav er allerede gættet på!", "OK"); }
+                if(guessedChars.Contains(char.ToUpper(letter)) ) { await Shell.Current.DisplayAlert("Fejl", $"'{char.ToUpper(letter)}' er allerede gættet på!", "OK"); }
                 else if (response.Success)
                 {
                     await Task.Delay(1); 
-                    GuessedChars.Add(letter);
+                    GuessedChars.Add(char.ToUpper(letter));
                 }
             }
             catch (Exception ex)
