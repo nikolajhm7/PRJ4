@@ -31,6 +31,8 @@ namespace Client.UI.ViewModels
         private bool _showhost = true;
         [ObservableProperty] 
         private string _avatar;
+        [ObservableProperty]
+        private string _addFriend = "";
 
         private readonly ILobbyService _lobbyService;
 
@@ -70,6 +72,7 @@ namespace Client.UI.ViewModels
             _preferenceManager = preferenceManager;
             _jwtTokenService = jwtTokenService;
             _apiService = apiService;
+            _friendsService = friendsService;
         }
 
         public void OnPageAppearing()
@@ -193,7 +196,7 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         public async Task AddNewFriend(string s)
         {
-            _friendsService.SendFriendRequest(s);
+            await _friendsService.SendFriendRequest(s);
         }
     }
 }
