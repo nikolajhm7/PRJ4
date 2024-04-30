@@ -100,6 +100,12 @@ namespace Server.API.Hubs
             _logger.LogInformation("Requesting all friends of {User}.", username);
 
             var friends = await _friendsRepository.GetFriendsOf(username);
+
+            if (getInvites)
+            {
+                friends.AddRange(await _friendsRepository.GetInvitesOf(username));
+            }
+
             return new ActionResult<List<FriendDTO>>(true, null, friends);
         }
     }
