@@ -128,8 +128,12 @@ namespace Client.UI.ViewModels
         {
             if (s != null)
             {
+<<<<<<< Updated upstream
                 
                 var response = await _lobbyService.CreateLobbyAsync(s.GameId);
+=======
+                var response = await _lobbyService.CreateLobbyAsync(1);
+>>>>>>> Stashed changes
                 if (response.Success)
                 {
                     await _navigationService.NavigateToPage($"{nameof(LobbyPage)}?LobbyId={response.Msg}");

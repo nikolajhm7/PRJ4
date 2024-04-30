@@ -15,10 +15,6 @@ namespace Client.Library.Models
         [ObservableProperty] private string _image;
         [ObservableProperty] private int maxPlayers;
 
-        public Game()
-        {
-        }
-
         public void setImage()
         {
             if (Name != null)
