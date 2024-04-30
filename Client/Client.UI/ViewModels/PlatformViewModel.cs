@@ -205,6 +205,12 @@ namespace Client.UI.ViewModels
         {
             _friendsService.AcceptFriendRequest(s);
         }
+
+        [RelayCommand]
+        public async Task DeclineFriendRequest(string s)
+        {
+            _friendsService.RemoveFriend(s);
+        }
     }
 }
 

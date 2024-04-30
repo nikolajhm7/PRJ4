@@ -114,8 +114,25 @@
                     <DataTemplate>
                         <StackLayout>
                             <Label Text="{Binding Name}" />
-                            
-                                
+
+                            <StackLayout Orientation="Horizontal">
+                                <Button 
+                                    Text="Remove"
+                                    Command="{Binding DeclineFriendCommand}"
+                                    CommandParameter="{Binding .}"
+                                    WidthRequest="100"
+                                    HeightRequest="50"
+                                    FontSize="10" />
+                                <Button 
+                                    Text="Accept"
+                                    Command="{Binding AcceptFriendCommand}"
+                                    CommandParameter="{Binding .}"
+                                    IsVisible="{Binding IsPending}"
+                                    WidthRequest="100"
+                                    HeightRequest="50"
+                                    FontSize="10" />
+                            </StackLayout>
+
                         </StackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
