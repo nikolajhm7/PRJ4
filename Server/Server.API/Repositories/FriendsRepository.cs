@@ -135,9 +135,16 @@ namespace Server.API.Repositories
             List<Friendship> friends;
             List<Friendship> friends2;
             
-            friends = await _context.Friendships.Where(f => f.User1.UserName == userName && f.Status == "Accepted")
+            friends = await _context.Friendships
+                .Include(f => f.User1)
+                .Include(f => f.User2)
+                .Where(f => f.User1.UserName == userName && f.Status == "Accepted")
                 .ToListAsync();
-            friends2 = await _context.Friendships.Where(f => f.User2.UserName == userName && f.Status == "Accepted")
+
+            friends2 = await _context.Friendships
+                .Include(f => f.User1)
+                .Include(f => f.User2)
+                .Where(f => f.User2.UserName == userName && f.Status == "Accepted")
                 .ToListAsync();
 
             var friendDTOs = new List<FriendDTO>();
