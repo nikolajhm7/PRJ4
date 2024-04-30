@@ -171,11 +171,13 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         public async Task RetrieveFriends()
         {
+            
             ActionResult<List<FriendDTO>> temp = await _friendsService.GetFriends(true);
                 if (temp.Success)
                 {
                 foreach (var friendDTO in temp.Value)
                     {
+
                         FriendsCollection.Add(friendDTO.Name);
                     }
                 }
