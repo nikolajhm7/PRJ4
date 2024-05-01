@@ -43,7 +43,7 @@ namespace Client.UI.ViewModels
 
         private IPreferenceManager _preferenceManager;
 
-        private ObservableCollection<Game> games;
+        private ObservableCollection<Game> games=[];
         public ObservableCollection<Game> Games
         {
             get { return games; }
@@ -133,7 +133,7 @@ namespace Client.UI.ViewModels
         }
 
         [RelayCommand]
-        async Task GoToLobby(Game s)
+        public async Task GoToLobby(Game s)
         {
             if (s != null)
             {

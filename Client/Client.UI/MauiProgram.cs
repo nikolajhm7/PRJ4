@@ -30,22 +30,24 @@ namespace Client.UI
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
-            
+
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.File(Path.Combine(FileSystem.AppDataDirectory, "Logs/log-.txt"),
                     rollingInterval: RollingInterval.Day,
                     retainedFileCountLimit: 30)
                 .CreateLogger();
-            
+
             builder.Logging.AddSerilog();
-         
+
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            builder.Configuration.AddConfiguration(configuration);
+            #region Services
+
+            #region Pages
 
             builder.Services.AddTransient<LoadingPage>();
             builder.Services.AddTransient<LoadingViewModel>();
@@ -71,31 +73,34 @@ namespace Client.UI
             builder.Services.AddTransient<NewUserPage>();
             builder.Services.AddTransient<NewUserViewModel>();
 
-            builder.Services.AddSingleton<ILobbyService, LobbyService>();
-            builder.Services.AddSingleton<IFriendsService, FriendsService>();
-            builder.Services.AddSingleton<IHangmanService, HangmanService>();
-
-            builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
-            
-            builder.Services.AddSingleton<IPreferenceManager, PreferenceManager>();
-            builder.Services.AddSingleton<IApiService, ApiService>();
-            
-            builder.Services.AddSingleton<INavigationService, NavigationService>();
-
-            builder.Services.AddHttpClient("ApiHttpClient");
-
-            builder.Services.AddTransient<GamePage>();  // til game branch
+            builder.Services.AddTransient<GamePage>();
             builder.Services.AddTransient<GameViewModel>();
 
+            //chat page skal slettes
             builder.Services.AddTransient<ChatAppPage>();
             builder.Services.AddTransient<ChatAppViewModel>();
 
-            #if DEBUG
-                builder.Logging.AddDebug();
-            #endif
+            #endregion
+
+            builder.Configuration.AddConfiguration(configuration);
+            builder.Services.AddSingleton<ILobbyService, LobbyService>();
+            builder.Services.AddSingleton<IFriendsService, FriendsService>();
+            builder.Services.AddSingleton<IHangmanService, HangmanService>();
+            builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
+            builder.Services.AddSingleton<IPreferenceManager, PreferenceManager>();
+            builder.Services.AddSingleton<IApiService, ApiService>();
+            builder.Services.AddSingleton<INavigationService, NavigationService>();
+            builder.Services.AddHttpClient("ApiHttpClient");
+
+            #endregion
+
+
+#if DEBUG
+            builder.Logging.AddDebug();
+#endif
 
             var app = builder.Build();
-            
+
             var jwtTokenService = app.Services.GetRequiredService<IJwtTokenService>();
 
 
@@ -103,6 +108,14 @@ namespace Client.UI
 
             return app;
         }
+
+        private static bool IsNetworkAvailable()
+        {
+            return Connectivity.Current.NetworkAccess == NetworkAccess.Internet &&
+                   Connectivity.Current.ConnectionProfiles.Contains(ConnectionProfile.WiFi);
+        }
+
+        #region Logging
 
         public static async Task UploadLogsAsync(IConfiguration configuration, IJwtTokenService jwtTokenService)
         {
@@ -116,14 +129,14 @@ namespace Client.UI
             var logFiles = Directory.GetFiles(logsDirectory, "*.txt"); // Antager at logs er i .txt filer
             foreach (var logFile in logFiles)
             {
-                
+
                 try
                 {
                     var logLines = await File.ReadAllLinesAsync(logFile);
                     var jsonLogContent = ConvertLogLinesToJson(logLines); // Konverter til JSON
                     if (await SendLogsToServer(jsonLogContent, configuration)) // Send som JSON
                     {
-                        
+
                         File.Delete(logFile); // Slet filen, hvis uploadet lykkes
                     }
 
@@ -136,12 +149,6 @@ namespace Client.UI
             }
         }
 
-        private static bool IsNetworkAvailable()
-        {
-            return Connectivity.Current.NetworkAccess == NetworkAccess.Internet &&
-                   Connectivity.Current.ConnectionProfiles.Contains(ConnectionProfile.WiFi);
-        }
-
         private static async Task<bool> SendLogsToServer(string jsonContentString, IConfiguration _configuration)
         {
             try
@@ -149,7 +156,8 @@ namespace Client.UI
                 var jsonContent = new StringContent(jsonContentString, Encoding.UTF8, "application/json");
 
                 using var httpClient = new HttpClient();
-                var response = await httpClient.PostAsync(_configuration["ConnectionSettings:ApiUrl"] + "/logs", jsonContent);
+                var response =
+                    await httpClient.PostAsync(_configuration["ConnectionSettings:ApiUrl"] + "/logs", jsonContent);
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
@@ -158,7 +166,7 @@ namespace Client.UI
                 return false;
             }
         }
-        
+
         private static string ConvertLogLinesToJson(IEnumerable<string> logLines)
         {
             var logEntries = new List<LogEntryDTO>();
@@ -188,7 +196,6 @@ namespace Client.UI
                 }
                 else if (currentEntry != null)
                 {
-                    // Dette er en fortsættelse af den nuværende besked over flere linjer
                     currentEntry.Message += "\n" + line;
                 }
             }
@@ -203,3 +210,6 @@ namespace Client.UI
 
     }
 }
+
+#endregion
+
