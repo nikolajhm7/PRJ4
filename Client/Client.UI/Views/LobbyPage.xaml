@@ -21,20 +21,12 @@
         />
 
         <Image
-            Source="{Binding Image}"
+            Source="{Binding ImagePath}"
             Grid.Row="1"
             Grid.Column="1"
             Grid.RowSpan="1"
             Aspect="AspectFit"
           />
-        <!--<Label
-            Grid.Row="3"
-            Grid.Column="1"
-            Text="{Binding Recivedgame.MaxPlayers}"/>
-        <Label
-            Grid.Row="2"
-            Grid.Column="1"
-            Text="{Binding Recivedgame.Name}"/>-->
 
         <CollectionView 
             x:Name="PlayersCollectionView" 
@@ -47,7 +39,6 @@
             Grid.RowSpan="5">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical" Span="2" />
-                <!-- Adjust Span for desired number of columns -->
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
@@ -71,11 +62,11 @@
             Style="{StaticResource normalBtn }"
             Command="{Binding GoBackCommand}"/>
 
-        <!-- Place the Start spil button in the bottom right -->
         <Button Grid.Row="4" 
                 Grid.Column="1" 
                 Style="{StaticResource normalBtn}"
                 Text="Start spil" 
-                Command="{Binding GoToGameCommand}"/>
+                Command="{Binding GoToGameCommand}"
+                IsVisible="{Binding IsGoToGameButtonVisible}"/>
     </Grid>
 </ContentPage>

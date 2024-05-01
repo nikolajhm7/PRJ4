@@ -3,15 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
              xmlns:behaviors="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
-             xmlns:local="clr-namespace:Client.Library.Models"
              x:Class="Client.UI.Views.PlatformPage"
-             x:DataType="viewModels:PlatformViewModel"
-            >
+             >
 
     <Grid
         Padding="50,0"
         RowDefinitions="*,*,*,*,10"
         ColumnDefinitions="*,2*,2*,*"
+        ColumnSpacing="10"
         >
 
         <Label 
@@ -69,45 +68,36 @@
             IsVisible="{Binding GamesShowing}"
             Command="{Binding ChangeViewCommand}"/>
 
-        <ImageButton
-            Source="{Binding Games[0].Image}"
-            Aspect="AspectFit"
-            Grid.Row="1"
-            Grid.Column="1"
-            IsVisible="{Binding GamesShowing}"
-            Command ="{Binding GoToLobbyCommand}"
-            CommandParameter="{Binding Games[0]}"/>
 
-        <ImageButton
-            Source="{Binding Games[1].Image}"
-            Aspect="AspectFit"
-            Grid.Row="1"
-            Grid.Column="2"
-            IsVisible="{Binding GamesShowing}"
-            Command ="{Binding GoToLobbyCommand}"
-            CommandParameter="{Binding Games[1]}"/>
-        
-        <ImageButton
-            Source="{Binding Games[2].Image}"
-            Aspect="AspectFit"
-            Grid.Row="2"
-            Grid.Column="1"
-            IsVisible="{Binding GamesShowing}"
-            Command ="{Binding GoToLobbyCommand}"
-            CommandParameter="{Binding Games[2]}"/>
-
-
-
-        <ImageButton
-            Source="{Binding Games[3].Image}"
-            Aspect="AspectFit"
-            Grid.Row="2"
-            Grid.Column="2"
-            IsVisible="{Binding GamesShowing}"
-            Command ="{Binding GoToLobbyCommand}"
-            CommandParameter="{Binding Games[3]}"/>
-
-
-
+        <CollectionView 
+                Grid.Row="1"
+                Grid.Column="1"
+                Grid.RowSpan="2"
+                Grid.ColumnSpan="2"
+            x:Name="GameCollectionView"
+            ItemsSource="{Binding Games}" 
+            EmptyView="No Games"
+            VerticalOptions="FillAndExpand"
+            IsVisible="{Binding GamesShowing}">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="3" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout>
+                        <ImageButton 
+                            Source="{Binding Image}"
+                            WidthRequest="100"
+                            HeightRequest="100"
+                            Command ="{Binding Source={x:Reference GameCollectionView},Path=BindingContext.GoToLobbyCommand}"
+                            CommandParameter="{Binding .}"
+                            />
+                        <Label 
+                            Text="{Binding Name}" 
+                            HorizontalOptions="Center" />
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
     </Grid>
 </ContentPage>

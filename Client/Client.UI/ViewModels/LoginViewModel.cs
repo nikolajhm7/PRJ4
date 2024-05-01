@@ -14,37 +14,63 @@ namespace Client.UI.ViewModels;
 
 public partial class LoginViewModel : ObservableObject
 {
-    private readonly HttpClient _httpClient;
+    #region Properties
+    [ObservableProperty]
+    private string _loginUsername = string.Empty;
+
+    [ObservableProperty]
+    private string _loginPassword = string.Empty;
+    #endregion
+
+    #region Interfaces
 
     private readonly IConfiguration _configuration;
-    
+
     private readonly ILogger<LoginViewModel> _logger;
 
     private readonly INavigationService _navigationService;
-    
+
     private IJwtTokenService _jwtTokenService;
-    
+
     private IPreferenceManager _preferenceManager;
-    
+
     private IApiService _apiService;
+
+    #endregion
+
+    private readonly HttpClient _httpClient;
+
     public LoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<LoginViewModel> logger, IJwtTokenService jwtTokenService, IPreferenceManager preferenceManager, INavigationService navigationService, IApiService apiService)
     {
         _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
-        
         _configuration = configuration;
-
         _navigationService = navigationService;
-        
         _logger = logger;
-        
         _jwtTokenService = jwtTokenService;
-        
         _preferenceManager = preferenceManager;
-        
         _apiService = apiService;
 
         IsAlreadyAuthenticated();
     }
+
+    #region Navigation
+
+    [RelayCommand]
+    async Task GoToNewUser()
+    {
+        await _navigationService.NavigateToPage(nameof(NewUserPage));
+    }
+
+    [RelayCommand]
+    public async Task JoinAsGuest()
+    {
+        await _navigationService.NavigateToPage(nameof(GuestLoginPage));
+    }
+
+    #endregion
+
+
+    #region Login and Auth
 
     private async void IsAlreadyAuthenticated()
     {
@@ -52,17 +78,6 @@ public partial class LoginViewModel : ObservableObject
         {
             await _navigationService.NavigateToPage(nameof(PlatformPage));
         }
-    }
-    [ObservableProperty]
-    private string _loginUsername = string.Empty;
-   
-    [ObservableProperty]
-    private string _loginPassword = string.Empty;
-
-    [RelayCommand]
-    async Task GoToNewUser()
-    {
-        await _navigationService.NavigateToPage(nameof(NewUserPage));
     }
 
     [RelayCommand]
@@ -90,12 +105,6 @@ public partial class LoginViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
-    public async Task JoinAsGuest()
-    {
-        await _navigationService.NavigateToPage(nameof(GuestLoginPage));
-    }
-
     public async Task<bool> LoginAsync(string username, string password)
     {
         try
@@ -106,35 +115,30 @@ public partial class LoginViewModel : ObservableObject
             {
                 if (_jwtTokenService.SetTokensFromResponse(response))
                 {
-                    //_preferenceManager.Set("username", username);
-                    //User.Instance.Username = username;
                     return true;
                 }
 
             }
             else
             {
-                // Log fejlresponsen for diagnosticeringsformål
                 var errorResponse = await response.Content.ReadAsStringAsync();
-                
+
                 _logger.LogError($"Login fejlede med status kode {response.StatusCode}: {errorResponse}");
             }
         }
         catch (HttpRequestException e)
         {
-            // Specifik handling for HTTP-relaterede fejl
-            
+
             _logger.LogError($"En HTTP fejl opstod: {e.Message}");
-            
+
         }
         catch (Exception e)
         {
-            // Generel exception handling
-            
+
             _logger.LogError($"En uventet fejl opstod: {e.Message}");
         }
         return false;
     }
 
-
+    #endregion
 }

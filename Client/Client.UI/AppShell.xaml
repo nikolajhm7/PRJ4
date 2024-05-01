@@ -13,44 +13,5 @@
         Title="LoadingPage"
         ContentTemplate="{DataTemplate views:LoadingPage}"
         Route="Loading" />
-    
-    <ShellContent
-        Title="Login"
-        ContentTemplate="{DataTemplate views:LoginPage}"
-        Route="LoginPage" />
-
-    <ShellContent
-        Title="Platform"
-        ContentTemplate="{DataTemplate views:PlatformPage}"
-        Route="PlatformPage" />
-
-    <ShellContent
-        Title="NewUser"
-        ContentTemplate="{DataTemplate views:NewUserPage}"
-        Route="NewUserPage" />
-
-    <ShellContent
-        Title="Join"
-        ContentTemplate="{DataTemplate views:JoinPage}"
-        Route="JoinPage" />
-
-    <ShellContent
-        Title="Lobby"
-        ContentTemplate="{DataTemplate views:LobbyPage}"
-        Route="LobbyPage" />
-    <ShellContent
-        Title="Game"
-        ContentTemplate="{DataTemplate views:GamePage}"
-        Route="GamePage" />
-    <ShellContent
-        Title ="Hangman Game"
-        ContentTemplate="{DataTemplate games:HangmanPage}"
-        Route="HangmanPage" />
-
-    <!--<ShellContent
-        Title="ChatApp"
-        ContentTemplate="{DataTemplate views:ChatAppPage}"
-        Route="ChatAppPage" />-->
-
 
 </Shell>

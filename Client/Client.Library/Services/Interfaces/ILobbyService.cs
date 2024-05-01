@@ -19,7 +19,7 @@ namespace Client.Library.Services
 
         Task<ActionResult> JoinLobbyAsync(string lobbyId);
 
-        Task<ActionResult<Lobby>> GetLobbyInfo(string lobbyId);
+        Task<ActionResult<int>> GetLobbyGameId(string lobbyId);
 
         Task<ActionResult> UserIsHost(string lobbyId);
 

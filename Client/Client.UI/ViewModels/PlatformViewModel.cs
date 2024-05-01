@@ -5,35 +5,38 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Client.Library.Services;
 using Client.Library.Services.Interfaces;
-using Client.UI.Managers;
 using Client.UI.Views;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+
+using Client.UI.Managers;
 
 namespace Client.UI.ViewModels
 {
     public partial class PlatformViewModel : ObservableObject
     {
-        [ObservableProperty]
-        private string? _username;
+        #region Properties
 
-        //public string? Username
-        //{
-        //    get => _username;
-        //    set => SetProperty(ref _username, value);
-        //}
-        [ObservableProperty] 
-        private bool _gamesShowing = false;
-        [ObservableProperty] 
-        private bool _showhost = true;
-        [ObservableProperty] 
-        private string _avatar;
+        [ObservableProperty] private string? _username;
+        [ObservableProperty] private bool _gamesShowing = false;
+        [ObservableProperty] private bool _showhost = true;
+        [ObservableProperty] private string _avatar;
+
+        private ObservableCollection<Game> games;
+
+        public ObservableCollection<Game> Games
+        {
+            get { return games; }
+            set { SetProperty(ref games, value); }
+        }
+
+        #endregion
+
+        #region Interfaces
 
         private readonly ILobbyService _lobbyService;
 
         private readonly INavigationService _navigationService;
-
-        private readonly HttpClient _httpClient;
 
         private readonly IApiService _apiService;
 
@@ -43,14 +46,14 @@ namespace Client.UI.ViewModels
 
         private IPreferenceManager _preferenceManager;
 
-        private ObservableCollection<Game> games;
-        public ObservableCollection<Game> Games
-        {
-            get { return games; }
-            set { SetProperty(ref games, value); }
-        }
+        #endregion
 
-        public PlatformViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration, INavigationService navigationService, ILobbyService lobbyService, IPreferenceManager preferenceManager, IJwtTokenService jwtTokenService, IApiService apiService)
+        private readonly HttpClient _httpClient;
+
+
+        public PlatformViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration,
+            INavigationService navigationService, ILobbyService lobbyService, IPreferenceManager preferenceManager,
+            IJwtTokenService jwtTokenService, IApiService apiService)
         {
             _configuration = configuration;
             _lobbyService = lobbyService;
@@ -66,6 +69,9 @@ namespace Client.UI.ViewModels
             SetAvatar();
             pullGames();
         }
+
+        #region Setting up frontend stuff
+
         public void SetImagesForGames()
         {
             foreach (var game in Games)
@@ -91,7 +97,6 @@ namespace Client.UI.ViewModels
             }
 
         }
-
         public void SetAvatar()
         {
             int i = 0;
@@ -110,6 +115,10 @@ namespace Client.UI.ViewModels
                     break;
             }
         }
+
+        #endregion
+
+        #region Navigating
 
         [RelayCommand]
         private async Task ChangeView()
@@ -133,12 +142,12 @@ namespace Client.UI.ViewModels
         }
 
         [RelayCommand]
-        async Task GoToLobby(Game s)
+        public async Task GoToLobby(Game s)
         {
             if (s != null)
             {
-                
-                var response = await _lobbyService.CreateLobbyAsync(1);
+                var response = await _lobbyService.CreateLobbyAsync(s.GameId);
+
                 if (response.Success)
                 {
                     await _navigationService.NavigateToPage($"{nameof(LobbyPage)}?LobbyId={response.Msg}");
@@ -153,11 +162,15 @@ namespace Client.UI.ViewModels
                 await Shell.Current.DisplayAlert("Fejl", "Vælg et spil som du har adgang til", "OK");
             }
         }
+
         [RelayCommand]
         async Task GoToJoin(string s)
         {
             await _navigationService.NavigateToPage(nameof(JoinPage));
         }
     }
+
+    #endregion
 }
+
 

@@ -10,7 +10,6 @@
             RowDefinitions="*,*,*,*"
             ColumnDefinitions="*,*,*,*">
 
-        <!--Elements for row 0-->
             <Label 
                 Grid.Row="0"
                 Grid.Column="0"
@@ -32,8 +31,6 @@
                 FontAttributes="Bold"
                 Text="{Binding ErrorLabel}"/>
 
-
-        <!--Elements for row 1-->
 
             <Entry 
                 Grid.Row="1"
@@ -58,8 +55,6 @@
                 Source="{Binding ImageSource}"
                 HeightRequest="200"/>
 
-        <!--Elements for row 2-->
-
             <Button 
                 Grid.Row="2"
                 Grid.Column="0"
@@ -72,7 +67,7 @@
                 Grid.Column="1"
                 FontSize="Medium"
                 Text="{Binding StatusMessage}"/>
-        <!--View players in game-->
+
             <CollectionView 
                 x:Name="PlayersCollectionView" 
                 ItemsSource="{Binding PlayerNames}" 
@@ -82,9 +77,8 @@
                 Grid.Row="2"
                 Grid.RowSpan="5">
                 <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" Span="2" />
-                <!-- Adjust Span for desired number of columns -->
-                 </CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="2" />
+            </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame 
@@ -100,8 +94,6 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-      
-        <!--Elements for row 3-->
             <Button 
                 Grid.Row="3"
                 Grid.Column="3"
@@ -109,7 +101,6 @@
                 WidthRequest="100"
                 Text="Reset"
                 Command="{Binding RestartGameCommand}"/>
-            <!--View List of Guessed Characters-->
             <CollectionView 
                 ItemsSource="{Binding GuessedChars}" 
                 SelectionMode="None" 
@@ -119,7 +110,6 @@
                 Grid.RowSpan="5">
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout Orientation="Vertical" Span="7" />
-                <!-- Adjust Span for desired number of columns -->
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                 <DataTemplate>
