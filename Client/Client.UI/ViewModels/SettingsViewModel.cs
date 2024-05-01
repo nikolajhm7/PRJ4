@@ -10,6 +10,7 @@ using Client.Library.Services.Interfaces;
 using CommunityToolkit.Mvvm.Input;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
+using Client.Library.Services;
 
 namespace Client.UI.ViewModels
 {
@@ -17,27 +18,17 @@ namespace Client.UI.ViewModels
     {
 
         private readonly IApiService _apiService;
-        public SettingsViewModel(IApiService apiService)
+        private readonly INavigationService _navigationService;
+        public SettingsViewModel(IApiService apiService, INavigationService navigationService)
         {
             _apiService = apiService;
+            _navigationService = navigationService;
         }
 
         [RelayCommand]
-        public async Task Addgame(Game g)
+        public async Task GoBack()
         {
-            //string endpoint = "/Game/addGameForUser";
-            //new httpContent()
-            //var response = await _apiService.MakeApiCall(endpoint, HttpMethod.Post,new httpContent{ Username = User.Instance.Username, g.GameId});
-
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    string jsonResponse = await response.Content.ReadAsStringAsync();
-            //    Games = JsonConvert.DeserializeObject<ObservableCollection<Game>>(jsonResponse);
-            //}
-            //else
-            //{
-            //    await Shell.Current.DisplayAlert("Fejl", "Kunne ikke hente spil", "OK");
-            //}
+           await _navigationService.NavigateBack();
         }
 
     }

@@ -16,12 +16,6 @@ namespace Client.UI.ViewModels
     {
         [ObservableProperty]
         private string? _username;
-
-        //public string? Username
-        //{
-        //    get => _username;
-        //    set => SetProperty(ref _username, value);
-        //}
         [ObservableProperty] 
         private bool _gamesShowing = false;
         [ObservableProperty] 
