@@ -251,7 +251,7 @@ namespace Client.UI.ViewModels
         public void OnFriendRequestAccepted(FriendDTO user)
         {
             var oldUser = FriendsCollection.FirstOrDefault(u => u.Name == user.Name);
-            if (user != null)
+            if (oldUser != null)
             {
                 FriendsCollection.Remove(oldUser);
                 FriendsCollection.Add(user);
