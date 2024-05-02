@@ -8,6 +8,9 @@ using Server.API.Models;
 using Server.API.Repositories.Interfaces;
 using Server.API.Services;
 using Server.API.Services.Interfaces;
+using System.Collections.Generic;
+using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Server.Test.Games;
 
@@ -142,7 +145,18 @@ public class HangmanHubTests
     {
         // Arrange
         var lobbyId = "Id";
+        var connection = "connection-id";
+        var username = "Testuser";
+        var user = new ConnectedUserDTO(username, connection);
+
+        _context.User?.Identity?.Name.Returns(username);
+        _context.ConnectionId.Returns(connection);
+
+        var list = new List<ConnectedUserDTO> { user, new ConnectedUserDTO(username, connection) };
+        _lobbyManager.GetUsersInLobby(lobbyId).Returns(list);
+
         _clients.Group(Arg.Any<string>()).Returns(_clientProxy);
+
         _randomPicker.PickRandomItem(Arg.Any<List<string>>()).Returns("word");
         _logicManager.TryGetValue(Arg.Any<string>(), out Arg.Any<IHangmanLogic>()).Returns(x =>
         {
@@ -150,6 +164,7 @@ public class HangmanHubTests
             return true;
         });
         _logic.IsGameOver().Returns(false);
+
 
         // Act
         var res = await _uut.GuessLetter(lobbyId, 'c');
@@ -165,6 +180,16 @@ public class HangmanHubTests
     {
         // Arrange
         var lobbyId = "Id";
+        var username = "Testuser";
+        var connection = "connection-id";
+        var user = new ConnectedUserDTO(username, connection);
+
+        _context.User?.Identity?.Name.Returns(username);
+        _context.ConnectionId.Returns(connection);
+
+        var list = new List<ConnectedUserDTO> { user, new ConnectedUserDTO(username, connection) };
+        _lobbyManager.GetUsersInLobby(lobbyId).Returns(list);
+
         _clients.Group(Arg.Any<string>()).Returns(_clientProxy);
         _logicManager.TryGetValue(Arg.Any<string>(), out Arg.Any<IHangmanLogic>()).Returns(x =>
         {

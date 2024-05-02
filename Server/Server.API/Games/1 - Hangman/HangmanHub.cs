@@ -53,6 +53,7 @@ namespace Server.API.Games
 
             var wordLength = logic.StartGame();
             await Clients.Group(lobbyId).SendAsync("GameStarted", wordLength);
+            await GetQueueForGame(lobbyId);
             return new(true, null);
         }
 
@@ -63,6 +64,12 @@ namespace Server.API.Games
             {
                 List<int> positions;
                 var userQueue = logic.GetQueue();
+                if (userQueue == null)
+                {
+                    var q = GetQueueForGame(lobbyId);
+                    userQueue = q.Result.Value;
+                }
+
                 if (currentUser == userQueue.Peek())
                 {
                     userQueue.Dequeue();
