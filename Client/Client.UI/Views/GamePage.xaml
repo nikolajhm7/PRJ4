@@ -121,6 +121,14 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
+            <Button 
+                Grid.Row="3"
+                Grid.Column="1"
+                Style="{StaticResource normalBtn}"
+                WidthRequest="100"
+                Text="Go back / leave lobby"
+                Command="{Binding GoBackCommand}"/>
+
 
             <Label
                 Grid.Row="3"
