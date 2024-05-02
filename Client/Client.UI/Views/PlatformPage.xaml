@@ -98,43 +98,6 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-        <ImageButton
-            Source="{Binding Games[0].Image}"
-            Aspect="AspectFit"
-            Grid.Row="1"
-            Grid.Column="1"
-            IsVisible="{Binding GamesShowing}"
-            Command ="{Binding GoToLobbyCommand}"
-            CommandParameter="{Binding Games[0]}"/>
-
-        <ImageButton
-            Source="{Binding Games[1].Image}"
-            Aspect="AspectFit"
-            Grid.Row="1"
-            Grid.Column="2"
-            IsVisible="{Binding GamesShowing}"
-            Command ="{Binding GoToLobbyCommand}"
-            CommandParameter="{Binding Games[1]}"/>
-        
-        <ImageButton
-            Source="{Binding Games[2].Image}"
-            Aspect="AspectFit"
-            Grid.Row="2"
-            Grid.Column="1"
-            IsVisible="{Binding GamesShowing}"
-            Command ="{Binding GoToLobbyCommand}"
-            CommandParameter="{Binding Games[2]}"/>
-
-
-
-        <ImageButton
-            Source="{Binding Games[3].Image}"
-            Aspect="AspectFit"
-            Grid.Row="2"
-            Grid.Column="2"
-            IsVisible="{Binding GamesShowing}"
-            Command ="{Binding GoToLobbyCommand}"
-            CommandParameter="{Binding Games[3]}"/>
 
         <StackLayout Grid.Column="0" Grid.Row="0" Grid.RowSpan="5">
             <Label Text="Friends List" HorizontalOptions="Center" />
