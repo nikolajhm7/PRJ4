@@ -9,8 +9,6 @@ using Client.Library.Services.Interfaces;
 using Client.UI.Views;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Client.Library.Models;
-using Client.Library.DTO;
 
 namespace Client.UI.ViewModels
 {
@@ -72,12 +70,12 @@ namespace Client.UI.ViewModels
             _friendsService = friendsService;
         }
 
-        public void OnPageAppearing()
+        public async void OnPageAppearing()
         {
             Username = _jwtTokenService.GetUsernameFromToken();
             SetAvatar();
-            pullGames();
-            RetrieveFriends();
+            await pullGames();
+            await RetrieveFriends();
         }
 
         #region Setting up frontend stuff
