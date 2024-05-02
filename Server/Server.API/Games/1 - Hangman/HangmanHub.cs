@@ -4,9 +4,11 @@ using Server.API.DTO;
 using Server.API.Models;
 using System.Linq.Expressions;
 using NSubstitute;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Server.API.Games
 {
+    [Authorize(Policy = "Guest+")]
     public class HangmanHub : Hub
     {
         private readonly ILogger<HangmanHub> _logger;
