@@ -16,6 +16,7 @@ using Microsoft.Maui.Controls;
 using System.Diagnostics;
 using System.Threading;
 using Client.Library.Models;
+using Client.Library.Services.Interfaces;
 
 namespace Client.UI.ViewModels
 {
@@ -24,6 +25,7 @@ namespace Client.UI.ViewModels
     public partial class GameViewModel : ObservableObject
     {
         private readonly IHangmanService _hangmanService;
+        private readonly INavigationService _navigationService;
         private int ErrorCounter;
 
         // Define command properties
@@ -206,6 +208,20 @@ namespace Client.UI.ViewModels
                 Console.WriteLine($"Error guessing letter: {ex.Message}");
             }
         }
+
+        //[RelayCommand]
+        //async Task GoBack()
+        //{
+        //    var res = await _lobbyService.StartGameAsync(LobbyId);
+        //    if (res.Success)
+        //    {
+        //        await _navigationService.NavigateToBack($"{nameof(LobbyPage)}?LobbyId={LobbyId}");
+        //    }
+        //    else
+        //    {
+        //        await Shell.Current.DisplayAlert("Failed", "to leave lobby", "OK");
+        //    }
+        //}
 
         [RelayCommand]
         private async Task RestartGame()
