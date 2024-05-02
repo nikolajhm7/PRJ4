@@ -66,9 +66,9 @@ namespace Client.UI.Games
             _hangmanService.LobbyClosedEvent += OnLobbyClosed;
             _hangmanService.UserLeftLobbyEvent += OnUserLeftLobby;
         }
-        public void OnPageAppearing()
+        public async void OnPageAppearing()
         {
-            StartGame();
+            await _hangmanService.ConnectAsync();
             GuessedChars.Clear();
         }
 
@@ -170,18 +170,18 @@ namespace Client.UI.Games
             playerNames.Remove("user.Username");
         }
 
-        [RelayCommand]
-        private async Task StartGame()
-        {
-            try
-            {
-                await _hangmanService.StartGame(LobbyId);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error starting game: {ex.Message}");
-            }
-        }
+        //[RelayCommand]
+        //private async Task StartGame()
+        //{
+        //    try
+        //    {
+        //        await _hangmanService.StartGame(LobbyId);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Error starting game: {ex.Message}");
+        //    }
+        //}
 
         [RelayCommand]
         private async Task GuessLetter(char letter)

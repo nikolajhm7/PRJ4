@@ -68,7 +68,7 @@ namespace Client.UI.ViewModels
         }
         public async void OnPageAppearing()
         {
-            _hangmanService.ConnectAsync();
+           await _hangmanService.ConnectAsync();
             GuessedChars.Clear();
         }
 
