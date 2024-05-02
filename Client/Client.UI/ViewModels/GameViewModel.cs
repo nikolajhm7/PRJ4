@@ -66,9 +66,9 @@ namespace Client.UI.ViewModels
             _hangmanService.LobbyClosedEvent += OnLobbyClosed;
             _hangmanService.UserLeftLobbyEvent += OnUserLeftLobby;
         }
-        public void OnPageAppearing()
+        public async void OnPageAppearing()
         {
-            StartGame();
+            await StartGame();
             GuessedChars.Clear();
         }
 
