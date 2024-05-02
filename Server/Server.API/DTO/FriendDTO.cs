@@ -2,22 +2,15 @@
 
 namespace Server.API.DTO
 {
-    public class FriendDTO
+    public class FriendDTO (string? name, DateTime since, bool pending)
     {
-        public string? Name { get; set; }
-        public DateTime FriendsSince { get; set; }
-
-        public bool IsPending { get; set; }
+        public string? Name { get; set; } = name;
+        public DateTime FriendsSince { get; set; } = since;
+        public bool IsPending { get; set; } = pending;
         public static FriendDTO FormFriendship(string userName, Friendship f)
         {
             var friendName = f.User1.UserName == userName ? f.User2.UserName : f.User1.UserName;
-            FriendDTO friendDTO = new FriendDTO
-            {
-                Name = friendName,
-                FriendsSince = f.date,
-                IsPending = f.Status == "Pending"
-            };
-            return friendDTO;
+            return new FriendDTO(friendName, f.date, f.Status == "Pending"); ;
         }
     }
 }

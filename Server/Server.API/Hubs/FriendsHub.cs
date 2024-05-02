@@ -19,6 +19,15 @@ namespace Server.API.Hubs
             _logger = logger;
             _friendsRepository = friendsRepository;
         }
+
+        public override async Task OnConnectedAsync()
+        {
+            await base.OnConnectedAsync();
+            var username = Context.User?.Identity?.Name;
+            if (username != null)
+                await Groups.AddToGroupAsync(Context.ConnectionId, username);
+        }
+
         public async Task<ActionResult> SendFriendRequest(string otherUsername)
         {
             var username = Context.User?.Identity?.Name;
@@ -30,7 +39,7 @@ namespace Server.API.Hubs
 
             _logger.LogInformation("Sending friend request from {Requestor} to {Requested}.", username, otherUsername);
 
-            await Clients.User(otherUsername).SendAsync("NewFriendRequest", username);
+            await Clients.Groups(otherUsername).SendAsync("NewFriendRequest", new FriendDTO(username, DateTime.Now, true));
 
             await _friendsRepository.AddFriendRequest(username, otherUsername);
 
@@ -48,7 +57,7 @@ namespace Server.API.Hubs
 
             _logger.LogInformation("{User} accepted a friend request from {Requestor}.", username, otherUsername);
 
-            await Clients.User(otherUsername).SendAsync("FriendRequestAccepted", username);
+            await Clients.Groups(otherUsername).SendAsync("FriendRequestAccepted", new FriendDTO(username, DateTime.Now, false));
 
             await _friendsRepository.AcceptFriendRequest(username, otherUsername);
 
@@ -66,7 +75,7 @@ namespace Server.API.Hubs
 
             _logger.LogInformation("{User} removed {Friend} from friends list.", username, otherUsername);
 
-            await Clients.User(otherUsername).SendAsync("FriendRemoved",username);
+            await Clients.Groups(otherUsername).SendAsync("FriendRemoved", username);
 
             await _friendsRepository.RemoveFriend(username, otherUsername);
 
@@ -84,7 +93,7 @@ namespace Server.API.Hubs
 
             _logger.LogInformation("{User} sent a game invite to {Friend}.", username, otherUsername);
 
-            await Clients.User(otherUsername).SendAsync("NewGameInvite", username);
+            await Clients.Groups(otherUsername).SendAsync("NewGameInvite", username);
             return new ActionResult(true, null);
         }
 
@@ -107,6 +116,15 @@ namespace Server.API.Hubs
             }
 
             return new ActionResult<List<FriendDTO>>(true, null, friends);
+        }
+
+        public override async Task OnDisconnectedAsync(Exception? e)
+        {
+            var username = Context.User?.Identity?.Name;
+            if (username != null)
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, username);
+
+            await base.OnDisconnectedAsync(e);
         }
     }
 }

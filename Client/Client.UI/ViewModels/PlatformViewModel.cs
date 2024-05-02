@@ -68,6 +68,10 @@ namespace Client.UI.ViewModels
             _jwtTokenService = jwtTokenService;
             _apiService = apiService;
             _friendsService = friendsService;
+
+            _friendsService.NewFriendRequestEvent += OnNewFriendRequest;
+            _friendsService.FriendRequestAcceptedEvent += OnFriendRequestAccepted;
+            _friendsService.FriendRemovedEvent += OnFriendRemovedEvent;
         }
 
         public async void OnPageAppearing()
@@ -237,6 +241,27 @@ namespace Client.UI.ViewModels
 
            await _friendsService.RemoveFriend(s);
            FriendsCollection.Remove(FriendsCollection.FirstOrDefault(f => f.Name == s));
+        }
+
+        public void OnNewFriendRequest(FriendDTO user)
+        {
+            FriendsCollection.Add(user);
+        }
+
+        public void OnFriendRequestAccepted(FriendDTO user)
+        {
+            var oldUser = FriendsCollection.FirstOrDefault(u => u.Name == user.Name);
+            if (user != null)
+            {
+                FriendsCollection.Remove(oldUser);
+                FriendsCollection.Add(user);
+            }
+        }
+
+        public void OnFriendRemovedEvent(string username)
+        {
+            var user = FriendsCollection.FirstOrDefault(u => u.Name == username);
+            if (user != null) FriendsCollection.Remove(user);
         }
         #endregion
     }
