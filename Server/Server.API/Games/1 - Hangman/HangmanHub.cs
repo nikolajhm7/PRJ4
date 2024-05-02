@@ -35,18 +35,20 @@ namespace Server.API.Games
                 _lobbyManager.UpdateUserInLobby(user, lobbyId);
                 await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
 
-                var result = CreateLogicIfNotCreated(lobbyId, out var wordLength);
-                
-                if (!result)
+                lock (_logicManager)
                 {
-                    if (_logicManager.TryGetValue(lobbyId, out var logic))
-                    {
-                        wordLength = logic.SecretWord.Length;
-                    }
-                }
-                
+                    var result = CreateLogicIfNotCreated(lobbyId, out var wordLength);
 
-                await Clients.Caller.SendAsync("GameStarted", wordLength);
+                    if (!result)
+                    {
+                        if (_logicManager.TryGetValue(lobbyId, out var logic))
+                        {
+                            wordLength = logic.SecretWord.Length;
+                        }
+                    }
+
+                    Clients.Caller.SendAsync("GameStarted", wordLength);
+                }
                 await base.OnConnectedAsync();
             }
             else
