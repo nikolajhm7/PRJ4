@@ -94,13 +94,7 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <Button 
-                Grid.Row="3"
-                Grid.Column="3"
-                Style="{StaticResource normalBtn}"
-                WidthRequest="100"
-                Text="Reset"
-                Command="{Binding RestartGameCommand}"/>
+            
             <CollectionView 
                 ItemsSource="{Binding GuessedChars}" 
                 SelectionMode="None" 
@@ -127,11 +121,28 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
+            <Button 
+                Grid.Row="3"
+                Grid.Column="1"
+                Style="{StaticResource normalBtn}"
+                WidthRequest="100"
+                Text="Go back / leave lobby"
+                Command="{Binding GoBackCommand}"/>
+
+
             <Label
                 Grid.Row="3"
                 Grid.Column="2"
                 Text="{Binding PlayerStatus}"
                 FontSize="Medium"/>
+
+            <Button 
+                Grid.Row="3"
+                Grid.Column="3"
+                Style="{StaticResource normalBtn}"
+                WidthRequest="100"
+                Text="Reset"
+                Command="{Binding RestartGameCommand}"/>
 
 
 

@@ -6,17 +6,17 @@ namespace Client.Library.Services
 {
     public class FriendsService : ConnectionService, IFriendsService
     {
-        public event Action<string>? NewFriendRequestEvent;
-        public event Action<string>? FriendRequestAcceptedEvent;
+        public event Action<FriendDTO>? NewFriendRequestEvent;
+        public event Action<FriendDTO>? FriendRequestAcceptedEvent;
         public event Action<string>? NewGameInviteEvent;
         public event Action<string>? FriendRemovedEvent;
 
         public FriendsService(IConfiguration configuration) : base(configuration["ConnectionSettings:ApiUrl"] + configuration["ConnectionSettings:FriendsEndpoint"])
         {
-            On<string>("NewFriendRequest", (username) =>
+            On<FriendDTO>("NewFriendRequest", (username) =>
                 NewFriendRequestEvent?.Invoke(username));
 
-            On<string>("FriendRequestAccepted", (username) =>
+            On<FriendDTO>("FriendRequestAccepted", (username) =>
                 FriendRequestAcceptedEvent?.Invoke(username));
 
             On<string>("NewGameInvite", (username) =>

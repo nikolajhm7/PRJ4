@@ -16,6 +16,7 @@ using Microsoft.Maui.Controls;
 using System.Diagnostics;
 using System.Threading;
 using Client.Library.Models;
+using Client.Library.Services.Interfaces;
 
 namespace Client.UI.ViewModels
 {
@@ -24,7 +25,8 @@ namespace Client.UI.ViewModels
     public partial class GameViewModel : ObservableObject
     {
         private readonly IHangmanService _hangmanService;
-        //private readonly ILobbyService _lobbyService;
+        private readonly INavigationService _navigationService;
+        private readonly ILobbyService _lobbyService;
         private int ErrorCounter;
         private Queue<string> userQueue;
 
@@ -240,6 +242,12 @@ namespace Client.UI.ViewModels
                 Console.WriteLine($"Error guessing letter: {ex.Message}");
             }
 
+        }
+
+        [RelayCommand]
+        async Task GoBack()
+        {
+            await _navigationService.NavigateBack();
         }
 
         [RelayCommand]
