@@ -89,6 +89,7 @@ namespace Server.API.Repositories
             }
 
             friendship.Status = "Accepted";
+            friendship.date = DateTime.Now;
 
             _context.Friendships.Update(friendship);
             await _context.SaveChangesAsync();
