@@ -68,7 +68,7 @@ namespace Client.UI.ViewModels
         }
         public async void OnPageAppearing()
         {
-            await StartGame();
+            _hangmanService.ConnectAsync();
             GuessedChars.Clear();
         }
 
@@ -170,18 +170,18 @@ namespace Client.UI.ViewModels
             playerNames.Remove("user.Username");
         }
 
-        [RelayCommand]
-        private async Task StartGame()
-        {
-            try
-            {
-                await _hangmanService.StartGame(LobbyId);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error starting game: {ex.Message}");
-            }
-        }
+        //[RelayCommand]
+        //private async Task StartGame()
+        //{
+        //    try
+        //    {
+        //        await _hangmanService.StartGame(LobbyId);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Error starting game: {ex.Message}");
+        //    }
+        //}
 
         [RelayCommand]
         private async Task GuessLetter(char letter)
