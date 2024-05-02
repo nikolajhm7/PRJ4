@@ -26,6 +26,7 @@ namespace Client.UI.ViewModels
     {
         private readonly IHangmanService _hangmanService;
         private readonly INavigationService _navigationService;
+        private readonly ILobbyService _lobbyService;
         private int ErrorCounter;
 
         // Define command properties
@@ -209,19 +210,11 @@ namespace Client.UI.ViewModels
             }
         }
 
-        //[RelayCommand]
-        //async Task GoBack()
-        //{
-        //    var res = await _lobbyService.StartGameAsync(LobbyId);
-        //    if (res.Success)
-        //    {
-        //        await _navigationService.NavigateToBack($"{nameof(LobbyPage)}?LobbyId={LobbyId}");
-        //    }
-        //    else
-        //    {
-        //        await Shell.Current.DisplayAlert("Failed", "to leave lobby", "OK");
-        //    }
-        //}
+        [RelayCommand]
+        async Task GoBack()
+        {
+            await _navigationService.NavigateBack();
+        }
 
         [RelayCommand]
         private async Task RestartGame()
