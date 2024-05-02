@@ -4,8 +4,7 @@
              xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
              xmlns:behaviors="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
              x:Class="Client.UI.Views.PlatformPage"
-             >
-
+            >
     <Grid
         Padding="50,0"
         RowDefinitions="*,*,*,*,10"
@@ -99,5 +98,87 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+        <ImageButton
+            Source="{Binding Games[0].Image}"
+            Aspect="AspectFit"
+            Grid.Row="1"
+            Grid.Column="1"
+            IsVisible="{Binding GamesShowing}"
+            Command ="{Binding GoToLobbyCommand}"
+            CommandParameter="{Binding Games[0]}"/>
+
+        <ImageButton
+            Source="{Binding Games[1].Image}"
+            Aspect="AspectFit"
+            Grid.Row="1"
+            Grid.Column="2"
+            IsVisible="{Binding GamesShowing}"
+            Command ="{Binding GoToLobbyCommand}"
+            CommandParameter="{Binding Games[1]}"/>
+        
+        <ImageButton
+            Source="{Binding Games[2].Image}"
+            Aspect="AspectFit"
+            Grid.Row="2"
+            Grid.Column="1"
+            IsVisible="{Binding GamesShowing}"
+            Command ="{Binding GoToLobbyCommand}"
+            CommandParameter="{Binding Games[2]}"/>
+
+
+
+        <ImageButton
+            Source="{Binding Games[3].Image}"
+            Aspect="AspectFit"
+            Grid.Row="2"
+            Grid.Column="2"
+            IsVisible="{Binding GamesShowing}"
+            Command ="{Binding GoToLobbyCommand}"
+            CommandParameter="{Binding Games[3]}"/>
+
+        <StackLayout Grid.Column="0" Grid.Row="0" Grid.RowSpan="5">
+            <Label Text="Friends List" HorizontalOptions="Center" />
+        
+            <CollectionView x:Name="FriendsCollectionView" 
+            ItemsSource="{Binding FriendsCollection}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                        
+                            <Label Text="{Binding Name}" Grid.Column="0" />
+                        
+                            <StackLayout Orientation="Horizontal" Grid.Column="1">
+                                <Button 
+                                    BackgroundColor="Red"
+                                    Command="{Binding Source={x:Reference FriendsCollectionView}, Path=BindingContext.DeclineFriendRequestCommand}"
+                                    CommandParameter="{Binding Name}"
+                                    WidthRequest="10"
+                                    HeightRequest="10"/>
+                                <Button 
+                                    BackgroundColor="Green"
+                                    Command="{Binding Source={x:Reference FriendsCollectionView}, Path=BindingContext.AcceptFriendRequestCommand}"
+                                    CommandParameter="{Binding Name}"
+                                    IsVisible="{Binding IsPending}"
+                                    WidthRequest="10"
+                                    HeightRequest="10"/>
+                            </StackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+
+        <StackLayout Grid.Row="3" Grid.Column="0">
+            <Entry Placeholder="Enter friends username"
+                   Text="{Binding AddFriendText}"/>
+            <Button Text="Add Friend"
+                    Command="{Binding AddNewFriendCommand}"
+                    Style="{StaticResource normalBtn}"/>
+        </StackLayout>
+
     </Grid>
 </ContentPage>

@@ -8,7 +8,7 @@
     xmlns:games="using:Client.UI.Games"
     Shell.FlyoutBehavior="Disabled"
     Title="Client.UI">
-
+        
     <ShellContent
         Title="LoadingPage"
         ContentTemplate="{DataTemplate views:LoadingPage}"

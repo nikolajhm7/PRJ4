@@ -15,6 +15,8 @@ namespace Client.Library.Services
         public event Action<string>? NewGameInviteEvent;
         public event Action<string>? FriendRemovedEvent;
 
+        Task ConnectAsync();
+        Task DisconnectAsync();
         Task<ActionResult> SendFriendRequest(string username);
 
         Task<ActionResult> AcceptFriendRequest(string username);

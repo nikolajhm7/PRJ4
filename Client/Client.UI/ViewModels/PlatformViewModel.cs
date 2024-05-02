@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Client.Library.DTO;
 using Client.Library.Interfaces;
 using Client.Library.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -8,8 +9,8 @@ using Client.Library.Services.Interfaces;
 using Client.UI.Views;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-
-using Client.UI.Managers;
+using Client.Library.Models;
+using Client.Library.DTO;
 
 namespace Client.UI.ViewModels
 {
@@ -29,6 +30,17 @@ namespace Client.UI.ViewModels
             get { return games; }
             set { SetProperty(ref games, value); }
         }
+            [ObservableProperty]
+        private string _addFriendText;
+        [ObservableProperty]
+        private string _addFriendPlaceholder;
+        
+        private ObservableCollection<FriendDTO> friendsCollection = [];
+        public ObservableCollection<FriendDTO> FriendsCollection
+        {
+            get { return friendsCollection; }
+            set { SetProperty(ref friendsCollection, value); }
+        }
 
         #endregion
 
@@ -46,14 +58,10 @@ namespace Client.UI.ViewModels
 
         private IPreferenceManager _preferenceManager;
 
+        private readonly IFriendsService _friendsService;
         #endregion
 
-        private readonly HttpClient _httpClient;
-
-
-        public PlatformViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration,
-            INavigationService navigationService, ILobbyService lobbyService, IPreferenceManager preferenceManager,
-            IJwtTokenService jwtTokenService, IApiService apiService)
+        public PlatformViewModel(IFriendsService friendsService, IHttpClientFactory httpClientFactory, IConfiguration configuration, INavigationService navigationService, ILobbyService lobbyService, IPreferenceManager preferenceManager, IJwtTokenService jwtTokenService, IApiService apiService)
         {
             _configuration = configuration;
             _lobbyService = lobbyService;
@@ -61,6 +69,7 @@ namespace Client.UI.ViewModels
             _preferenceManager = preferenceManager;
             _jwtTokenService = jwtTokenService;
             _apiService = apiService;
+            _friendsService = friendsService;
         }
 
         public void OnPageAppearing()
@@ -68,6 +77,7 @@ namespace Client.UI.ViewModels
             Username = _jwtTokenService.GetUsernameFromToken();
             SetAvatar();
             pullGames();
+            RetrieveFriends();
         }
 
         #region Setting up frontend stuff
@@ -119,7 +129,6 @@ namespace Client.UI.ViewModels
         #endregion
 
         #region Navigating
-
         [RelayCommand]
         private async Task ChangeView()
         {
@@ -132,6 +141,8 @@ namespace Client.UI.ViewModels
         {
             _preferenceManager.Remove("auth_token");
             _preferenceManager.Remove("refresh_token");
+            await _friendsService.DisconnectAsync();
+            await _lobbyService.DisconnectAsync();
             await _navigationService.NavigateToPage(nameof(LoginPage));
         }
 
@@ -168,9 +179,68 @@ namespace Client.UI.ViewModels
         {
             await _navigationService.NavigateToPage(nameof(JoinPage));
         }
+        #endregion
+        
+        #region Friends
+        [RelayCommand]
+        public async Task RetrieveFriends()
+        {
+            
+            ActionResult<List<FriendDTO>> res = await _friendsService.GetFriends(true);
+                if (res.Success)
+                {
+                    
+                foreach (var friendDTO in res.Value)
+                    {
+                        if (FriendsCollection.Any(f => f.Name == friendDTO.Name))
+                        {}
+                        else
+                        {
+                            var temp = friendDTO;
+                            FriendsCollection.Add(temp);
+                        }
+                    }
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Error", "Failed to get friends", "OK");
+                }
+        }
+
+        [RelayCommand]
+        public async Task AddNewFriend()
+        {
+            var text = AddFriendText;
+            AddFriendText = string.Empty;
+
+            var res = await _friendsService.SendFriendRequest(text);
+
+            if (!res.Success)
+            {
+                await Shell.Current.DisplayAlert("Error", "Failed to send friend request", "OK");
+            }
+        }
+
+        [RelayCommand]
+        public async Task AcceptFriendRequest(string s)
+        {
+            await _friendsService.AcceptFriendRequest(s);
+             var friend = FriendsCollection.FirstOrDefault(f => f.Name == s);
+            if (friend != null)
+                {
+                    friend.IsPending = false;
+                }
+            
+        }
+
+        [RelayCommand]
+        public async Task DeclineFriendRequest(string s)
+        {
+
+           await _friendsService.RemoveFriend(s);
+           FriendsCollection.Remove(FriendsCollection.FirstOrDefault(f => f.Name == s));
+        }
+        #endregion
     }
-
-    #endregion
 }
-
 

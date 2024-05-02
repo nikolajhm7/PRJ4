@@ -56,13 +56,14 @@ namespace Server.API.Repositories
             await _context.SaveChangesAsync();
         }
         
-        private async Task<Friendship> FindFriendshipOneWay(string user1UserName, string user2UserName)
+        private async Task<Friendship?> FindFriendshipOneWay(string user1UserName, string user2UserName)
         {
-            return await _context.Friendships.Where(f => f.User1.UserName == user1UserName && f.User2.UserName == user2UserName)
+            return await _context.Friendships
+                .Where(f => f.User1.UserName == user1UserName && f.User2.UserName == user2UserName)
                 .FirstOrDefaultAsync();
         }
         
-        private async Task<Friendship> FindFriendship(string userName, string friendName)
+        private async Task<Friendship?> FindFriendship(string userName, string friendName)
         {
             var friendship = await FindFriendshipOneWay(userName, friendName);
             if (friendship == null)
@@ -110,10 +111,19 @@ namespace Server.API.Repositories
         {
             List<Friendship> friends;
             List<Friendship> friends2;
-            
-            friends = await _context.Friendships.Where(f => f.User1.UserName == userName).ToListAsync();
-            friends2 = await _context.Friendships.Where(f => f.User2.UserName == userName).ToListAsync();
-            
+
+            friends = await _context.Friendships
+                .Include(f => f.User1)
+                .Include(f => f.User2)
+                .Where(f => f.User1.UserName == userName && f.Status == "Pending")
+                .ToListAsync();
+
+            friends2 = await _context.Friendships
+                .Include(f => f.User1)
+                .Include(f => f.User2)
+                .Where(f => f.User2.UserName == userName && f.Status == "Pending")
+                .ToListAsync();
+
             var friendDTOs = new List<FriendDTO>();
             
             foreach (var f in friends)
