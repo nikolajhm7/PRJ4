@@ -30,28 +30,21 @@ namespace Client.UI.ViewModels
             get { return games; }
             set { SetProperty(ref games, value); }
         }
+            [ObservableProperty]
+        private string _addFriendText;
+        [ObservableProperty]
+        private string _addFriendPlaceholder;
+        
+        private ObservableCollection<FriendDTO> friendsCollection = [];
+        public ObservableCollection<FriendDTO> FriendsCollection
+        {
+            get { return friendsCollection; }
+            set { SetProperty(ref friendsCollection, value); }
+        }
 
         #endregion
 
         #region Interfaces
-        [ObservableProperty]
-        private string? _username;
-
-        //public string? Username
-        //{
-        //    get => _username;
-        //    set => SetProperty(ref _username, value);
-        //}
-        [ObservableProperty] 
-        private bool _gamesShowing = false;
-        [ObservableProperty]
-        private bool _showhost = true;
-        [ObservableProperty] 
-        private string _avatar;
-        [ObservableProperty]
-        private string _addFriendText;
-        [ObservableProperty]
-        private string _addFriendPlaceholder;
 
         private readonly ILobbyService _lobbyService;
 
@@ -65,21 +58,8 @@ namespace Client.UI.ViewModels
 
         private IPreferenceManager _preferenceManager;
 
-        private ObservableCollection<FriendDTO> friendsCollection = [];
-        public ObservableCollection<FriendDTO> FriendsCollection
-        {
-            get { return friendsCollection; }
-            set { SetProperty(ref friendsCollection, value); }
-        }
-
         private readonly IFriendsService _friendsService;
-
-        private ObservableCollection<Game> games;
-        public ObservableCollection<Game> Games
-        {
-            get { return games; }
-            set { SetProperty(ref games, value); }
-        }
+        #endregion
 
         public PlatformViewModel(IFriendsService friendsService, IHttpClientFactory httpClientFactory, IConfiguration configuration, INavigationService navigationService, ILobbyService lobbyService, IPreferenceManager preferenceManager, IJwtTokenService jwtTokenService, IApiService apiService)
         {
@@ -149,7 +129,6 @@ namespace Client.UI.ViewModels
         #endregion
 
         #region Navigating
-
         [RelayCommand]
         private async Task ChangeView()
         {
@@ -200,6 +179,9 @@ namespace Client.UI.ViewModels
         {
             await _navigationService.NavigateToPage(nameof(JoinPage));
         }
+        #endregion
+        
+        #region Friends
         [RelayCommand]
         public async Task RetrieveFriends()
         {
@@ -258,8 +240,7 @@ namespace Client.UI.ViewModels
            await _friendsService.RemoveFriend(s);
            FriendsCollection.Remove(FriendsCollection.FirstOrDefault(f => f.Name == s));
         }
+        #endregion
     }
-
-    #endregion
 }
 
