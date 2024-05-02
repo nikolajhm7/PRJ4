@@ -16,7 +16,7 @@ namespace Server.API.Services.Interfaces
         void RemoveLobby(string lobbyId);
         void StartGame(string lobbyId);
         GameStatus GetGameStatus(string lobbyId);
-        ActionResult<Lobby> GetLobbyInfo(string lobbyId);
+        ActionResult<int> GetLobbyGameId(string lobbyId);
 
     }
 }

@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
-             x:Class="Client.UI.Views.GamePage"
-             x:DataType="viewModels:GameViewModel"
-             Title="GamePage">
-
-        <Grid 
+             xmlns:viewModels="clr-namespace:Client.UI.Games"
+             x:Class="Client.UI.Games.HangmanPage"
+             x:DataType="viewModels:HangmanViewModel"
+             Title="HangmanPage">
+    <Grid 
             RowDefinitions="*,*,*,*"
             ColumnDefinitions="*,*,*,*">
 
-            <Label 
+        <!--Elements for row 0-->
+        <Label 
                 Grid.Row="0"
                 Grid.Column="0"
                 FontSize="Large"
                 Text="{Binding LobbyIdLabel}"/>
 
-            <Label
+        <Label
                 Grid.Row="0"
                 Grid.Column="1"
                 FontSize="32"
@@ -24,7 +24,7 @@
                 HorizontalOptions="Center"
                 Text="{Binding Title}"/>
 
-            <Label 
+        <Label 
                 Grid.Row="0"
                 Grid.Column="3"
                 FontSize="Large"
@@ -32,7 +32,9 @@
                 Text="{Binding ErrorLabel}"/>
 
 
-            <Entry 
+        <!--Elements for row 1-->
+
+        <Entry 
                 Grid.Row="1"
                 Grid.Column="0"
                 Placeholder="Enter letter"
@@ -40,7 +42,7 @@
                 ClearButtonVisibility="WhileEditing"
                 Text="{Binding Letter}"/>
 
-            <Label
+        <Label
                 Grid.Row="1"
                 Grid.Column="1"
                 Grid.ColumnSpan="2"
@@ -49,26 +51,28 @@
                 CharacterSpacing="10"/>
 
 
-            <Image
+        <Image
                 Grid.Row="1"
                 Grid.Column="3"
                 Source="{Binding ImageSource}"
                 HeightRequest="200"/>
 
-            <Button 
+        <!--Elements for row 2-->
+
+        <Button 
                 Grid.Row="2"
                 Grid.Column="0"
                 Style="{StaticResource normalBtn}"
                 Text="Submit"
                 Command="{Binding GuessLetterCommand}"
                 CommandParameter="{Binding Letter}"/>
-            <Label
+        <Label
                 Grid.Row="2"
                 Grid.Column="1"
                 FontSize="Medium"
                 Text="{Binding StatusMessage}"/>
-
-            <CollectionView 
+        <!--View players in game-->
+        <CollectionView 
                 x:Name="PlayersCollectionView" 
                 ItemsSource="{Binding PlayerNames}" 
                 SelectionMode="None" 
@@ -76,12 +80,13 @@
                 Grid.ColumnSpan="1"
                 Grid.Row="2"
                 Grid.RowSpan="5">
-                <CollectionView.ItemsLayout>
+            <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical" Span="2" />
+                <!-- Adjust Span for desired number of columns -->
             </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame 
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame 
                         CornerRadius="10" 
                         Padding="10" 
                         Margin="5" 
@@ -89,29 +94,33 @@
                         <Label 
                             Text="{Binding .}" 
                             HorizontalTextAlignment="Center"/>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
-            <Button 
+
+        <!--Elements for row 3-->
+        <Button 
                 Grid.Row="3"
                 Grid.Column="3"
                 Style="{StaticResource normalBtn}"
                 WidthRequest="100"
                 Text="Reset"
                 Command="{Binding RestartGameCommand}"/>
-            <CollectionView 
+        <!--View List of Guessed Characters-->
+        <CollectionView 
                 ItemsSource="{Binding GuessedChars}" 
                 SelectionMode="None" 
                 Grid.Column="0"
                 Grid.ColumnSpan="1"
                 Grid.Row="3"
                 Grid.RowSpan="5">
-                <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" Span="7" />
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="7" />
+                <!-- Adjust Span for desired number of columns -->
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Frame 
                         CornerRadius="10" 
@@ -123,11 +132,11 @@
                             FontSize="Medium"
                             HorizontalTextAlignment="Center"/>
                     </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
-            <Label
+        <Label
                 Grid.Row="3"
                 Grid.Column="2"
                 Text="{Binding PlayerStatus}"
