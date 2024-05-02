@@ -65,9 +65,14 @@ namespace Server.API.Games
                 var logic = new HangmanLogic(_randomPicker);
                 _logicManager.Add(lobbyId, logic);
 
-            var wordLength = logic.StartGame();
-            await Clients.Group(lobbyId).SendAsync("GameStarted", wordLength);
-            return new(true, null);
+                length = logic.StartGame();
+                return true;
+            }
+            else
+            {
+                length = 0;
+                return false;
+            }
         }
 
         //public async Task<ActionResult> StartGame(string lobbyId)
