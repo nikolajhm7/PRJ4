@@ -60,7 +60,7 @@ namespace Server.API.Games
 
         private bool CreateLogicIfNotCreated(string lobbyId, out int length)
         {
-            if (_logicManager.LobbyExists(lobbyId))
+            if (!_logicManager.LobbyExists(lobbyId))
             {
                 var logic = new HangmanLogic(_randomPicker);
                 _logicManager.Add(lobbyId, logic);
@@ -68,8 +68,11 @@ namespace Server.API.Games
                 length = logic.StartGame();
                 return true;
             }
-            length = 0;
-            return false;
+            else
+            {
+                length = 0;
+                return false;
+            }
         }
 
         //public async Task<ActionResult> StartGame(string lobbyId)
