@@ -21,6 +21,7 @@ namespace Client.UI.ViewModels
         private GameInfo _gameInfo;
         private int gameId;
         private bool isHost = false;
+        private bool _initialized = false;
 
         [ObservableProperty] 
         private string imagePath = "";
@@ -49,14 +50,18 @@ namespace Client.UI.ViewModels
 
         public async Task OnPageappearing()
         {
-            await InitializeLobby();
-            var isHostResult = await _lobbyService.UserIsHost(lobbyId);
-            if (isHostResult.Success)
+            if(!_initialized)
             {
-                isHost = true;
-                IsGoToGameButtonVisible = true;
+                await InitializeLobby();
+                var isHostResult = await _lobbyService.UserIsHost(lobbyId);
+                if (isHostResult.Success)
+                {
+                    isHost = true;
+                    IsGoToGameButtonVisible = true;
+                }
+                await LoadUsersInLobby();
+                _initialized = true;
             }
-            await LoadUsersInLobby();
         }
 
         private async Task InitializeLobby()
@@ -84,7 +89,7 @@ namespace Client.UI.ViewModels
             {
                 foreach (var user in result.Value)
                 {
-                    playerNames.Add(user.Username);
+                    PlayerNames.Add(user.Username);
                 }
             }
             else
@@ -95,12 +100,12 @@ namespace Client.UI.ViewModels
 
         private void OnUserJoinedLobby(ConnectedUserDTO user)
         {
-            playerNames.Add(user.Username);
+            PlayerNames.Add(user.Username);
         }
 
         private void OnUserLeftLobby(ConnectedUserDTO user)
         {
-            playerNames.Remove(user.Username);
+            PlayerNames.Remove(user.Username);
         }
 
         private void OnGameStarted()
@@ -185,20 +190,6 @@ namespace Client.UI.ViewModels
             else
             {
                 await Shell.Current.DisplayAlert("Failed", "to join lobby", "OK");
-            }
-        }
-
-        //Handle result of different functions, and error log if neccesary:
-        private void HandleActionResult(ActionResult message)
-        {
-            if (!message.Success)
-            {
-                // Give the user feedback about the error
-                Debug.WriteLine("Creating a lobby failed: msg:", message.Msg);
-            }
-            else
-            {
-                Debug.WriteLine("This is your lobby id:", message.Msg);
             }
         }
     }

@@ -70,9 +70,9 @@ namespace Client.UI.ViewModels
             _hangmanService.LobbyClosedEvent += OnLobbyClosed;
             _hangmanService.UserLeftLobbyEvent += OnUserLeftLobby;
         }
-        public void OnPageAppearing()
+        public async void OnPageAppearing()
         {
-            StartGame();
+           await _hangmanService.ConnectAsync();
             GuessedChars.Clear();
             LoadUsersInGame();
         }
@@ -209,8 +209,6 @@ namespace Client.UI.ViewModels
             playerNames.Remove(username);
             playerNames.Remove("user.Username");
         }
-
-        
 
         [RelayCommand]
         private async Task StartGame()

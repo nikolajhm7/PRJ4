@@ -36,10 +36,10 @@ namespace Client.Library.Games
         public event Action<bool, string>? GameOverEvent;
         public event Action? LobbyClosedEvent;
         public event Action<string>? UserLeftLobbyEvent;
-        public async Task<ActionResult> StartGame(string lobbyId)
-        {
-            return await InvokeAsync("StartGame", lobbyId);
-        }
+        //public async Task<ActionResult> StartGame(string lobbyId)
+        //{
+        //    return await InvokeAsync("StartGame", lobbyId);
+        //}
         public async Task<ActionResult> GuessLetter(string lobbyId, char letter)
         {
             return await InvokeAsync("GuessLetter", lobbyId, letter);

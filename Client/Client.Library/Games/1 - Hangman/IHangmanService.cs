@@ -15,7 +15,9 @@ namespace Client.Library.Games
         event Action<bool, string>? GameOverEvent;
         event Action? LobbyClosedEvent; 
         event Action<string>? UserLeftLobbyEvent;
-        Task<ActionResult> StartGame(string lobbyId);
+        Task ConnectAsync();
+        Task DisconnectAsync();
+        //Task<ActionResult> StartGame(string lobbyId);
         Task<ActionResult> GuessLetter(string lobbyId, char letter);
         Task<ActionResult> RestartGame(string lobbyId);
         Task<ActionResult<List<ConnectedUserDTO>>> GetUsersInGame(string lobbyId);

@@ -4,9 +4,11 @@ using Server.API.DTO;
 using Server.API.Models;
 using System.Linq.Expressions;
 using NSubstitute;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Server.API.Games
 {
+    [Authorize(Policy = "Guest+")]
     public class HangmanHub : Hub
     {
         private readonly ILogger<HangmanHub> _logger;
@@ -32,6 +34,21 @@ namespace Server.API.Games
             {
                 _lobbyManager.UpdateUserInLobby(user, lobbyId);
                 await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
+
+                lock (_logicManager)
+                {
+                    var result = CreateLogicIfNotCreated(lobbyId, out var wordLength);
+
+                    if (!result)
+                    {
+                        if (_logicManager.TryGetValue(lobbyId, out var logic))
+                        {
+                            wordLength = logic.SecretWord.Length;
+                        }
+                    }
+
+                    Clients.Caller.SendAsync("GameStarted", wordLength);
+                }
                 await base.OnConnectedAsync();
             }
             else
@@ -41,21 +58,32 @@ namespace Server.API.Games
 
         }
 
-        public async Task<ActionResult> StartGame(string lobbyId)
+        private bool CreateLogicIfNotCreated(string lobbyId, out int length)
         {
-            if (_logicManager.LobbyExists(lobbyId))
+            if (!_logicManager.LobbyExists(lobbyId))
             {
-                return new(false, "Game lobby already exists, and started.");
-            }
-
-            var logic = new HangmanLogic(_randomPicker);
-            _logicManager.Add(lobbyId, logic);
+                var logic = new HangmanLogic(_randomPicker);
+                _logicManager.Add(lobbyId, logic);
 
             var wordLength = logic.StartGame();
             await Clients.Group(lobbyId).SendAsync("GameStarted", wordLength);
-            await GetQueueForGame(lobbyId);
             return new(true, null);
         }
+
+        //public async Task<ActionResult> StartGame(string lobbyId)
+        //{
+        //    if (_logicManager.LobbyExists(lobbyId))
+        //    {
+        //        return new(false, "Game lobby already exists, and started.");
+        //    }
+
+        //    var logic = new HangmanLogic(_randomPicker);
+        //    _logicManager.Add(lobbyId, logic);
+
+        //    var wordLength = logic.StartGame();
+        //    await Clients.Group(lobbyId).SendAsync("GameStarted", wordLength);
+        //    return new(true, null);
+        //}
 
         public async Task<ActionResult> GuessLetter(string lobbyId, char letter)
         {
