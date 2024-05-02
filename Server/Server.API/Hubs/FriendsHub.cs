@@ -39,7 +39,7 @@ namespace Server.API.Hubs
 
             _logger.LogInformation("Sending friend request from {Requestor} to {Requested}.", username, otherUsername);
 
-            await Clients.Groups(otherUsername).SendAsync("NewFriendRequest", new FriendDTO(username, DateTime.Now, true));
+            await Clients.Group(otherUsername).SendAsync("NewFriendRequest", new FriendDTO(username, DateTime.Now, true));
 
             await _friendsRepository.AddFriendRequest(username, otherUsername);
 
@@ -57,7 +57,7 @@ namespace Server.API.Hubs
 
             _logger.LogInformation("{User} accepted a friend request from {Requestor}.", username, otherUsername);
 
-            await Clients.Groups(otherUsername).SendAsync("FriendRequestAccepted", new FriendDTO(username, DateTime.Now, false));
+            await Clients.Group(otherUsername).SendAsync("FriendRequestAccepted", new FriendDTO(username, DateTime.Now, false));
 
             await _friendsRepository.AcceptFriendRequest(username, otherUsername);
 
@@ -75,7 +75,7 @@ namespace Server.API.Hubs
 
             _logger.LogInformation("{User} removed {Friend} from friends list.", username, otherUsername);
 
-            await Clients.Groups(otherUsername).SendAsync("FriendRemoved", username);
+            await Clients.Group(otherUsername).SendAsync("FriendRemoved", username);
 
             await _friendsRepository.RemoveFriend(username, otherUsername);
 
@@ -93,7 +93,7 @@ namespace Server.API.Hubs
 
             _logger.LogInformation("{User} sent a game invite to {Friend}.", username, otherUsername);
 
-            await Clients.Groups(otherUsername).SendAsync("NewGameInvite", username);
+            await Clients.Group(otherUsername).SendAsync("NewGameInvite", username);
             return new ActionResult(true, null);
         }
 

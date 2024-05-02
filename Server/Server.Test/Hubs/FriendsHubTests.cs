@@ -66,13 +66,14 @@ namespace Server.Test.Hubs
             var otherUsername = "otherUser";
             var username = "user";
             _context.User?.Identity?.Name.Returns(username);
+            _clients.Group(otherUsername).Returns(_clientProxy);
 
             // Act
             var result = await _uut.SendFriendRequest(otherUsername);
 
             // Assert
             await _friendsRepository.Received(1).AddFriendRequest(username, otherUsername);
-            await _clients.User(otherUsername).Received(1).SendCoreAsync("NewFriendRequest", Arg.Any<object[]>());
+            await _clientProxy.Received(1).SendCoreAsync("NewFriendRequest", Arg.Any<object[]>());
             Assert.That(result.Success, Is.True);
             Assert.That(result.Msg, Is.Null);
         }
@@ -98,13 +99,14 @@ namespace Server.Test.Hubs
             var otherUsername = "otherUser";
             var username = "user";
             _context.User?.Identity?.Name.Returns(username);
+            _clients.Group(otherUsername).Returns(_clientProxy);
 
             // Act
             var result = await _uut.AcceptFriendRequest(otherUsername);
 
             // Assert
             await _friendsRepository.Received(1).AcceptFriendRequest(username, otherUsername);
-            await _clients.User(otherUsername).Received().SendCoreAsync("FriendRequestAccepted", Arg.Any<object[]>());
+            await _clientProxy.Received().SendCoreAsync("FriendRequestAccepted", Arg.Any<object[]>());
             Assert.That(result.Success, Is.True);
             Assert.That(result.Msg, Is.Null);
         }
@@ -130,13 +132,14 @@ namespace Server.Test.Hubs
             var otherUsername = "otherUser";
             var username = "user";
             _context.User?.Identity?.Name.Returns(username);
+            _clients.Group(otherUsername).Returns(_clientProxy);
 
             // Act
             var result = await _uut.RemoveFriend(otherUsername);
 
             // Assert
             await _friendsRepository.Received(1).RemoveFriend(username, otherUsername);
-            await _clients.User(otherUsername).Received().SendCoreAsync("FriendRemoved", Arg.Any<object[]>());
+            await _clientProxy.Received().SendCoreAsync("FriendRemoved", Arg.Any<object[]>());
             Assert.That(result.Success, Is.True);
             Assert.That(result.Msg, Is.Null);
         }
@@ -146,12 +149,13 @@ namespace Server.Test.Hubs
         {
             // Arrange
             var otherUsername = "otherUser";
+            _clients.Group(otherUsername).Returns(_clientProxy);
 
             // Act
             var result = await _uut.InviteFriend(otherUsername);
 
             // Assert
-            await _clients.User(otherUsername).Received().SendCoreAsync("NewGameInvite", Arg.Any<object[]>());
+            await _clientProxy.Received().SendCoreAsync("NewGameInvite", Arg.Any<object[]>());
             Assert.That(result.Success, Is.True);
             Assert.That(result.Msg, Is.Null);
         }
