@@ -91,6 +91,28 @@ public class HangmanHubTests
         // Assert
         await _groups.Received(1).AddToGroupAsync(Arg.Any<string>(), Arg.Any<string>());
     }
+    
+    [Test]
+    public async Task OnConnectedAsync_LobbyDoesNotExistAndGameStarted_AddsToGroup()
+    {
+        // Arrange
+        var lobbyId = "Id";
+        _lobbyManager.GetLobbyIdFromUsername(Arg.Any<string>()).Returns(lobbyId);
+        _lobbyManager.GetGameStatus(lobbyId).Returns(GameStatus.InGame);
+        _logicManager.LobbyExists(lobbyId).Returns(true);
+        _logicManager.TryGetValue(lobbyId, out var logic).Returns(x =>
+        {
+            x[1] = _logic;
+            return true;
+        });
+
+        // Act
+        await _uut.OnConnectedAsync();
+        
+        // Assert
+        await _groups.Received(1).AddToGroupAsync(Arg.Any<string>(), Arg.Any<string>());
+    }
+    
         
     [Test]
     public async Task GuessLetter_LobbyDoesNotExist_ReturnsFalse()

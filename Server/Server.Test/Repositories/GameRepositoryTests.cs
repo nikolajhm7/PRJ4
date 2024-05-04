@@ -116,6 +116,81 @@ public class GameRepositoryTests : TestBase
         Assert.That(games.Count, Is.EqualTo(1));
         Assert.That(games[0].GameId, Is.EqualTo(game.GameId));
     }
+    
+    [Test]
+    public async Task GetMaxPlayers_ReturnsCorrectMaxPlayers()
+    {
+        // Arrange
+        var game = new Game { GameId = 1, Name = "Game1", MaxPlayers = 5 };
+        Context.Games.Add(game);
+        Context.SaveChanges();
+
+        // Act
+        var maxPlayers = await _gameRepository.GetMaxPlayers(game.GameId);
+
+        // Assert
+        Assert.That(maxPlayers, Is.EqualTo(game.MaxPlayers));
+    }
+    
+    [Test]
+    public async Task GetMaxPlayers_ThrowsExceptionIfGameNotFound()
+    {
+        // Act & Assert
+        Assert.ThrowsAsync<Exception>(async () => await _gameRepository.GetMaxPlayers(1));
+    }
+    
+    [Test]
+    public async Task GetGameById_ReturnsCorrectGame()
+    {
+        // Arrange
+        var game = new Game { GameId = 1, Name = "Game1" };
+        Context.Games.Add(game);
+        Context.SaveChanges();
+
+        // Act
+        var result = await _gameRepository.GetGameById(game.GameId);
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.GameId, Is.EqualTo(game.GameId));
+    }
+    
+    [Test]
+    public async Task GetGameById_ThrowsExceptionIfGameNotFound()
+    {
+        // Act & Assert
+        Assert.ThrowsAsync<Exception>(async () => await _gameRepository.GetGameById(1));
+    }
+    
+    [Test]
+    public async Task EditGame_ThrowsExceptionIfGameNotFound()
+    {
+        // Arrange
+        var game = new Game { GameId = 1, Name = "Game1" };
+
+        // Act & Assert
+        Assert.ThrowsAsync<Exception>(async () => await _gameRepository.EditGame(game));
+    }
+    
+    [Test]
+    public async Task EditGame_EditsGameSuccessfully()
+    {
+        // Arrange
+        var game = new Game { GameId = 1, Name = "Game1" };
+        Context.Games.Add(game);
+        Context.SaveChanges();
+
+        // Act
+        game.Name = "Game2";
+        game.MaxPlayers = 5;
+        await _gameRepository.EditGame(game);
+
+        // Assert
+        var editedGame = await Context.Games.FirstOrDefaultAsync(g => g.GameId == game.GameId);
+        Assert.That(editedGame, Is.Not.Null);
+        Assert.That(editedGame.Name, Is.EqualTo(game.Name));
+        Assert.That(editedGame.MaxPlayers, Is.EqualTo(game.MaxPlayers));
+    }
 
 
 }
