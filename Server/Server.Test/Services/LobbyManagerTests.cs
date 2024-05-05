@@ -329,5 +329,60 @@ namespace Server.Test.Services
             // Assert
             Assert.That(result, Is.EqualTo(GameStatus.NoLobby));
         }
+        
+        [Test]
+        public void UpdateUserInLobby_UserIsUpdated()
+        {
+            // Arrange
+            string lobbyId = "123";
+
+            ConnectedUserDTO user = new("name", "123");
+
+            var lobby = new Lobby(lobbyId, "name", 1, 1);
+            lobby.Members.Add(user);
+            _uut.lobbies.Add(lobbyId, lobby);
+
+            ConnectedUserDTO updatedUser = new("name", "1234");
+
+            // Act
+            _uut.UpdateUserInLobby(updatedUser, lobbyId);
+
+            // Assert
+            Assert.That(_uut.lobbies[lobbyId].Members, Contains.Item(updatedUser));
+            Assert.That(_uut.lobbies[lobbyId].Members, Does.Not.Contain(user));
+
+        }
+        
+        [Test]
+        public void GetLobbyGameId_LobbyExists_ReturnsGameId()
+        {
+            string lobbyId = "123";
+            var lobby = new Lobby(lobbyId, "name", 1, 1);
+            lobby.GameId = 1;
+            _uut.lobbies.Add(lobbyId, lobby);
+
+            // Act
+            var result = _uut.GetLobbyGameId(lobbyId);
+
+            // Assert
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Msg, Is.EqualTo("Succesfully returned lobby"));
+            Assert.That(result.Value, Is.EqualTo(1));
+        }
+        
+        [Test]
+        public void GetLobbyGameId_LobbyDoesNotExist_ReturnsFalse()
+        {
+            string lobbyId = "123";
+
+            // Act
+            var result = _uut.GetLobbyGameId(lobbyId);
+
+            // Assert
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Msg, Is.EqualTo("Could not find lobby"));
+            Assert.That(result.Value, Is.EqualTo(0));
+        }
     }
+
 }
