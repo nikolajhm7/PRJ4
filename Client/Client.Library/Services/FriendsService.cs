@@ -8,7 +8,7 @@ namespace Client.Library.Services
     {
         public event Action<FriendDTO>? NewFriendRequestEvent;
         public event Action<FriendDTO>? FriendRequestAcceptedEvent;
-        public event Action<string>? NewGameInviteEvent;
+        public event Action<string, string>? NewGameInviteEvent;
         public event Action<string>? FriendRemovedEvent;
 
         public FriendsService(IConfiguration configuration) : base(configuration["ConnectionSettings:ApiUrl"] + configuration["ConnectionSettings:FriendsEndpoint"])
@@ -19,8 +19,8 @@ namespace Client.Library.Services
             On<FriendDTO>("FriendRequestAccepted", (username) =>
                 FriendRequestAcceptedEvent?.Invoke(username));
 
-            On<string>("NewGameInvite", (username) =>
-                NewGameInviteEvent?.Invoke(username));
+            On<string, string>("NewGameInvite", (username, lobbyId) =>
+                NewGameInviteEvent?.Invoke(username, lobbyId));
 
             On<string>("FriendRemoved", (username) =>
                 FriendRemovedEvent?.Invoke(username));

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 using Server.API.Data;
 using Server.API.Repositories.Interfaces;
 using Server.API.Repositories;
+using Server.API.Services.Interfaces;
 
 namespace Server.API.Hubs
 {
@@ -13,11 +14,13 @@ namespace Server.API.Hubs
     {
         private readonly ILogger<FriendsHub> _logger;
         private readonly IFriendsRepository _friendsRepository;
+        private readonly ILobbyManager _lobbyManager;
 
-        public FriendsHub(ILogger<FriendsHub> logger, IFriendsRepository friendsRepository)
+        public FriendsHub(ILogger<FriendsHub> logger, IFriendsRepository friendsRepository, ILobbyManager lobbyManager)
         {
             _logger = logger;
             _friendsRepository = friendsRepository;
+            _lobbyManager = lobbyManager;
         }
 
         public override async Task OnConnectedAsync()
@@ -91,9 +94,22 @@ namespace Server.API.Hubs
                 return new ActionResult(false, "Authentication context is not available.");
             }
 
+            if (await _friendsRepository.FindFriendship(username, otherUsername) == null)
+            {
+                _logger.LogWarning("{User} is not friends with {Friend}.", username, otherUsername);
+                return new ActionResult(false, "You can only invite friends to a game.");
+            }
+
+            var lobbyId = _lobbyManager.GetLobbyIdFromUsername(username);
+            if (lobbyId == null)
+            {
+                _logger.LogWarning("Couldn't find a lobby for {username}.", username);
+                return new ActionResult(false, "You must be in a lobby to invite friends to a game.");
+            }
+
             _logger.LogInformation("{User} sent a game invite to {Friend}.", username, otherUsername);
 
-            await Clients.Group(otherUsername).SendAsync("NewGameInvite", username);
+            await Clients.Group(otherUsername).SendAsync("NewGameInvite", username, lobbyId);
             return new ActionResult(true, null);
         }
 

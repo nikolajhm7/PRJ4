@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Client.UI.Views"
+             xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
+             xmlns:DTOs="clr-namespace:Client.Library.DTO;assembly=Client.Library"
+             x:Class="Client.UI.Views.FriendsView">
+
+    <Grid x:Name="FriendsViewGrid"
+          RowDefinitions="*, Auto"
+          VerticalOptions="FillAndExpand"
+          BindingContext="{Binding Source={RelativeSource AncestorType={x:Type local:FriendsView}}, Path=ViewModel}"
+          x:DataType="{x:Type viewModels:FriendsViewModel}">
+        <StackLayout>
+            <Label Text="Friends List" HorizontalOptions="Center" />
+
+            <CollectionView x:Name="FriendsCollectionView" 
+                            ItemsSource="{Binding FriendsCollection}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="{x:Type DTOs:FriendDTO}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Text="{Binding Name}" Grid.Column="0" />
+
+                            <StackLayout Orientation="Horizontal" Grid.Column="1">
+                                <Button BackgroundColor="Red"
+                                        Command="{Binding Source={x:Reference FriendsCollectionView}, Path=BindingContext.DeclineFriendRequestCommand}"
+                                        CommandParameter="{Binding Name}"
+                                        WidthRequest="10"
+                                        HeightRequest="10"/>
+                                <Button BackgroundColor="Green"
+                                        Command="{Binding Source={x:Reference FriendsCollectionView}, Path=BindingContext.AcceptFriendRequestCommand}"
+                                        CommandParameter="{Binding Name}"
+                                        IsVisible="{Binding IsPending}"
+                                        WidthRequest="10"
+                                        HeightRequest="10"/>
+                                <Button BackgroundColor="Blue"
+                                        Command="{Binding Source={x:Reference FriendsCollectionView}, Path=BindingContext.InviteFriendCommand}"
+                                        CommandParameter="{Binding Name}"
+                                        IsVisible="{Binding Source={x:Reference FriendsViewGrid}, Path=BindingContext.CanInvite}"
+                                        WidthRequest="10"
+                                        HeightRequest="10"/>
+                            </StackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+
+        <StackLayout Grid.Row="1"
+                     Padding="10">
+            <Entry Placeholder="Enter friends username"
+                   Text="{Binding AddFriendText}"/>
+            <Button Text="Add Friend"
+                    Command="{Binding AddNewFriendCommand}"
+                    Style="{StaticResource normalBtn}"/>
+        </StackLayout>
+    </Grid>
+
+    <!--<VerticalStackLayout BindingContext="{Binding Source={RelativeSource AncestorType={x:Type local:FriendsView}}, Path=ViewModel}"
+                         x:DataType="{x:Type viewModels:FriendsViewModel}">
+        <Label Text="{Binding LabelText}"/>
+        <Button Text="Press!"
+                Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:FriendsViewModel}}, Path=ButtonPressedCommand}"
+                CommandParameter="{Binding}"/>
+    </VerticalStackLayout>-->
+</ContentView>

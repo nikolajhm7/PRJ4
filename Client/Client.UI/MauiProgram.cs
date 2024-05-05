@@ -76,6 +76,8 @@ namespace Client.UI
             builder.Services.AddTransient<GamePage>();
             builder.Services.AddTransient<GameViewModel>();
 
+            builder.Services.AddTransient<FriendsViewModel>();
+
             #endregion
 
             builder.Configuration.AddConfiguration(configuration);
