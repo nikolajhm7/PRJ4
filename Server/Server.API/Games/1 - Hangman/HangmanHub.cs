@@ -240,6 +240,32 @@ namespace Server.API.Games
             }
         }
 
+        public async Task<ActionResult> LeaveGame(string lobbyId)
+        {
+            _logger.LogDebug("Attempting to leave lobby {LobbyId} by user {UserName}.", lobbyId, Context.User?.Identity?.Name);
+
+            var username = Context.User?.Identity?.Name;
+            if (username == null)
+            {
+                _logger.LogWarning("Context.User or Context.User.Identity is null.");
+                return new ActionResult(false, "Authentication context is not available.");
+            }
+
+            if (_lobbyManager.LobbyExists(lobbyId))
+            {
+                var user = new ConnectedUserDTO(username, Context.ConnectionId);
+
+                await RemoveUserFromLobby(lobbyId, user);
+
+                return new ActionResult(true, null);
+            }
+            else
+            {
+                _logger.LogError("Attempt to leave non-existing lobby {LobbyId}.", lobbyId);
+                return new ActionResult(false, "Lobby does not exist.");
+            }
+        }
+
         //public async Task<ActionResult<List<char>>> GetGuessedChars(string lobbyId)
         //{
         //    if (_logicManager.TryGetValue(lobbyId, out var logic))

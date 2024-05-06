@@ -22,5 +22,6 @@ namespace Client.Library.Games
         Task<ActionResult> RestartGame(string lobbyId);
         Task<ActionResult<List<ConnectedUserDTO>>> GetUsersInGame(string lobbyId);
         Task<ActionResult<Queue<string>>> GetQueueForGame(string lobbyId);
+        Task <ActionResult> LeaveGameAsync(string? lobbyId);
     }
 }

@@ -57,6 +57,12 @@ namespace Client.Library.Games
         {
             return await InvokeAsync<Queue<string>>("GetQueueForGame", lobbyId);
         }
+
+        public async Task<ActionResult> LeaveGameAsync(string lobbyId)
+        {
+            return await InvokeAsync("LeaveGame", lobbyId);
+        }
+
         public async Task<ActionResult<List<char>>> GetGuessedLetters(string lobbyId)
         {
             return await InvokeAsync<List<char>>("GetGuessedChars", lobbyId);

@@ -126,7 +126,7 @@
                 Grid.Column="1"
                 Style="{StaticResource normalBtn}"
                 WidthRequest="100"
-                Text="Go back / leave lobby"
+                Text="Leave lobby"
                 Command="{Binding GoBackCommand}"/>
 
 
