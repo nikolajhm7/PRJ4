@@ -146,7 +146,15 @@ namespace Client.UI.ViewModels
             if (user != null) FriendsCollection.Remove(user);
         }
 
-        public async void OnNewGameInvite(string username, string lobbyId)
+        public void OnNewGameInvite(string username, string lobbyId)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                HandleInvite(username, lobbyId);
+            });
+        }
+
+        public async void HandleInvite(string username, string lobbyId)
         {
             var res = await Shell.Current.DisplayAlert("Game Invite", $"{username} has invited you to their lobby: {lobbyId}", "Join", "Cancel");
 
