@@ -95,36 +95,28 @@ public class HangmanHubTests
         await _groups.Received(1).AddToGroupAsync(Arg.Any<string>(), Arg.Any<string>());
     }
     
-    //[Test]
-    //public async Task StartGame_StartsGame_ReturnsTrueSendsMessage()
-    //{
-    //    // Arrange
-    //    var lobbyId = "Id";
-    //    _clients.Group(Arg.Any<string>()).Returns(_clientProxy);
-    //    _logicManager.LobbyExists(lobbyId).Returns(false);
+    [Test]
+    public async Task OnConnectedAsync_LobbyDoesNotExistAndGameStarted_AddsToGroup()
+    {
+        // Arrange
+        var lobbyId = "Id";
+        _lobbyManager.GetLobbyIdFromUsername(Arg.Any<string>()).Returns(lobbyId);
+        _lobbyManager.GetGameStatus(lobbyId).Returns(GameStatus.InGame);
+        _logicManager.LobbyExists(lobbyId).Returns(true);
+        _logicManager.TryGetValue(lobbyId, out var logic).Returns(x =>
+        {
+            x[1] = _logic;
+            return true;
+        });
 
-    //    // Act
-    //    var res = await _uut.;
+        // Act
+        await _uut.OnConnectedAsync();
         
-    //    // Assert
-    //    await _clientProxy.Received(1).SendCoreAsync(Arg.Any<string>(), Arg.Any<object[]>());
-    //    Assert.That(res.Success, Is.True);
-    //}
+        // Assert
+        await _groups.Received(1).AddToGroupAsync(Arg.Any<string>(), Arg.Any<string>());
+    }
     
-    //[Test]
-    //public async Task StartGame_AlreadyExists_ReturnsFalse()
-    //{
-    //    // Arrange
-    //    var lobbyId = "Id";
-    //    _logicManager.LobbyExists(Arg.Any<string>()).Returns(true);
-
-    //    // Act
-    //    var res = await _uut.StartGame(lobbyId);
         
-    //    // Assert
-    //    Assert.That(res.Success, Is.False);
-    //}
-    
     [Test]
     public async Task GuessLetter_LobbyDoesNotExist_ReturnsFalse()
     {

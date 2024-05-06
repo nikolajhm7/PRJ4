@@ -335,7 +335,161 @@ namespace Server.Test.Hubs
             await _clientProxy.DidNotReceive().SendCoreAsync(Arg.Any<string>(), Arg.Any<object[]>());
             await _groups.Received(1).RemoveFromGroupAsync(Arg.Any<string>(), Arg.Any<string>());
         }
+        
+        [Test]
+        public async Task JoinLobby_UsernameIsNull_ReturnsError()
+        {
+            // Arrange
+            _context.User?.Identity?.Name.Returns((string?)null);
 
+            // Act
+            var result = await _uut.JoinLobby("123456");
+
+            // Assert
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Msg, Is.EqualTo("Authentication context is not available."));
+        }
+        
+        [Test]
+        public async Task JoinLobby_JoinedLobbySuccessfully_ReturnsSuccess()
+        {
+            // Arrange
+            string lobbyId = "123456";
+            var username = "testuser";
+            var connection = "connection-id";
+
+            _clients.Group(lobbyId).Returns(_clientProxy);
+            _clients.Caller.Returns(_singleClientProxy);
+            _lobbyManager.LobbyExists(lobbyId).Returns(true);
+            var ar = new ActionResult<List<ConnectedUserDTO>>(true, null, new List<ConnectedUserDTO>());
+            _lobbyManager.AddToLobby(Arg.Any<ConnectedUserDTO>(), lobbyId).Returns(ar);
+
+            // Act
+            _context.User?.Identity?.Name.Returns(username);
+            _context.ConnectionId.Returns(connection);
+
+            var result = await _uut.JoinLobby(lobbyId);
+
+            // Assert
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Msg, Is.EqualTo(lobbyId));
+            
+            await _clientProxy.Received(1).SendCoreAsync("UserJoinedLobby", Arg.Any<object[]>());
+
+            await _groups.Received(1).AddToGroupAsync(connection, lobbyId);
+        }
+        
+        [Test]
+        public async Task GetLobbyGameId_ReturnsGameId()
+        {
+            // Arrange
+            string lobbyId = "123456";
+            var gameId = 1;
+            _lobbyManager.GetLobbyGameId(lobbyId).Returns(new ActionResult<int>(true, null, gameId));
+
+            // Act
+            var result = await _uut.GetLobbyGameId(lobbyId);
+
+            // Assert
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Msg, Is.Null);
+            Assert.That(result.Value, Is.EqualTo(gameId));
+        }
+        
+        [Test]
+        public async Task UserIsHost_ReturnsActionResult()
+        {
+            // Arrange
+            string lobbyId = "123456";
+            _context.User?.Identity?.Name.Returns("testuser");
+            _lobbyManager.IsHost("testuser", lobbyId).Returns(true);
+
+            // Act
+            var result = await _uut.UserIsHost(lobbyId);
+
+            // Assert
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Msg, Is.Not.Null);
+        }
+        
+        [Test]
+        public async Task UserIsHost_UserIsNotHost_ReturnsError()
+        {
+            // Arrange
+            string lobbyId = "123456";
+            _context.User?.Identity?.Name.Returns("testuser");
+            _lobbyManager.IsHost("testuser", lobbyId).Returns(false);
+
+            // Act
+            var result = await _uut.UserIsHost(lobbyId);
+
+            // Assert
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Msg, Is.EqualTo("User is not the host of the lobby"));
+        }
+        
+        [Test]
+        public async Task UserIsHost_UsernameIsNull_ReturnsError()
+        {
+            // Arrange
+            _context.User?.Identity?.Name.Returns((string?)null);
+
+            // Act
+            var result = await _uut.UserIsHost("123456");
+
+            // Assert
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Msg, Is.EqualTo("Authentication context is not available."));
+        }
+        
+        [Test]
+        public async Task GetUsersInLobby_ReturnsUsers()
+        {
+            // Arrange
+            string lobbyId = "123456";
+            var users = new List<ConnectedUserDTO> { new ConnectedUserDTO("testuser", "connection-id") };
+            _context.User?.Identity?.Name.Returns("testuser");
+            _lobbyManager.LobbyExists(lobbyId).Returns(true);
+            _lobbyManager.GetUsersInLobby(lobbyId).Returns(users);
+
+            // Act
+            var result = await _uut.GetUsersInLobby(lobbyId);
+
+            // Assert
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Msg, Is.Null);
+            Assert.That(result.Value, Is.EqualTo(users));
+        }
+        
+        [Test]
+        public async Task GetUsersInLobby_LobbyDoesNotExist_ReturnsError()
+        {
+            // Arrange
+            string lobbyId = "123456";
+            _context.User?.Identity?.Name.Returns("testuser");
+            _lobbyManager.LobbyExists(lobbyId).Returns(false);
+
+            // Act
+            var result = await _uut.GetUsersInLobby(lobbyId);
+
+            // Assert
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Msg, Is.EqualTo("Lobby does not exist."));
+        }
+        
+        [Test]
+        public async Task GetUsersInLobby_UsernameIsNull_ReturnsError()
+        {
+            // Arrange
+            _context.User?.Identity?.Name.Returns((string?)null);
+
+            // Act
+            var result = await _uut.GetUsersInLobby("123456");
+
+            // Assert
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Msg, Is.EqualTo("Authentication context is not available."));
+        }
 
         [TearDown]
         public void TearDown()

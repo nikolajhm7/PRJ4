@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Server.API.DTO;
 
 namespace Server.Test.Hubs
 {
@@ -66,13 +67,14 @@ namespace Server.Test.Hubs
             var otherUsername = "otherUser";
             var username = "user";
             _context.User?.Identity?.Name.Returns(username);
+            _clients.Group(otherUsername).Returns(_clientProxy);
 
             // Act
             var result = await _uut.SendFriendRequest(otherUsername);
 
             // Assert
             await _friendsRepository.Received(1).AddFriendRequest(username, otherUsername);
-            await _clients.User(otherUsername).Received(1).SendCoreAsync("NewFriendRequest", Arg.Any<object[]>());
+            await _clientProxy.Received(1).SendCoreAsync("NewFriendRequest", Arg.Any<object[]>());
             Assert.That(result.Success, Is.True);
             Assert.That(result.Msg, Is.Null);
         }
@@ -98,13 +100,14 @@ namespace Server.Test.Hubs
             var otherUsername = "otherUser";
             var username = "user";
             _context.User?.Identity?.Name.Returns(username);
+            _clients.Group(otherUsername).Returns(_clientProxy);
 
             // Act
             var result = await _uut.AcceptFriendRequest(otherUsername);
 
             // Assert
             await _friendsRepository.Received(1).AcceptFriendRequest(username, otherUsername);
-            await _clients.User(otherUsername).Received().SendCoreAsync("FriendRequestAccepted", Arg.Any<object[]>());
+            await _clientProxy.Received().SendCoreAsync("FriendRequestAccepted", Arg.Any<object[]>());
             Assert.That(result.Success, Is.True);
             Assert.That(result.Msg, Is.Null);
         }
@@ -130,13 +133,14 @@ namespace Server.Test.Hubs
             var otherUsername = "otherUser";
             var username = "user";
             _context.User?.Identity?.Name.Returns(username);
+            _clients.Group(otherUsername).Returns(_clientProxy);
 
             // Act
             var result = await _uut.RemoveFriend(otherUsername);
 
             // Assert
             await _friendsRepository.Received(1).RemoveFriend(username, otherUsername);
-            await _clients.User(otherUsername).Received().SendCoreAsync("FriendRemoved", Arg.Any<object[]>());
+            await _clientProxy.Received().SendCoreAsync("FriendRemoved", Arg.Any<object[]>());
             Assert.That(result.Success, Is.True);
             Assert.That(result.Msg, Is.Null);
         }
@@ -146,12 +150,13 @@ namespace Server.Test.Hubs
         {
             // Arrange
             var otherUsername = "otherUser";
+            _clients.Group(otherUsername).Returns(_clientProxy);
 
             // Act
             var result = await _uut.InviteFriend(otherUsername);
 
             // Assert
-            await _clients.User(otherUsername).Received().SendCoreAsync("NewGameInvite", Arg.Any<object[]>());
+            await _clientProxy.Received().SendCoreAsync("NewGameInvite", Arg.Any<object[]>());
             Assert.That(result.Success, Is.True);
             Assert.That(result.Msg, Is.Null);
         }
@@ -168,6 +173,86 @@ namespace Server.Test.Hubs
             // Assert
             Assert.That(result.Success, Is.False);
             Assert.That(result.Msg, Is.EqualTo("Authentication context is not available."));
+        }
+        
+        [Test]
+        public async Task GetFriends_UserIsNull_ReturnsFailedActionResult()
+        {
+            // Arrange
+            _context.User?.Identity?.Name.Returns((string)null);
+
+            // Act
+            var result = await _uut.GetFriends(true);
+
+            // Assert
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Msg, Is.EqualTo("Authentication context is not available."));
+        }
+        
+        [Test]
+        public async Task GetFriends_ValidRequest_ReturnsFriends()
+        {
+            // Arrange
+            var username = "user";
+            _context.User?.Identity?.Name.Returns(username);
+            var friends = new List<FriendDTO>();
+            _friendsRepository.GetFriendsOf(username).Returns(friends);
+
+            // Act
+            var result = await _uut.GetFriends(false);
+
+            // Assert
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Msg, Is.Null);
+            Assert.That(result.Value, Is.EqualTo(friends));
+        }
+        
+        [Test]
+        public async Task GetFriends_ValidRequestWithInvites_ReturnsFriendsAndInvites()
+        {
+            // Arrange
+            var username = "user";
+            _context.User?.Identity?.Name.Returns(username);
+            var friends = new List<FriendDTO>();
+            var invites = new List<FriendDTO>();
+            _friendsRepository.GetFriendsOf(username).Returns(friends);
+            _friendsRepository.GetInvitesOf(username).Returns(invites);
+
+            // Act
+            var result = await _uut.GetFriends(true);
+
+            // Assert
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Msg, Is.Null);
+            Assert.That(result.Value, Is.EqualTo(friends.Concat(invites)));
+        }
+        
+        [Test]
+        public async Task OnConnectedAsync_ValidRequest_JoinsGroup()
+        {
+            // Arrange
+            var username = "user";
+            _context.User?.Identity?.Name.Returns(username);
+
+            // Act
+            await _uut.OnConnectedAsync();
+
+            // Assert
+            await _groups.Received().AddToGroupAsync(_context.ConnectionId, username);
+        }
+        
+        [Test]
+        public async Task OnDisconnectedAsync_ValidRequest_LeavesGroup()
+        {
+            // Arrange
+            var username = "user";
+            _context.User?.Identity?.Name.Returns(username);
+
+            // Act
+            await _uut.OnDisconnectedAsync(new Exception());
+
+            // Assert
+            await _groups.Received().RemoveFromGroupAsync(_context.ConnectionId, username);
         }
 
         [TearDown]

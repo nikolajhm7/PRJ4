@@ -79,10 +79,6 @@ namespace Client.UI
             builder.Services.AddTransient<GamePage>();
             builder.Services.AddTransient<GameViewModel>();
 
-            //chat page skal slettes
-            builder.Services.AddTransient<ChatAppPage>();
-            builder.Services.AddTransient<ChatAppViewModel>();
-
             #endregion
 
             builder.Configuration.AddConfiguration(configuration);

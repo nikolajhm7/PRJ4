@@ -241,4 +241,25 @@ public class HangmanLogicTests
         // Assert
         Assert.That(res, Is.False);
     }
+    
+    [Test]
+    public void DidUserWin_GuessesEqualMaxGuesses_ReturnsFalse()
+    {
+        // Arrange
+        string word = "zzzzz";
+        _randomPicker.PickRandomItem(Arg.Any<List<string>>()).Returns(word);
+        _uut.StartGame();
+
+        for(int i = 0; i < _uut.MaxIncorrectGuesses; i++)
+        {
+            char letter = (char)('a' + i);
+            _uut.GuessLetter(letter, out var pos1);    
+        }
+
+        // Act
+        var res = _uut.DidUserWin();
+
+        // Assert
+        Assert.That(res, Is.False);
+    }
 }

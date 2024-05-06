@@ -150,7 +150,7 @@ public class FriendsRepositoryTests : TestBase
         Context.SaveChanges();
 
         // Act
-       Assert.ThrowsAsync<Exception>(() => _friendsRepository.AcceptFriendRequest(user.Id, "user2"));
+       Assert.ThrowsAsync<Exception>(() => _friendsRepository.AcceptFriendRequest(user.UserName, "user2"));
     }
 
     [Test]
@@ -165,7 +165,7 @@ public class FriendsRepositoryTests : TestBase
         Context.SaveChanges();
 
         // Act
-        Assert.ThrowsAsync<Exception>(() => _friendsRepository.AcceptFriendRequest(user2.Id, user1.Id));
+        Assert.ThrowsAsync<Exception>(() => _friendsRepository.AcceptFriendRequest(user2.UserName, user1.UserName));
     }
 
 
@@ -198,6 +198,7 @@ public class FriendsRepositoryTests : TestBase
         var user1 = new User { Id = "user1", UserName = "User1" };
         var user2 = new User { Id = "user2", UserName = "User2" };
         var friendship = new Friendship { User1Id = user1.Id, User2Id = user2.Id, Status = "Pending", date = DateTime.Now, User1 = user1, User2 = user2 };
+        
         Context.Users.AddRange(user1, user2);
         Context.Friendships.Add(friendship);
         Context.SaveChanges();
@@ -209,6 +210,18 @@ public class FriendsRepositoryTests : TestBase
         Assert.That(invites.Count, Is.EqualTo(1));
         Assert.That(invites[0].Name, Is.EqualTo(user1.UserName));
         Assert.That(invites[0].FriendsSince, Is.EqualTo(friendship.date));
+    }
+    
+    [Test]
+    public async Task AddFriendRequest_ThrowsExceptionWhenFriendUserNotFound()
+    {
+        // Arrange
+        var user = new User { Id = "user1" };
+        Context.Users.Add(user);
+        Context.SaveChanges();
+
+        // Act
+        Assert.ThrowsAsync<Exception>(() => _friendsRepository.AddFriendRequest(user.UserName, "user2"));
     }
 
 }
