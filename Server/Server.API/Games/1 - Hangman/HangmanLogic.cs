@@ -15,6 +15,7 @@ namespace Server.API.Games
         private int _currentGuessCount = 0;
         private List<char> _guessedLetters = [];
         private readonly IRandomPicker _picker = picker;
+        private Queue<string> _userQueue = [];
 
         public int StartGame()
         {
@@ -82,6 +83,21 @@ namespace Server.API.Games
                 }
             }
             return positions;
+        }
+
+        public List<char> GetGuessedLetters()
+        {
+            return _guessedLetters;
+        }
+
+        public void SetQueue(Queue<string> userQueue)
+        {
+            _userQueue = userQueue;
+        }
+
+        public Queue<string> GetQueue()
+        {
+            return _userQueue;
         }
     }
 }

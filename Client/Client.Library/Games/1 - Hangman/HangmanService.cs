@@ -1,4 +1,5 @@
-﻿using Client.Library.Models;
+﻿using Client.Library.DTO;
+using Client.Library.Models;
 using Client.Library.Services;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -46,6 +47,25 @@ namespace Client.Library.Games
         public async Task<ActionResult> RestartGame(string lobbyId)
         {
             return await InvokeAsync("RestartGame", lobbyId);
+        }
+        public async Task<ActionResult<List<ConnectedUserDTO>>> GetUsersInGame(string lobbyId)
+        {
+            return await InvokeAsync<List<ConnectedUserDTO>>("GetUsersInGame", lobbyId);
+        }
+
+        public async Task<ActionResult<Queue<string>>> GetQueueForGame(string lobbyId)
+        {
+            return await InvokeAsync<Queue<string>>("GetQueueForGame", lobbyId);
+        }
+
+        public async Task<ActionResult> LeaveGameAsync(string lobbyId)
+        {
+            return await InvokeAsync("LeaveGame", lobbyId);
+        }
+
+        public async Task<ActionResult<List<char>>> GetGuessedLetters(string lobbyId)
+        {
+            return await InvokeAsync<List<char>>("GetGuessedChars", lobbyId);
         }
     }
 }

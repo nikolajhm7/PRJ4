@@ -9,5 +9,8 @@ namespace Server.API.Games
         bool GuessLetter(char letter, out List<int> positions);
         bool IsGameOver();
         bool DidUserWin();
+        List<char> GetGuessedLetters();
+        public void SetQueue(Queue<string> userQueue);
+        public Queue<string> GetQueue();
     }
 }

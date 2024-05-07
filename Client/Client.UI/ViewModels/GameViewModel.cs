@@ -28,6 +28,8 @@ namespace Client.UI.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ILobbyService _lobbyService;
         private int ErrorCounter;
+        private bool isHost = true;
+        private Queue<string> userQueue;
 
         // Define command properties
         [ObservableProperty]
@@ -45,6 +47,7 @@ namespace Client.UI.ViewModels
         ObservableCollection<char> guessedChars;
         [ObservableProperty] private string? imageSource;
 
+
         public ObservableCollection<char> GuessedChars
         {
             get { return guessedChars; }
@@ -55,9 +58,11 @@ namespace Client.UI.ViewModels
         }
 
 
-        public GameViewModel(IHangmanService hangmanService)
+        public GameViewModel(IHangmanService hangmanService, ILobbyService lobbyService, INavigationService navigationService)
         {
             _hangmanService = hangmanService;
+            _navigationService = navigationService;
+            _lobbyService = lobbyService;
             guessedChars = [];
             playerNames.Add("Anthony");
             playerNames.Add("Nikolaj");
@@ -73,8 +78,45 @@ namespace Client.UI.ViewModels
         {
            await _hangmanService.ConnectAsync();
             GuessedChars.Clear();
+            await LoadUsersInGame();
         }
 
+        private async Task LoadUsersInGame()
+        {
+            await Task.Delay(1);
+            var result = await _hangmanService.GetUsersInGame(LobbyId);
+            if (result.Success)
+            {
+                foreach (var user in result.Value)
+                {
+                    PlayerNames.Add(user.Username);
+                }
+            }
+            else
+            {
+                Debug.WriteLine("Failed to get users in lobby: " + result.Msg);
+            }
+        }
+
+        private async Task LoadPlayerQueue()
+        {
+            await Task.Delay(1);
+            var result = await _hangmanService.GetQueueForGame(LobbyId);
+            if (result.Success)
+            {
+                userQueue = result.Value;
+            }
+        }
+
+        private void MakeUnderscores(int wordLength)
+        {
+            for (int i = 0; i < wordLength; i++)
+            {
+                HiddenWord += "_";
+            }
+        }
+
+        #region OnGameStarted
         private void OnGameStarted(int wordLength)
         {
             Debug.WriteLine($"Game started with wordLength: {wordLength}");
@@ -83,7 +125,7 @@ namespace Client.UI.ViewModels
             Title = "Welcome to Hangman!";
 
             // Set the message
-            StatusMessage = "Game started!";
+            StatusMessage = $"Game started with wordLength: {wordLength}";
             PlayerStatus = $"Players: {playerNames.Count}/{playerNames.Count}";
 
             // Set the lobby id
@@ -102,16 +144,15 @@ namespace Client.UI.ViewModels
 
             // Set the hidden word length
             MakeUnderscores(wordLength);
-            
-        }
 
-        private void MakeUnderscores(int wordLength)
-        {
-            for (int i = 0; i < wordLength; i++)
-            {
-                HiddenWord += "_";
-            }
+            GuessedChars.Clear();
+
+            LoadPlayerQueue();
+
         }
+        #endregion
+
+        #region OnGuessResult
         private void OnGuessResult(char letter, bool isCorrect, List<int> positions)
         {
             Console.WriteLine($"Guess result: {letter}, {isCorrect}, {string.Join(",", positions)}");
@@ -125,6 +166,7 @@ namespace Client.UI.ViewModels
                     hwChars[position] = letter;
                 }
                 HiddenWord = new string(hwChars).ToUpper();
+
             }
             // Update the error counter
             if (!isCorrect)
@@ -136,8 +178,13 @@ namespace Client.UI.ViewModels
                     ImageSource = $"hangman_img{ErrorCounter}.jpg";
                 }
             }
-        }
 
+            if (!guessedChars.Contains(char.ToUpper(letter))) { GuessedChars.Add(char.ToUpper(letter)); }
+            
+        }
+        #endregion
+
+        #region OnGameOver
         private void OnGameOver(bool didWin, string word)
         {
             Console.WriteLine($"Game over: {didWin}, {word}");
@@ -149,7 +196,9 @@ namespace Client.UI.ViewModels
             Title = "HangMan: Game Over";
 
         }
+#endregion
 
+        
         private void OnLobbyClosed()
         {
             Console.WriteLine("Lobby closed!");
@@ -159,6 +208,10 @@ namespace Client.UI.ViewModels
 
             // Set the title
             Title = "HangMan: Game Over";
+
+            // Close the lobby
+            //await _navigationService.NavigateBack();
+
         }
 
         private void OnUserLeftLobby(string username)
@@ -170,8 +223,73 @@ namespace Client.UI.ViewModels
             //// Remove the player
             PlayerStatus = $"Players: {playerNames.Count}/4 - {username} has left";
             playerNames.Remove(username);
-            playerNames.Remove("user.Username");
         }
+
+        [RelayCommand]
+        private async Task GuessLetter(char letter)
+        {
+
+            try
+            {
+                var response = await _hangmanService.GuessLetter(LobbyId, letter);
+                //if(guessedChars.Contains(char.ToUpper(letter)) ) 
+                //{ 
+                //    await Shell.Current.DisplayAlert("Fejl", $"'{char.ToUpper(letter)}' er allerede gættet på!", "OK"); 
+                //}
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error guessing letter: {ex.Message}");
+            }
+
+        }
+
+        [RelayCommand]
+        async Task GoBack()
+        {
+            bool answer;
+            if (isHost)
+            {
+                answer = await Shell.Current.DisplayAlert(
+                    "Closing lobby",
+                    "Going back will close the lobby and players will be kicked, proceed?",
+                    "Yes",
+                    "Cancel"
+                );
+            }
+            else
+            {
+                answer = await Shell.Current.DisplayAlert(
+                    "Leaving lobby",
+                    "Going back will remove you from the lobby, proceed?",
+                    "Yes",
+                    "Cancel"
+                );
+            }
+
+            if (answer)
+            {
+                await _hangmanService.LeaveGameAsync(LobbyId);
+                //await _lobbyService.LeaveLobbyAsync(lobbyId);
+                await _navigationService.NavigateBack();
+            }
+        }
+
+        [RelayCommand]
+        private async Task RestartGame()
+        {
+            try
+            {
+                await _hangmanService.RestartGame(LobbyId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error restarting game: {ex.Message}");
+            }
+        }
+
+    }
+}
 
         //[RelayCommand]
         //private async Task StartGame()
@@ -185,51 +303,4 @@ namespace Client.UI.ViewModels
         //        Console.WriteLine($"Error starting game: {ex.Message}");
         //    }
         //}
-
-        [RelayCommand]
-        private async Task GuessLetter(char letter)
-        {
-            try
-            {
-                var response = await _hangmanService.GuessLetter(LobbyId, letter);
-
-                //if (response.Msg != "No connection to server.")
-                //{
-                //    guessedChars.Add(letter);
-                //}
-                if(guessedChars.Contains(char.ToUpper(letter)) ) { await Shell.Current.DisplayAlert("Fejl", $"'{char.ToUpper(letter)}' er allerede gættet på!", "OK"); }
-                else if (response.Success)
-                {
-                    await Task.Delay(1); 
-                    GuessedChars.Add(char.ToUpper(letter));
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error guessing letter: {ex.Message}");
-            }
-        }
-
-        [RelayCommand]
-        async Task GoBack()
-        {
-            await _navigationService.NavigateBack();
-        }
-
-        [RelayCommand]
-        private async Task RestartGame()
-        {
-            try
-            {
-                await _hangmanService.RestartGame(LobbyId);
-                GuessedChars.Clear();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error restarting game: {ex.Message}");
-            }
-        }
-
-    }
-}
 
