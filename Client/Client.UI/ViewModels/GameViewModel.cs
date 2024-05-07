@@ -29,6 +29,7 @@ namespace Client.UI.ViewModels
         private readonly ILobbyService _lobbyService;
         private int ErrorCounter;
         private bool isHost = true;
+        private int maxPlayers = 0;
         private Queue<string> userQueue;
 
         // Define command properties
@@ -73,6 +74,8 @@ namespace Client.UI.ViewModels
             _hangmanService.GameOverEvent += OnGameOver;
             _hangmanService.LobbyClosedEvent += OnLobbyClosed;
             _hangmanService.UserLeftLobbyEvent += OnUserLeftLobby;
+
+            maxPlayers = _lobbyService.GetLobbyMaxPlayers(LobbyId).Result.Value;
         }
         public async void OnPageAppearing()
         {
@@ -221,7 +224,7 @@ namespace Client.UI.ViewModels
 
 
             //// Remove the player
-            PlayerStatus = $"Players: {playerNames.Count}/4 - {username} has left";
+            PlayerStatus = $"Players: {playerNames.Count}/{maxPlayers} - {username} has left";
             playerNames.Remove(username);
         }
 
