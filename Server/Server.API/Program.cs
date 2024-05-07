@@ -156,10 +156,10 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-
-//app.Urls.Add("https://*:5008");
+app.Urls.Add("http://*:5008");
 
 app.Run();
+
 
 
 void addJWTAuthentication(WebApplicationBuilder builder)
