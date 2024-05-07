@@ -30,7 +30,7 @@ namespace Client.UI.ViewModels
         private int ErrorCounter;
         private Queue<string> userQueue;
         private bool _initialized = false;
-        private int _wordlenght = 0;
+        private int maxPlayers = 0;
 
         // Define command properties
         [ObservableProperty]
