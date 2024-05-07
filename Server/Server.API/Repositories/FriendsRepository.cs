@@ -63,7 +63,7 @@ namespace Server.API.Repositories
                 .FirstOrDefaultAsync();
         }
         
-        private async Task<Friendship?> FindFriendship(string userName, string friendName)
+        public async Task<Friendship?> FindFriendship(string userName, string friendName)
         {
             var friendship = await FindFriendshipOneWay(userName, friendName);
             if (friendship == null)

@@ -12,7 +12,7 @@ namespace Client.Library.Services
     {
         public event Action<FriendDTO>? NewFriendRequestEvent;
         public event Action<FriendDTO>? FriendRequestAcceptedEvent;
-        public event Action<string>? NewGameInviteEvent;
+        public event Action<string, string>? NewGameInviteEvent;
         public event Action<string>? FriendRemovedEvent;
 
         Task ConnectAsync();
