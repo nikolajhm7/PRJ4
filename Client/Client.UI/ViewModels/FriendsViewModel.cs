@@ -11,17 +11,10 @@ namespace Client.UI.ViewModels
 {
     public partial class FriendsViewModel : ObservableObject
     {
-        //[ObservableProperty]
-        //private string _labelText = "WAITING";
-
-        //[RelayCommand]
-        //public async Task ButtonPressed()
-        //{
-        //    LabelText = "PRESSED!";
-        //    await Task.Delay(2000);
-        //    LabelText = "WAITING";
-        //}
         #region Properties
+
+        [ObservableProperty]
+        private bool _isUser = true;
 
         [ObservableProperty]
         private bool _canInvite;
@@ -45,19 +38,30 @@ namespace Client.UI.ViewModels
         private readonly ILobbyService _lobbyService;
 
         private readonly INavigationService _navigationService;
+        private readonly IJwtTokenService _jwtTokenService;
 
         #endregion
 
-        public FriendsViewModel(IFriendsService friendsService, ILobbyService lobbyService, INavigationService navigationService)
+        public FriendsViewModel(IFriendsService friendsService, ILobbyService lobbyService, INavigationService navigationService, IJwtTokenService jwtTokenService)
         {
             _friendsService = friendsService;
             _lobbyService = lobbyService;
             _navigationService = navigationService;
+            _jwtTokenService = jwtTokenService;
 
             _friendsService.NewFriendRequestEvent += OnNewFriendRequest;
             _friendsService.FriendRequestAcceptedEvent += OnFriendRequestAccepted;
             _friendsService.FriendRemovedEvent += OnFriendRemoved;
             _friendsService.NewGameInviteEvent += OnNewGameInvite;
+        }
+
+        public async void OnLoaded(object? e, EventArgs args)
+        {
+            IsUser = !_jwtTokenService.IsUserRoleGuest();
+            if (IsUser)
+            {
+                await RetrieveFriends();
+            }
         }
 
         #region Friends

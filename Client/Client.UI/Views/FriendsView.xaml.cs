@@ -13,15 +13,8 @@ public partial class FriendsView : ContentView
 		if (vm != null)
 		{
             ViewModel = vm;
+			Loaded += ViewModel.OnLoaded;
         }
-
-		Loaded += async (s, e) =>
-		{
-            if (ViewModel != null)
-			{
-                await ViewModel.RetrieveFriends();
-            }
-        };
 	}
 
 	public static readonly BindableProperty CanInviteProperty =

@@ -10,7 +10,8 @@
           RowDefinitions="*, Auto"
           VerticalOptions="FillAndExpand"
           BindingContext="{Binding Source={RelativeSource AncestorType={x:Type local:FriendsView}}, Path=ViewModel}"
-          x:DataType="{x:Type viewModels:FriendsViewModel}">
+          x:DataType="{x:Type viewModels:FriendsViewModel}"
+          IsVisible="{Binding IsUser}">
         <StackLayout>
             <Label Text="Friends List" HorizontalOptions="Center" />
 
