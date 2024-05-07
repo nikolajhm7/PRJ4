@@ -28,9 +28,9 @@ namespace Client.UI.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ILobbyService _lobbyService;
         private int ErrorCounter;
-        private bool isHost = true;
-        private int maxPlayers = 0;
         private Queue<string> userQueue;
+        private bool _initialized = false;
+        private int _wordlenght = 0;
 
         // Define command properties
         [ObservableProperty]
@@ -39,7 +39,7 @@ namespace Client.UI.ViewModels
         [ObservableProperty] private string errorLabel;
         [ObservableProperty] private string lobbyIdLabel;
         [ObservableProperty] private string? lobbyId;
-        [ObservableProperty] private string? title;
+        [ObservableProperty] private string title = "Empty";
         [ObservableProperty] private string? statusMessage;
         [ObservableProperty] private string? playerStatus;
         [ObservableProperty] private string? players;
@@ -79,9 +79,13 @@ namespace Client.UI.ViewModels
         }
         public async void OnPageAppearing()
         {
-           await _hangmanService.ConnectAsync();
-            GuessedChars.Clear();
-            await LoadUsersInGame();
+            if (!_initialized)
+            {
+                await _hangmanService.ConnectAsync();
+                GuessedChars.Clear();
+                await LoadUsersInGame();
+                _initialized = true;
+            }
         }
 
         private async Task LoadUsersInGame()
@@ -250,32 +254,7 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task GoBack()
         {
-            bool answer;
-            if (isHost)
-            {
-                answer = await Shell.Current.DisplayAlert(
-                    "Closing lobby",
-                    "Going back will close the lobby and players will be kicked, proceed?",
-                    "Yes",
-                    "Cancel"
-                );
-            }
-            else
-            {
-                answer = await Shell.Current.DisplayAlert(
-                    "Leaving lobby",
-                    "Going back will remove you from the lobby, proceed?",
-                    "Yes",
-                    "Cancel"
-                );
-            }
-
-            if (answer)
-            {
-                await _hangmanService.LeaveGameAsync(LobbyId);
-                await _hangmanService.DisconnectAsync();
-                await _navigationService.NavigateBack();
-            }
+            await _navigationService.NavigateBack();
         }
 
         [RelayCommand]
