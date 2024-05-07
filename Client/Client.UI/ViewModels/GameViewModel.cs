@@ -273,7 +273,7 @@ namespace Client.UI.ViewModels
             if (answer)
             {
                 await _hangmanService.LeaveGameAsync(LobbyId);
-                //await _lobbyService.LeaveLobbyAsync(lobbyId);
+                await _hangmanService.DisconnectAsync();
                 await _navigationService.NavigateBack();
             }
         }
