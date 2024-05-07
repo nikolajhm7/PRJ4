@@ -88,8 +88,15 @@
                         HorizontalOptions="FillAndExpand">
                         <Label 
                             Text="{Binding .}" 
-                            HorizontalTextAlignment="Center"/>
-                        </Frame>
+                            HorizontalTextAlignment="Center">
+                            <Label.BackgroundColor>
+                                <MultiBinding Converter="{StaticResource BackgroundColorConverter}">
+                                    <Binding />
+                                    <Binding Path="BindingContext.UserQueueFront" Source="{x:Reference PlayersCollectionView}" />
+                                </MultiBinding>
+                            </Label.BackgroundColor>
+                        </Label>
+                    </Frame>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
@@ -116,12 +123,6 @@
                             Text="{Binding .}"
                             FontSize="Medium"
                             HorizontalTextAlignment="Center">
-                            <Label.BackgroundColor>
-                                <MultiBinding Converter="{StaticResource BackgroundColorConverter}">
-                                    <Binding />
-                                    <Binding Path="BindingContext.UserQueueFront" Source="{x:Reference PlayersCollectionView}" />
-                                </MultiBinding>
-                            </Label.BackgroundColor>
                         </Label>
                     </Frame>
                     </DataTemplate>
