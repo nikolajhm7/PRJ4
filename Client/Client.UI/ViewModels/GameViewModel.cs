@@ -290,7 +290,6 @@ namespace Client.UI.ViewModels
                 Console.WriteLine($"Error restarting game: {ex.Message}");
             }
         }
-
     }
 }
 
