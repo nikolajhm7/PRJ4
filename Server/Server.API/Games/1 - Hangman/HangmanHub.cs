@@ -176,6 +176,7 @@ namespace Server.API.Games
                 await Clients.Group(lobbyId).SendAsync("UserLeftLobby", user.Username);
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyId);
                 _lobbyManager.RemoveFromLobby(user, lobbyId);
+                await RemovePlayerFromQueue(lobbyId, user.Username);
                 _logger.LogInformation("{UserName} successfully left lobby {LobbyId}.", user.Username, lobbyId);
             }
         }
@@ -262,6 +263,52 @@ namespace Server.API.Games
             else
             {
                 _logger.LogError("Attempt to leave non-existing lobby {LobbyId}.", lobbyId);
+                return new ActionResult(false, "Lobby does not exist.");
+            }
+        }
+
+        public async Task<ActionResult> RemovePlayerFromQueue(string lobbyId, string username)
+        {
+            if (_logicManager.TryGetValue(lobbyId, out var logic))
+            {
+                var userQueue = logic.GetQueue();
+                if (userQueue != null && userQueue.Contains(username))
+                {
+                    // Remove the player from the queue
+                    userQueue = new Queue<string>(userQueue.Where(user => user != username));
+                    logic.SetQueue(userQueue);
+                    return new ActionResult(true, null);
+                }
+                else
+                {
+                    return new ActionResult(false, "Player not found in the queue.");
+                }
+            }
+            else
+            {
+                return new ActionResult(false, "Lobby does not exist.");
+            }
+        }
+
+        public async Task<ActionResult> AddPlayerToQueue(string lobbyId, string username)
+        {
+            if (_logicManager.TryGetValue(lobbyId, out var logic))
+            {
+                var userQueue = logic.GetQueue();
+                if (userQueue != null && !userQueue.Contains(username))
+                {
+                    // Add the player to the queue
+                    userQueue.Enqueue(username);
+                    logic.SetQueue(userQueue);
+                    return new ActionResult(true, null);
+                }
+                else
+                {
+                    return new ActionResult(false, "Player is already in the queue.");
+                }
+            }
+            else
+            {
                 return new ActionResult(false, "Lobby does not exist.");
             }
         }

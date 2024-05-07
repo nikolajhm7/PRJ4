@@ -1,4 +1,4 @@
-    using Client.Library.Services;
+using Client.Library.Services;
 using Client.UI.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -46,6 +46,7 @@ namespace Client.UI.ViewModels
         [ObservableProperty] private string hiddenWord;
         ObservableCollection<char> guessedChars;
         [ObservableProperty] private string? imageSource;
+        [ObservableProperty] private string? userQueueFront;
 
 
         public ObservableCollection<char> GuessedChars
@@ -105,6 +106,7 @@ namespace Client.UI.ViewModels
             if (result.Success)
             {
                 userQueue = result.Value;
+                UserQueueFront = userQueue.Peek();
             }
         }
 
@@ -148,7 +150,6 @@ namespace Client.UI.ViewModels
             GuessedChars.Clear();
 
             LoadPlayerQueue();
-
         }
         #endregion
 
