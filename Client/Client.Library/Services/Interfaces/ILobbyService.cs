@@ -23,6 +23,8 @@ namespace Client.Library.Services
 
         Task<ActionResult<int>> GetLobbyGameId(string lobbyId);
 
+        Task<ActionResult<int>> GetLobbyMaxPlayers(string lobbyId);
+
         Task<ActionResult> UserIsHost(string lobbyId);
 
         Task<ActionResult> LeaveLobbyAsync(string lobbyId);

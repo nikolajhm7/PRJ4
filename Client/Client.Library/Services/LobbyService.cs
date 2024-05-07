@@ -47,6 +47,11 @@ namespace Client.Library.Services
             return await InvokeAsync<int>("GetLobbyGameId", lobbyId);
         }
 
+        public async Task<ActionResult<int>> GetLobbyMaxPlayers(string lobbyId)
+        {
+            return await InvokeAsync<int>("GetLobbyMaxPlayers", lobbyId);
+        }
+
         public async Task<ActionResult> UserIsHost(string lobbyId)
         {
             return await InvokeAsync("UserIsHost", lobbyId);

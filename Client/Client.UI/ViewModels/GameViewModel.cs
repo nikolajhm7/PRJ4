@@ -28,8 +28,9 @@ namespace Client.UI.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ILobbyService _lobbyService;
         private int ErrorCounter;
-        private bool isHost = true;
         private Queue<string> userQueue;
+        private bool _initialized = false;
+        private int maxPlayers = 0;
 
         // Define command properties
         [ObservableProperty]
@@ -38,7 +39,7 @@ namespace Client.UI.ViewModels
         [ObservableProperty] private string errorLabel;
         [ObservableProperty] private string lobbyIdLabel;
         [ObservableProperty] private string? lobbyId;
-        [ObservableProperty] private string? title;
+        [ObservableProperty] private string title = "Empty";
         [ObservableProperty] private string? statusMessage;
         [ObservableProperty] private string? playerStatus;
         [ObservableProperty] private string? players;
@@ -74,12 +75,53 @@ namespace Client.UI.ViewModels
             _hangmanService.GameOverEvent += OnGameOver;
             _hangmanService.LobbyClosedEvent += OnLobbyClosed;
             _hangmanService.UserLeftLobbyEvent += OnUserLeftLobby;
+
+            maxPlayers = _lobbyService.GetLobbyMaxPlayers(LobbyId).Result.Value;
         }
         public async void OnPageAppearing()
         {
-           await _hangmanService.ConnectAsync();
-            GuessedChars.Clear();
-            await LoadUsersInGame();
+            if (!_initialized)
+            {
+                await _hangmanService.ConnectAsync();
+                GuessedChars.Clear();
+                await LoadUsersInGame();
+                _initialized = true;
+            }
+        }
+
+        private async Task LoadUsersInGame()
+        {
+            await Task.Delay(1);
+            var result = await _hangmanService.GetUsersInGame(LobbyId);
+            if (result.Success)
+            {
+                foreach (var user in result.Value)
+                {
+                    PlayerNames.Add(user.Username);
+                }
+            }
+            else
+            {
+                Debug.WriteLine("Failed to get users in lobby: " + result.Msg);
+            }
+        }
+
+        private async Task LoadPlayerQueue()
+        {
+            await Task.Delay(1);
+            var result = await _hangmanService.GetQueueForGame(LobbyId);
+            if (result.Success)
+            {
+                userQueue = result.Value;
+            }
+        }
+
+        private void MakeUnderscores(int wordLength)
+        {
+            for (int i = 0; i < wordLength; i++)
+            {
+                HiddenWord += "_";
+            }
         }
 
         private async Task LoadUsersInGame()
@@ -128,7 +170,7 @@ namespace Client.UI.ViewModels
 
             // Set the message
             StatusMessage = $"Game started with wordLength: {wordLength}";
-            PlayerStatus = $"Players: {playerNames.Count}/{playerNames.Count}";
+            PlayerStatus = $"Players: {PlayerNames.Count}/{maxPlayers}";
 
             // Set the lobby id
             LobbyIdLabel = $"Lobby ID: {LobbyId}";
@@ -150,6 +192,7 @@ namespace Client.UI.ViewModels
             GuessedChars.Clear();
 
             LoadPlayerQueue();
+
         }
         #endregion
 
@@ -222,8 +265,8 @@ namespace Client.UI.ViewModels
 
 
             //// Remove the player
-            PlayerStatus = $"Players: {playerNames.Count}/4 - {username} has left";
-            playerNames.Remove(username);
+            PlayerStatus = $"Players: {PlayerNames.Count}/{maxPlayers} - {username} has left";
+            PlayerNames.Remove(username);
         }
 
         [RelayCommand]
@@ -288,7 +331,6 @@ namespace Client.UI.ViewModels
                 Console.WriteLine($"Error restarting game: {ex.Message}");
             }
         }
-
     }
 }
 

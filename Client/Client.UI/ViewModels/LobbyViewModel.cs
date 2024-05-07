@@ -20,8 +20,7 @@ namespace Client.UI.ViewModels
         private readonly INavigationService _navigationService;
         private GameInfo _gameInfo;
         private int gameId;
-        private bool isHost = false;
-        private bool _initialized = false;
+        private bool isHost, gameStarted, _initialized = false;
 
         [ObservableProperty] 
         private string imagePath = "";
@@ -182,15 +181,16 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task GoToGame()
         {
-            var res = await _lobbyService.StartGameAsync(LobbyId);
-            if (res.Success)
+            if (!gameStarted)
             {
-                await _navigationService.NavigateToPage($"{nameof(GamePage)}?LobbyId={LobbyId}");
+                var res = await _lobbyService.StartGameAsync(LobbyId);
+                if (!res.Success)
+                {
+                    await Shell.Current.DisplayAlert("Failed", "to join lobby", "OK");
+                }
+                gameStarted = true;
             }
-            else
-            {
-                await Shell.Current.DisplayAlert("Failed", "to join lobby", "OK");
-            }
+            await _navigationService.NavigateToPage($"{nameof(GamePage)}?LobbyId={LobbyId}");
         }
     }
 }
