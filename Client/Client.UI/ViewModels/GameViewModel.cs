@@ -129,7 +129,7 @@ namespace Client.UI.ViewModels
 
             // Set the message
             StatusMessage = $"Game started with wordLength: {wordLength}";
-            PlayerStatus = $"Players: {playerNames.Count}/{playerNames.Count}";
+            PlayerStatus = $"Players: {PlayerNames.Count}/{maxPlayers}";
 
             // Set the lobby id
             LobbyIdLabel = $"Lobby ID: {LobbyId}";
@@ -224,8 +224,8 @@ namespace Client.UI.ViewModels
 
 
             //// Remove the player
-            PlayerStatus = $"Players: {playerNames.Count}/{maxPlayers} - {username} has left";
-            playerNames.Remove(username);
+            PlayerStatus = $"Players: {PlayerNames.Count}/{maxPlayers} - {username} has left";
+            PlayerNames.Remove(username);
         }
 
         [RelayCommand]
