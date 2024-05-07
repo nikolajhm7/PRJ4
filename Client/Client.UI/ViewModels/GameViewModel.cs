@@ -30,6 +30,7 @@ namespace Client.UI.ViewModels
         private int ErrorCounter;
         private Queue<string> userQueue;
         private bool _initialized = false;
+        private bool isHost = true;
         private int maxPlayers = 0;
 
         // Define command properties
@@ -113,42 +114,6 @@ namespace Client.UI.ViewModels
             if (result.Success)
             {
                 userQueue = result.Value;
-            }
-        }
-
-        private void MakeUnderscores(int wordLength)
-        {
-            for (int i = 0; i < wordLength; i++)
-            {
-                HiddenWord += "_";
-            }
-        }
-
-        private async Task LoadUsersInGame()
-        {
-            await Task.Delay(1);
-            var result = await _hangmanService.GetUsersInGame(LobbyId);
-            if (result.Success)
-            {
-                foreach (var user in result.Value)
-                {
-                    PlayerNames.Add(user.Username);
-                }
-            }
-            else
-            {
-                Debug.WriteLine("Failed to get users in lobby: " + result.Msg);
-            }
-        }
-
-        private async Task LoadPlayerQueue()
-        {
-            await Task.Delay(1);
-            var result = await _hangmanService.GetQueueForGame(LobbyId);
-            if (result.Success)
-            {
-                userQueue = result.Value;
-                UserQueueFront = userQueue.Peek();
             }
         }
 
