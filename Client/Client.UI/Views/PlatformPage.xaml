@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
              xmlns:behaviors="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
+             xmlns:views="clr-namespace:Client.UI.Views"
              x:Class="Client.UI.Views.PlatformPage"
             >
     <Grid
@@ -99,49 +100,8 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <StackLayout Grid.Column="0" Grid.Row="0" Grid.RowSpan="5">
-            <Label Text="Friends List" HorizontalOptions="Center" />
-        
-            <CollectionView x:Name="FriendsCollectionView" 
-            ItemsSource="{Binding FriendsCollection}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                        
-                            <Label Text="{Binding Name}" Grid.Column="0" />
-                        
-                            <StackLayout Orientation="Horizontal" Grid.Column="1">
-                                <Button 
-                                    BackgroundColor="Red"
-                                    Command="{Binding Source={x:Reference FriendsCollectionView}, Path=BindingContext.DeclineFriendRequestCommand}"
-                                    CommandParameter="{Binding Name}"
-                                    WidthRequest="10"
-                                    HeightRequest="10"/>
-                                <Button 
-                                    BackgroundColor="Green"
-                                    Command="{Binding Source={x:Reference FriendsCollectionView}, Path=BindingContext.AcceptFriendRequestCommand}"
-                                    CommandParameter="{Binding Name}"
-                                    IsVisible="{Binding IsPending}"
-                                    WidthRequest="10"
-                                    HeightRequest="10"/>
-                            </StackLayout>
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </StackLayout>
-
-        <StackLayout Grid.Row="3" Grid.Column="0">
-            <Entry Placeholder="Enter friends username"
-                   Text="{Binding AddFriendText}"/>
-            <Button Text="Add Friend"
-                    Command="{Binding AddNewFriendCommand}"
-                    Style="{StaticResource normalBtn}"/>
-        </StackLayout>
+        <views:FriendsView Grid.Column="0" Grid.Row="0" Grid.RowSpan="5"
+                           CanInvite="False"/>
 
     </Grid>
 </ContentPage>

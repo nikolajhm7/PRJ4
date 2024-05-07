@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
+             xmlns:views="clr-namespace:Client.UI.Views"
              x:Class="Client.UI.Views.LobbyPage"
              x:DataType="viewModels:LobbyViewModel"
              Title="LobbyPage">
@@ -68,5 +69,8 @@
                 Text="Start spil" 
                 Command="{Binding GoToGameCommand}"
                 IsVisible="{Binding IsGoToGameButtonVisible}"/>
+
+        <views:FriendsView Grid.Column="0" Grid.Row="0" Grid.RowSpan="7"
+                           CanInvite="True"/>
     </Grid>
 </ContentPage>

@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Server.API.DTO;
+using Server.API.Services.Interfaces;
+using Server.API.Models;
 
 namespace Server.Test.Hubs
 {
@@ -19,7 +21,7 @@ namespace Server.Test.Hubs
         private IHubCallerClients _clients;
         private IGroupManager _groups;
         private HubCallerContext _context;
-
+        private ILobbyManager _lobbyManager;
         private ILogger<FriendsHub> _logger;
         private IFriendsRepository _friendsRepository;
         private IClientProxy _clientProxy;
@@ -34,11 +36,11 @@ namespace Server.Test.Hubs
             _context = Substitute.For<HubCallerContext>();
             _clientProxy = Substitute.For<IClientProxy>();
             _singleClientProxy = Substitute.For<ISingleClientProxy>();
-
+            _lobbyManager = Substitute.For<ILobbyManager>();
             _friendsRepository = Substitute.For<IFriendsRepository>();
             _logger = Substitute.For<ILogger<FriendsHub>>();
 
-            _uut = new FriendsHub(_logger, _friendsRepository)
+            _uut = new FriendsHub(_logger, _friendsRepository, _lobbyManager)
             {
                 Clients = _clients,
                 Groups = _groups,
@@ -146,11 +148,44 @@ namespace Server.Test.Hubs
         }
 
         [Test]
+        public async Task InviteFriend_NotFriends_ReturnsFalse()
+        {
+            // Arrange
+            var otherUsername = "otherUser";
+            _clients.Group(otherUsername).Returns(_clientProxy);
+            _friendsRepository.FindFriendship(Arg.Any<string>(), Arg.Any<string>()).Returns((Friendship?)null);
+
+            // Act
+            var result = await _uut.InviteFriend(otherUsername);
+
+            // Assert
+            Assert.That(result.Success, Is.False);
+        }
+
+        [Test]
+        public async Task InviteFriend_NoLobby_ReturnsFalse()
+        {
+            // Arrange
+            var otherUsername = "otherUser";
+            _clients.Group(otherUsername).Returns(_clientProxy);
+            _friendsRepository.FindFriendship(Arg.Any<string>(), Arg.Any<string>()).Returns(new Friendship());
+            _lobbyManager.GetLobbyIdFromUsername(Arg.Any<string>()).Returns((string?)null);
+
+            // Act
+            var result = await _uut.InviteFriend(otherUsername);
+
+            // Assert
+            Assert.That(result.Success, Is.False);
+        }
+
+        [Test]
         public async Task InviteFriend_ValidRequest_NotifiesClient()
         {
             // Arrange
             var otherUsername = "otherUser";
             _clients.Group(otherUsername).Returns(_clientProxy);
+            _friendsRepository.FindFriendship(Arg.Any<string>(), Arg.Any<string>()).Returns(new Friendship());
+            _lobbyManager.GetLobbyIdFromUsername(Arg.Any<string>()).Returns("");
 
             // Act
             var result = await _uut.InviteFriend(otherUsername);
