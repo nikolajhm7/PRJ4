@@ -75,9 +75,9 @@ namespace Client.UI.ViewModels
             _hangmanService.LobbyClosedEvent += OnLobbyClosed;
             _hangmanService.UserLeftLobbyEvent += OnUserLeftLobby;
 
-            maxPlayers = _lobbyService.GetLobbyMaxPlayers(LobbyId).Result.Value;
+            //maxPlayers = _lobbyService.GetLobbyMaxPlayers(LobbyId).Result.Value;
         }
-        public async void OnPageAppearing()
+        public async Task OnPageAppearing()
         {
             if (!_initialized)
             {
