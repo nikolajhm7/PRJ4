@@ -76,8 +76,8 @@ namespace Client.UI
             builder.Services.AddTransient<NewUserPage>();
             builder.Services.AddTransient<NewUserViewModel>();
 
-            builder.Services.AddTransient<GamePage>();
-            builder.Services.AddTransient<GameViewModel>();
+            builder.Services.AddTransient<HangmanPage>();
+            builder.Services.AddTransient<HangmanViewModel>();
 
             builder.Services.AddTransient<FriendsViewModel>();
 
