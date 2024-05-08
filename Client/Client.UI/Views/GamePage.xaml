@@ -144,7 +144,5 @@
                 Text="Reset"
                 Command="{Binding RestartGameCommand}"/>
 
-
-
     </Grid>
 </ContentPage>
