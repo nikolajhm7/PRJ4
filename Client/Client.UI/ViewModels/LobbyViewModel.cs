@@ -9,6 +9,8 @@ using Client.Library.Services.Interfaces;
 using Client.UI.Views;
 using Client.Library.Constants;
 using Client.UI.Games;
+using Client.UI.ViewModels.Manager;
+using Client.Library.Games;
 
 
 namespace Client.UI.ViewModels
@@ -19,9 +21,11 @@ namespace Client.UI.ViewModels
     {
         private readonly ILobbyService _lobbyService;
         private readonly INavigationService _navigationService;
+        private readonly IHangmanService _hangmanService;
         private GameInfo _gameInfo;
         private int gameId;
         private bool isHost, gameStarted, _initialized = false;
+        private ViewModelFactory _viewModelFactory;
 
         [ObservableProperty] 
         private string imagePath = "";
@@ -34,12 +38,17 @@ namespace Client.UI.ViewModels
         public ObservableCollection<string> playerNames = new ObservableCollection<string> { };
 
         [ObservableProperty]
-        private bool isGoToGameButtonVisible = false;
+        private bool isGoToGameButtonEnabled = false;
 
-        public LobbyViewModel(ILobbyService lobbyService, INavigationService navigationService)
+        [ObservableProperty]
+        private string goToGameButtonText = "Start game";
+
+        public LobbyViewModel(ILobbyService lobbyService, INavigationService navigationService, ViewModelFactory viewModelFactory, IHangmanService hangmanService)
         {
             _lobbyService = lobbyService;
             _navigationService = navigationService;
+            _viewModelFactory = viewModelFactory;
+            _hangmanService = hangmanService;
 
             // Subscribe to events
             _lobbyService.UserJoinedLobbyEvent += OnUserJoinedLobby;
@@ -56,8 +65,14 @@ namespace Client.UI.ViewModels
                 var isHostResult = await _lobbyService.UserIsHost(lobbyId);
                 if (isHostResult.Success)
                 {
+                    //The player is the host of the game
                     isHost = true;
-                    IsGoToGameButtonVisible = true;
+                    IsGoToGameButtonEnabled = true;
+                }
+                else
+                {
+                    //The player is a participant in the game
+                    GoToGameButtonText = "Go to game";
                 }
                 await LoadUsersInLobby();
                 _initialized = true;
@@ -110,12 +125,18 @@ namespace Client.UI.ViewModels
 
         private void OnGameStarted()
         {
-            if (!isHost)
+            MainThread.BeginInvokeOnMainThread(() =>
             {
-                MainThread.BeginInvokeOnMainThread(() =>
-                    GoToGameAsync()
-                );
-            }
+                if (!isHost)
+                {
+                    GoToGameAsync();
+                    IsGoToGameButtonEnabled = true;
+                }
+                else
+                {
+                    GoToGameButtonText = "Go back to game";
+                }
+            });
         }
 
         private async void GoToGameAsync()
@@ -132,6 +153,7 @@ namespace Client.UI.ViewModels
                     //remove event listeners
                     _lobbyService.LobbyClosedEvent -= OnLobbyClosed;
                     CloseLobby();
+                    LeaveLobbyAndServices();
                 });
             }
         }
@@ -144,7 +166,7 @@ namespace Client.UI.ViewModels
                 "Host closed lobby",
                 "Ok"
             );
-            await _navigationService.NavigateBack();
+            _viewModelFactory.ResetHangmanViewModel();
         }
 
 
@@ -173,9 +195,7 @@ namespace Client.UI.ViewModels
 
             if (answer)
             {
-                
-                await _lobbyService.LeaveLobbyAsync(lobbyId);
-                await _navigationService.NavigateBack();
+                LeaveLobbyAndServices();
             }
         }
 
@@ -192,6 +212,16 @@ namespace Client.UI.ViewModels
                 gameStarted = true;
             }
             await _navigationService.NavigateToPage($"{nameof(HangmanPage)}?LobbyId={LobbyId}");
+        }
+
+
+        private async void LeaveLobbyAndServices()
+        {
+            _viewModelFactory.ResetHangmanViewModel();
+            await _lobbyService.LeaveLobbyAsync(lobbyId);
+            await _navigationService.NavigateToPage(nameof(PlatformPage));
+            await _lobbyService.DisconnectAsync();
+            await _hangmanService.DisconnectAsync();
         }
     }
 }
