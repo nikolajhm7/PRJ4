@@ -14,22 +14,18 @@ using Server.API.Repository;
 
 namespace Server.Test.Middleware;
 
-public class TokenRefreshMiddlewareTests : TestBase
+public class TokenRefreshMiddlewareTests : IntegrationTestBase
 {
     private TokenRefreshMiddleware _middleware;
     private RequestDelegate _next;
     private DefaultHttpContext _httpContext;
-    private ITokenRepository _tokenRepository;
-    private IJwtTokenService _jwtTokenService;
     private IUserRepository _userRepository;
 
     [SetUp]
     public void SetUp()
     {
         _next = Substitute.For<RequestDelegate>();
-        _tokenRepository = Substitute.For<ITokenRepository>();
-        _jwtTokenService = new JwtTokenService(Configuration, _tokenRepository, TimeService);
-        _middleware = new TokenRefreshMiddleware(_next, _jwtTokenService);
+        _middleware = new TokenRefreshMiddleware(_next, JwtTokenService);
         _httpContext = new DefaultHttpContext();
         _httpContext.Response.Body = new MemoryStream();
         var userStore = Substitute.For<IUserStore<User>>();
@@ -52,10 +48,10 @@ public class TokenRefreshMiddlewareTests : TestBase
     public async Task InvokeAsync_WithExpiringToken_ShouldRefreshToken()
     {
         // Arrange
-        var token = _jwtTokenService.GenerateToken("testUser");
+        var token = JwtTokenService.GenerateToken("testUser");
         _httpContext.Request.Headers["Authorization"] = $"Bearer {token}";
         
-        var refreshToken = _jwtTokenService.GenerateRefreshToken("testUser");
+        var refreshToken = JwtTokenService.GenerateRefreshToken("testUser");
         
         _httpContext.Request.Headers["X-Refresh-Token"] = refreshToken;
 
@@ -79,8 +75,8 @@ public class TokenRefreshMiddlewareTests : TestBase
         
         TimeService.UtcNow.Returns(DateTime.UtcNow.AddMinutes(29));  // 1 minut til udløb
         
-        _tokenRepository.GetRefreshToken("testUser").Returns(refreshToken);
-        _tokenRepository.IsActive("testUser").Returns(true);
+        TokenRepository.GetRefreshToken("testUser").Returns(refreshToken);
+        TokenRepository.IsActive("testUser").Returns(true);
         
         await _middleware.InvokeAsync(_httpContext);
         
@@ -103,10 +99,10 @@ public class TokenRefreshMiddlewareTests : TestBase
     {
         TimeService.UtcNow.Returns(DateTime.UtcNow);
         // Arrange
-        var token = _jwtTokenService.GenerateToken("testUser");
+        var token = JwtTokenService.GenerateToken("testUser");
         _httpContext.Request.Headers["Authorization"] = $"Bearer {token}";
 
-        var refreshToken = _jwtTokenService.GenerateRefreshToken("testUser");
+        var refreshToken = JwtTokenService.GenerateRefreshToken("testUser");
         _httpContext.Request.Headers["X-Refresh-Token"] = refreshToken;
 
         Context.Users.Add(
@@ -137,4 +133,17 @@ public class TokenRefreshMiddlewareTests : TestBase
         await _next.Received(1).Invoke(_httpContext);
     }
 
+    
+    private void ValidateJwtTokenStructure(string token)
+    {
+        var accessTokenParts = token.Split('.');
+        Assert.That(accessTokenParts.Length, Is.EqualTo(3), "JWT should have 3 parts separated by '.' for AccessToken");
+    }
+    
+    private void ValidateRefreshTokenStructure(string refreshToken)
+    {
+        Assert.That(refreshToken, Is.Not.Null.Or.Empty, "Refresh Token should not be null or empty");
+        Assert.DoesNotThrow(() => Convert.FromBase64String(refreshToken), "Refresh Token should be a valid Base64 string");
+        Assert.That(refreshToken.Length, Is.EqualTo(44), "Refresh Token should be 44 characters long");
+    }
 }

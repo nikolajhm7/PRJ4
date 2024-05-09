@@ -61,7 +61,6 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
     {
         builder.ConfigureServices(services =>
         {
-            // Find den eksisterende DbContext registrering og fjern den
             var descriptor = services.SingleOrDefault(
                 d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
 
@@ -70,13 +69,10 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                 services.Remove(descriptor);
             }
 
-            // Anvend den allerede oprettede DbContext konfiguration
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseInMemoryDatabase("TestDb");  // Brug samme navn som i IntegrationTestBase for konsistens
-            });
-
-            // Tilføj yderligere mock services eller ændringer til din konfiguration her hvis nødvendigt
+                options.UseInMemoryDatabase("TestDb");
+            }, ServiceLifetime.Singleton);
         });
     }
 }
