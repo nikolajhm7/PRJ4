@@ -9,6 +9,7 @@ using Client.Library.Services.Interfaces;
 using Client.UI.Views;
 using Client.Library.Constants;
 using Client.UI.Games;
+using Microsoft.Extensions.Logging;
 
 
 namespace Client.UI.ViewModels
@@ -22,6 +23,8 @@ namespace Client.UI.ViewModels
         private GameInfo _gameInfo;
         private int gameId;
         private bool isHost, gameStarted, _initialized = false;
+        
+        private ILogger<LobbyViewModel> _logger;
 
         [ObservableProperty] 
         private string imagePath = "";
@@ -36,10 +39,11 @@ namespace Client.UI.ViewModels
         [ObservableProperty]
         private bool isGoToGameButtonVisible = false;
 
-        public LobbyViewModel(ILobbyService lobbyService, INavigationService navigationService)
+        public LobbyViewModel(ILobbyService lobbyService, INavigationService navigationService, ILogger<LobbyViewModel> logger)
         {
             _lobbyService = lobbyService;
             _navigationService = navigationService;
+            _logger = logger;
 
             // Subscribe to events
             _lobbyService.UserJoinedLobbyEvent += OnUserJoinedLobby;
@@ -66,10 +70,12 @@ namespace Client.UI.ViewModels
 
         private async Task InitializeLobby()
         {
+            _logger.LogInformation("Initializing lobby");
             var gameIdResult = await _lobbyService.GetLobbyGameId(lobbyId);
             if (!gameIdResult.Success)
             {
-                Debug.WriteLine("Failed to get gameid in lobby: " + gameIdResult.Msg);
+                _logger.LogError("Failed to get game id for lobby: " + gameIdResult.Msg);
+                return;
             }
             gameId = gameIdResult.Value;
             if (GameInfMapper.GameInfoDictionary.TryGetValue(gameId, out GameInfo? _gameInfo))
@@ -78,12 +84,13 @@ namespace Client.UI.ViewModels
             }
             else
             {
-                Debug.WriteLine("Lobby info not defined for gameid " + gameId);
+                _logger.LogError("Failed to get game info for game id: " + gameId);
             }
         }
 
         private async Task LoadUsersInLobby()
         {
+            _logger.LogInformation("Loading users in lobby");
             var result = await _lobbyService.GetUsersInLobby(lobbyId);
             if (result.Success)
             {
@@ -91,10 +98,11 @@ namespace Client.UI.ViewModels
                 {
                     PlayerNames.Add(user.Username);
                 }
+                _logger.LogInformation("Successfully loaded users in lobby");
             }
             else
             {
-                Debug.WriteLine("Failed to get users in lobby: " + result.Msg);
+                _logger.LogError("Failed to get users in lobby: " + result.Msg);
             }
         }
 

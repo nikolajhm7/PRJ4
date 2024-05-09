@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using Client.Library.Models;
 using Client.UI.Views;
+using Microsoft.Extensions.Logging;
 
 namespace Client.UI.ViewModels
 {
@@ -39,15 +40,18 @@ namespace Client.UI.ViewModels
 
         private readonly INavigationService _navigationService;
         private readonly IJwtTokenService _jwtTokenService;
+        
+        private ILogger<FriendsViewModel> _logger;
 
         #endregion
 
-        public FriendsViewModel(IFriendsService friendsService, ILobbyService lobbyService, INavigationService navigationService, IJwtTokenService jwtTokenService)
+        public FriendsViewModel(IFriendsService friendsService, ILobbyService lobbyService, INavigationService navigationService, IJwtTokenService jwtTokenService, ILogger<FriendsViewModel> logger)
         {
             _friendsService = friendsService;
             _lobbyService = lobbyService;
             _navigationService = navigationService;
             _jwtTokenService = jwtTokenService;
+            _logger = logger;
 
             _friendsService.NewFriendRequestEvent += OnNewFriendRequest;
             _friendsService.FriendRequestAcceptedEvent += OnFriendRequestAccepted;
@@ -60,7 +64,12 @@ namespace Client.UI.ViewModels
             IsUser = !_jwtTokenService.IsUserRoleGuest();
             if (IsUser)
             {
+                _logger.LogInformation("User is not a guest, retrieving friends.");
                 await RetrieveFriends();
+            }
+            else
+            {
+                _logger.LogInformation("User is a guest, skipping retrieval of friends.");
             }
         }
 
@@ -68,7 +77,7 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         public async Task RetrieveFriends()
         {
-
+            _logger.LogInformation("Starting to retrieve friends.");
             ActionResult<List<FriendDTO>> res = await _friendsService.GetFriends(true);
             if (res.Success)
             {
@@ -83,9 +92,11 @@ namespace Client.UI.ViewModels
                         FriendsCollection.Add(temp);
                     }
                 }
+                _logger.LogInformation("Successfully retrieved and updated friends list.");
             }
             else
             {
+                _logger.LogError("Failed to retrieve friends.");
                 await Shell.Current.DisplayAlert("Error", "Failed to get friends", "OK");
             }
         }
@@ -93,6 +104,7 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         public async Task AddNewFriend()
         {
+            _logger.LogInformation("Attempting to add new friend: {Username}", AddFriendText);
             var text = AddFriendText;
             AddFriendText = string.Empty;
 
@@ -100,25 +112,36 @@ namespace Client.UI.ViewModels
 
             if (!res.Success)
             {
+                _logger.LogError("Failed to send friend request to: {Username}.", text);
                 await Shell.Current.DisplayAlert("Error", "Failed to send friend request", "OK");
+            }
+            else
+            {
+                _logger.LogInformation("Friend request sent to: {Username}", text);
             }
         }
 
         [RelayCommand]
         public async Task AcceptFriendRequest(string s)
         {
+            _logger.LogInformation("Accepting friend request from: {Username}", s);
             await _friendsService.AcceptFriendRequest(s);
             var friend = FriendsCollection.FirstOrDefault(f => f.Name == s);
             if (friend != null)
             {
                 friend.IsPending = false;
+                _logger.LogInformation("Friend request accepted and updated for: {Username}", s);
             }
-
+            else
+            {
+                _logger.LogWarning("Attempted to accept friend request, but user not found in list: {Username}", s);
+            }
         }
 
         [RelayCommand]
         public async Task DeclineFriendRequest(string s)
         {
+            _logger.LogInformation("Declining friend request from: {Username}", s);
             await _friendsService.RemoveFriend(s);
             FriendsCollection.Remove(FriendsCollection.FirstOrDefault(f => f.Name == s));
         }
