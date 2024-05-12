@@ -14,6 +14,9 @@ using Serilog;
 using Client.Library.Games;
 using Client.Library;
 using Client.Library.Services.Interfaces;
+using Client.UI.Games;
+using ChatAppPage = Client.UI.Games.ChatAppPage;
+using ChatAppViewModel = Client.UI.Games.ChatAppViewModel;
 
 namespace Client.UI
 {
@@ -73,12 +76,10 @@ namespace Client.UI
             builder.Services.AddTransient<NewUserPage>();
             builder.Services.AddTransient<NewUserViewModel>();
 
-            builder.Services.AddTransient<GamePage>();
-            builder.Services.AddTransient<GameViewModel>();
+            builder.Services.AddTransient<HangmanPage>();
+            builder.Services.AddTransient<HangmanViewModel>();
 
-            //chat page skal slettes
-            builder.Services.AddTransient<ChatAppPage>();
-            builder.Services.AddTransient<ChatAppViewModel>();
+            builder.Services.AddTransient<FriendsViewModel>();
 
             #endregion
 
@@ -94,6 +95,11 @@ namespace Client.UI
 
             #endregion
 
+            builder.Services.AddTransient<HangmanPage>();
+            builder.Services.AddTransient<HangmanViewModel>();
+
+            //builder.Services.AddTransient<ChatAppPage>();
+            //builder.Services.AddTransient<ChatAppViewModel>();
 
 #if DEBUG
             builder.Logging.AddDebug();

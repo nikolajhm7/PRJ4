@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
 using Client.Library.Services.Interfaces;
 using Client.UI.Views;
+using Microsoft.Extensions.Logging;
 
 namespace Client.UI.ViewModels
 {
@@ -15,14 +16,16 @@ namespace Client.UI.ViewModels
         private readonly IConfiguration _configuration;
         private readonly INavigationService _navigationService;
         private IJwtTokenService _jwtTokenService;
+        private ILogger<GuestLoginViewModel> _logger;
 
         public GuestLoginViewModel(IHttpClientFactory httpClientFactory, IConfiguration configuration,
-            INavigationService navigationService, IJwtTokenService jwtTokenService)
+            INavigationService navigationService, IJwtTokenService jwtTokenService, ILogger<GuestLoginViewModel> logger)
         {
             _httpClient = httpClientFactory.CreateClient("ApiHttpClient");
             _configuration = configuration;
             _navigationService = navigationService;
             _jwtTokenService = jwtTokenService;
+            _logger = logger;
         }
 
         [ObservableProperty] string _username = "";
@@ -36,8 +39,10 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         public async Task MakeNewUser()
         {
+            _logger.LogInformation("Make new user clicked");
             if (string.IsNullOrWhiteSpace(Username))
             {
+                _logger.LogWarning("Username is empty");
                 await Shell.Current.DisplayAlert("Fejl", "Brugernavn skal udfyldes", "OK");
                 return;
             }
@@ -45,6 +50,7 @@ namespace Client.UI.ViewModels
 
             if (!Regex.IsMatch(Username, pattern))
             {
+                _logger.LogWarning("Username does not match pattern");
                 await Shell.Current.DisplayAlert("Fejl", "Brugernavnet skal være mellem 2 og 20 tegn og må kun indeholde bogstaver og tal", "OK");
                 return;
             }
@@ -54,11 +60,13 @@ namespace Client.UI.ViewModels
             
             if (_jwtTokenService.SetTokensFromResponse(response))
             {
+                _logger.LogInformation("Guest logged in successfully");
                 await Shell.Current.DisplayAlert("Succes", "Du er nu logget ind som gæst", "OK");
                 await _navigationService.NavigateToPage(nameof(JoinPage));
             }
             else
             {
+                _logger.LogWarning("Guest login failed");
                 var errorResponse = await response.Content.ReadAsStringAsync();
                 await Shell.Current.DisplayAlert("Fejl", $"Der opstod en fejl: {errorResponse}", "OK");
             }

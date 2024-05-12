@@ -8,6 +8,9 @@ using Server.API.Models;
 using Server.API.Repositories.Interfaces;
 using Server.API.Services;
 using Server.API.Services.Interfaces;
+using System.Collections.Generic;
+using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Server.Test.Games;
 
@@ -93,35 +96,27 @@ public class HangmanHubTests
     }
     
     [Test]
-    public async Task StartGame_StartsGame_ReturnsTrueSendsMessage()
+    public async Task OnConnectedAsync_LobbyDoesNotExistAndGameStarted_AddsToGroup()
     {
         // Arrange
         var lobbyId = "Id";
-        _clients.Group(Arg.Any<string>()).Returns(_clientProxy);
-        _logicManager.LobbyExists(lobbyId).Returns(false);
+        _lobbyManager.GetLobbyIdFromUsername(Arg.Any<string>()).Returns(lobbyId);
+        _lobbyManager.GetGameStatus(lobbyId).Returns(GameStatus.InGame);
+        _logicManager.LobbyExists(lobbyId).Returns(true);
+        _logicManager.TryGetValue(lobbyId, out var logic).Returns(x =>
+        {
+            x[1] = _logic;
+            return true;
+        });
 
         // Act
-        var res = await _uut.StartGame(lobbyId);
+        await _uut.OnConnectedAsync();
         
         // Assert
-        await _clientProxy.Received(1).SendCoreAsync(Arg.Any<string>(), Arg.Any<object[]>());
-        Assert.That(res.Success, Is.True);
+        await _groups.Received(1).AddToGroupAsync(Arg.Any<string>(), Arg.Any<string>());
     }
     
-    [Test]
-    public async Task StartGame_AlreadyExists_ReturnsFalse()
-    {
-        // Arrange
-        var lobbyId = "Id";
-        _logicManager.LobbyExists(Arg.Any<string>()).Returns(true);
-
-        // Act
-        var res = await _uut.StartGame(lobbyId);
         
-        // Assert
-        Assert.That(res.Success, Is.False);
-    }
-    
     [Test]
     public async Task GuessLetter_LobbyDoesNotExist_ReturnsFalse()
     {
@@ -142,7 +137,18 @@ public class HangmanHubTests
     {
         // Arrange
         var lobbyId = "Id";
+        var connection = "connection-id";
+        var username = "Testuser";
+        var user = new ConnectedUserDTO(username, connection);
+
+        _context.User?.Identity?.Name.Returns(username);
+        _context.ConnectionId.Returns(connection);
+
+        var list = new List<ConnectedUserDTO> { user, new ConnectedUserDTO(username, connection) };
+        _lobbyManager.GetUsersInLobby(lobbyId).Returns(list);
+
         _clients.Group(Arg.Any<string>()).Returns(_clientProxy);
+
         _randomPicker.PickRandomItem(Arg.Any<List<string>>()).Returns("word");
         _logicManager.TryGetValue(Arg.Any<string>(), out Arg.Any<IHangmanLogic>()).Returns(x =>
         {
@@ -150,6 +156,7 @@ public class HangmanHubTests
             return true;
         });
         _logic.IsGameOver().Returns(false);
+
 
         // Act
         var res = await _uut.GuessLetter(lobbyId, 'c');
@@ -165,6 +172,16 @@ public class HangmanHubTests
     {
         // Arrange
         var lobbyId = "Id";
+        var username = "Testuser";
+        var connection = "connection-id";
+        var user = new ConnectedUserDTO(username, connection);
+
+        _context.User?.Identity?.Name.Returns(username);
+        _context.ConnectionId.Returns(connection);
+
+        var list = new List<ConnectedUserDTO> { user, new ConnectedUserDTO(username, connection) };
+        _lobbyManager.GetUsersInLobby(lobbyId).Returns(list);
+
         _clients.Group(Arg.Any<string>()).Returns(_clientProxy);
         _logicManager.TryGetValue(Arg.Any<string>(), out Arg.Any<IHangmanLogic>()).Returns(x =>
         {

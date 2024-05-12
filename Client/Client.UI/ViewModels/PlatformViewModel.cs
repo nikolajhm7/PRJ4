@@ -28,10 +28,9 @@ namespace Client.UI.ViewModels
             get { return games; }
             set { SetProperty(ref games, value); }
         }
-            [ObservableProperty]
-        private string _addFriendText;
+
         [ObservableProperty]
-        private string _addFriendPlaceholder;
+        private string _addFriendText;
         
         private ObservableCollection<FriendDTO> friendsCollection = [];
         public ObservableCollection<FriendDTO> FriendsCollection
@@ -75,7 +74,6 @@ namespace Client.UI.ViewModels
             Username = _jwtTokenService.GetUsernameFromToken();
             SetAvatar();
             await pullGames();
-            await RetrieveFriends();
         }
 
         #region Setting up frontend stuff
@@ -179,66 +177,6 @@ namespace Client.UI.ViewModels
         }
         #endregion
         
-        #region Friends
-        [RelayCommand]
-        public async Task RetrieveFriends()
-        {
-            
-            ActionResult<List<FriendDTO>> res = await _friendsService.GetFriends(true);
-                if (res.Success)
-                {
-                    
-                foreach (var friendDTO in res.Value)
-                    {
-                        if (FriendsCollection.Any(f => f.Name == friendDTO.Name))
-                        {}
-                        else
-                        {
-                            var temp = friendDTO;
-                            FriendsCollection.Add(temp);
-                        }
-                    }
-                }
-                else
-                {
-                    await Shell.Current.DisplayAlert("Error", "Failed to get friends", "OK");
-                }
-        }
-
-        [RelayCommand]
-        public async Task AddNewFriend()
-        {
-            var text = AddFriendText;
-            AddFriendText = string.Empty;
-
-            var res = await _friendsService.SendFriendRequest(text);
-
-            if (!res.Success)
-            {
-                await Shell.Current.DisplayAlert("Error", "Failed to send friend request", "OK");
-            }
-        }
-
-        [RelayCommand]
-        public async Task AcceptFriendRequest(string s)
-        {
-            await _friendsService.AcceptFriendRequest(s);
-             var friend = FriendsCollection.FirstOrDefault(f => f.Name == s);
-            if (friend != null)
-                {
-                    friend.IsPending = false;
-                }
-            
-        }
-
-        [RelayCommand]
-        public async Task DeclineFriendRequest(string s)
-        {
-
-           await _friendsService.RemoveFriend(s);
-           FriendsCollection.Remove(FriendsCollection.FirstOrDefault(f => f.Name == s));
-        }
-        #endregion
     }
 }
 

@@ -14,9 +14,9 @@ public class TokenRepository : ITokenRepository
         _context = context;
     }
 
-    public void SaveRefreshToken(string userId, string refreshToken, DateTime expiryDate)
+    public void SaveRefreshToken(string username, string refreshToken, DateTime expiryDate)
     {
-        var user = _context.Users.Include(u => u.RefreshTokens).FirstOrDefault(u => u.Id == userId);
+        var user = _context.Users.Include(u => u.RefreshTokens).FirstOrDefault(u => u.UserName == username);
         if (user != null)
         {
             user.RefreshTokens.Add(new RefreshToken
@@ -29,15 +29,15 @@ public class TokenRepository : ITokenRepository
         }
     }
 
-    public string GetRefreshToken(string userId)
+    public string GetRefreshToken(string username)
     {
-        var user = _context.Users.Include(u => u.RefreshTokens).FirstOrDefault(u => u.Id == userId);
+        var user = _context.Users.Include(u => u.RefreshTokens).FirstOrDefault(u => u.UserName == username);
         return user?.RefreshTokens.LastOrDefault()?.Token;
     }
 
-    public bool IsActive(string userId)
+    public bool IsActive(string username)
     {
-        var user = _context.Users.Include(u => u.RefreshTokens).FirstOrDefault(u => u.Id == userId);
+        var user = _context.Users.Include(u => u.RefreshTokens).FirstOrDefault(u => u.UserName == username);
         return user?.RefreshTokens.LastOrDefault()?.IsActive ?? false;
     }
 }

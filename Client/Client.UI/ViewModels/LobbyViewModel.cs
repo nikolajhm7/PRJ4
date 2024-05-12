@@ -8,6 +8,8 @@ using Client.Library.Services;
 using Client.Library.Services.Interfaces;
 using Client.UI.Views;
 using Client.Library.Constants;
+using Client.UI.Games;
+using Microsoft.Extensions.Logging;
 
 
 namespace Client.UI.ViewModels
@@ -20,7 +22,9 @@ namespace Client.UI.ViewModels
         private readonly INavigationService _navigationService;
         private GameInfo _gameInfo;
         private int gameId;
-        private bool isHost = false;
+        private bool isHost, gameStarted, _initialized = false;
+        
+        private ILogger<LobbyViewModel> _logger;
 
         [ObservableProperty] 
         private string imagePath = "";
@@ -35,10 +39,11 @@ namespace Client.UI.ViewModels
         [ObservableProperty]
         private bool isGoToGameButtonVisible = false;
 
-        public LobbyViewModel(ILobbyService lobbyService, INavigationService navigationService)
+        public LobbyViewModel(ILobbyService lobbyService, INavigationService navigationService, ILogger<LobbyViewModel> logger)
         {
             _lobbyService = lobbyService;
             _navigationService = navigationService;
+            _logger = logger;
 
             // Subscribe to events
             _lobbyService.UserJoinedLobbyEvent += OnUserJoinedLobby;
@@ -49,22 +54,28 @@ namespace Client.UI.ViewModels
 
         public async Task OnPageappearing()
         {
-            await InitializeLobby();
-            var isHostResult = await _lobbyService.UserIsHost(lobbyId);
-            if (isHostResult.Success)
+            if(!_initialized)
             {
-                isHost = true;
-                IsGoToGameButtonVisible = true;
+                await InitializeLobby();
+                var isHostResult = await _lobbyService.UserIsHost(lobbyId);
+                if (isHostResult.Success)
+                {
+                    isHost = true;
+                    IsGoToGameButtonVisible = true;
+                }
+                await LoadUsersInLobby();
+                _initialized = true;
             }
-            await LoadUsersInLobby();
         }
 
         private async Task InitializeLobby()
         {
+            _logger.LogInformation("Initializing lobby");
             var gameIdResult = await _lobbyService.GetLobbyGameId(lobbyId);
             if (!gameIdResult.Success)
             {
-                Debug.WriteLine("Failed to get gameid in lobby: " + gameIdResult.Msg);
+                _logger.LogError("Failed to get game id for lobby: " + gameIdResult.Msg);
+                return;
             }
             gameId = gameIdResult.Value;
             if (GameInfMapper.GameInfoDictionary.TryGetValue(gameId, out GameInfo? _gameInfo))
@@ -73,34 +84,36 @@ namespace Client.UI.ViewModels
             }
             else
             {
-                Debug.WriteLine("Lobby info not defined for gameid " + gameId);
+                _logger.LogError("Failed to get game info for game id: " + gameId);
             }
         }
 
         private async Task LoadUsersInLobby()
         {
+            _logger.LogInformation("Loading users in lobby");
             var result = await _lobbyService.GetUsersInLobby(lobbyId);
             if (result.Success)
             {
                 foreach (var user in result.Value)
                 {
-                    playerNames.Add(user.Username);
+                    PlayerNames.Add(user.Username);
                 }
+                _logger.LogInformation("Successfully loaded users in lobby");
             }
             else
             {
-                Debug.WriteLine("Failed to get users in lobby: " + result.Msg);
+                _logger.LogError("Failed to get users in lobby: " + result.Msg);
             }
         }
 
         private void OnUserJoinedLobby(ConnectedUserDTO user)
         {
-            playerNames.Add(user.Username);
+            PlayerNames.Add(user.Username);
         }
 
         private void OnUserLeftLobby(ConnectedUserDTO user)
         {
-            playerNames.Remove(user.Username);
+            PlayerNames.Remove(user.Username);
         }
 
         private void OnGameStarted()
@@ -115,7 +128,7 @@ namespace Client.UI.ViewModels
 
         private async void GoToGameAsync()
         {
-            await _navigationService.NavigateToPage($"{nameof(GamePage)}?LobbyId={LobbyId}");
+            await _navigationService.NavigateToPage($"{nameof(HangmanPage)}?LobbyId={LobbyId}");
         }
 
         private void OnLobbyClosed()
@@ -177,29 +190,16 @@ namespace Client.UI.ViewModels
         [RelayCommand]
         async Task GoToGame()
         {
-            var res = await _lobbyService.StartGameAsync(LobbyId);
-            if (res.Success)
+            if (!gameStarted)
             {
-                await _navigationService.NavigateToPage($"{nameof(GamePage)}?LobbyId={LobbyId}");
+                var res = await _lobbyService.StartGameAsync(LobbyId);
+                if (!res.Success)
+                {
+                    await Shell.Current.DisplayAlert("Failed", "to join lobby", "OK");
+                }
+                gameStarted = true;
             }
-            else
-            {
-                await Shell.Current.DisplayAlert("Failed", "to join lobby", "OK");
-            }
-        }
-
-        //Handle result of different functions, and error log if neccesary:
-        private void HandleActionResult(ActionResult message)
-        {
-            if (!message.Success)
-            {
-                // Give the user feedback about the error
-                Debug.WriteLine("Creating a lobby failed: msg:", message.Msg);
-            }
-            else
-            {
-                Debug.WriteLine("This is your lobby id:", message.Msg);
-            }
+            await _navigationService.NavigateToPage($"{nameof(HangmanPage)}?LobbyId={LobbyId}");
         }
     }
 }

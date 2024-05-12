@@ -140,7 +140,6 @@ app.UseEndpoints(endpoints =>
     _ = endpoints.MapHub<LobbyHub>(builder.Configuration["ConnectionSettings:LobbyEndpoint"]);
     _ = endpoints.MapHub<FriendsHub>(builder.Configuration["ConnectionSettings:FriendsEndpoint"]);
     _ = endpoints.MapHub<HangmanHub>(builder.Configuration["ConnectionSettings:HangmanEndpoint"]);
-    _ = endpoints.MapHub<ChatAppHub>(builder.Configuration["ConnectionSettings:ChatAppEndpoint"]);
 });
 
 app.MapControllers();
@@ -157,10 +156,10 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-
-//app.Urls.Add("https://*:5008");
+app.Urls.Add("http://*:5008");
 
 app.Run();
+
 
 
 void addJWTAuthentication(WebApplicationBuilder builder)

@@ -137,5 +137,17 @@ namespace Server.API.Services
                 return new(false, "Could not find lobby", 0);
             }
         }
+
+        public int GetLobbyMaxPlayers(string lobbyId)
+        {
+            if (lobbies.TryGetValue(lobbyId, out Lobby? lobby))
+            {
+                return lobby.MaxPlayers;
+            }
+            else
+            {
+                return 0;
+            }
+        }
     }
 }

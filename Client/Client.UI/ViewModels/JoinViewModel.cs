@@ -57,7 +57,7 @@ namespace Client.UI.ViewModels
                 }
                 else
                 {
-                    await _navigationService.NavigateToPage("//"+nameof(LoginPage));
+                    await _navigationService.NavigateToPage(nameof(LoginPage));
                 }
         }
     }

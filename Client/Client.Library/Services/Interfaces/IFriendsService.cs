@@ -10,9 +10,9 @@ namespace Client.Library.Services
 {
     public interface IFriendsService
     {
-        public event Action<string>? NewFriendRequestEvent;
-        public event Action<string>? FriendRequestAcceptedEvent;
-        public event Action<string>? NewGameInviteEvent;
+        public event Action<FriendDTO>? NewFriendRequestEvent;
+        public event Action<FriendDTO>? FriendRequestAcceptedEvent;
+        public event Action<string, string>? NewGameInviteEvent;
         public event Action<string>? FriendRemovedEvent;
 
         Task ConnectAsync();

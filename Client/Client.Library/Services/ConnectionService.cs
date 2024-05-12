@@ -122,6 +122,20 @@ namespace Client.Library.Services
             }
         }
 
+        public async Task<ActionResult> InvokeAsync(string methodName, object? arg1, object? arg2, object? arg3)
+        {
+            await ConnectAsync();
+
+            if (IsConnected)
+            {
+                return await _hubConnection.InvokeAsync<ActionResult>(methodName, arg1, arg2, arg3);
+            }
+            else
+            {
+                return new ActionResult(false, "No connection to server.");
+            }
+        }
+
         public async Task<ActionResult<T>> InvokeAsync<T>(string methodName, object? arg1)
         {
             await ConnectAsync();

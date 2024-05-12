@@ -84,6 +84,12 @@ namespace Server.API.Hubs
             return new(result.Success, result.Msg, result.Value);
         }
 
+        public async Task<ActionResult<int>> GetLobbyMaxPlayers(string lobbyId)
+        {
+            var maxPlayers = _lobbyManager.GetLobbyMaxPlayers(lobbyId);
+            return new(true, null, maxPlayers);
+        }
+
         public async Task<ActionResult> UserIsHost(string lobbyId)
         {
             var username = Context.User?.Identity?.Name;

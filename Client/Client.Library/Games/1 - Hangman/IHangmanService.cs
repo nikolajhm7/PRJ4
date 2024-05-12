@@ -13,12 +13,14 @@ namespace Client.Library.Games
         event Action<int>? GameStartedEvent;
         event Action<char, bool, List<int>>? GuessResultEvent;
         event Action<bool, string>? GameOverEvent;
-        event Action? LobbyClosedEvent;
+        event Action? LobbyClosedEvent; 
         event Action<string>? UserLeftLobbyEvent;
         Task ConnectAsync();
         Task DisconnectAsync();
-        //Task<ActionResult> StartGame(string lobbyId);
         Task<ActionResult> GuessLetter(string lobbyId, char letter);
         Task<ActionResult> RestartGame(string lobbyId);
+        Task<ActionResult<List<ConnectedUserDTO>>> GetUsersInGame(string lobbyId);
+        Task<ActionResult<Queue<string>>> GetQueueForGame(string lobbyId);
+        Task <ActionResult> LeaveGameAsync(string lobbyId);
     }
 }

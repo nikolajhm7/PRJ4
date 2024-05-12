@@ -14,6 +14,7 @@ namespace Client.Library.Services
         Task DisconnectAsync();
         Task<ActionResult> InvokeAsync(string methodName, object? arg1);
         Task<ActionResult> InvokeAsync(string methodName, object? arg1, object? arg2);
+        Task<ActionResult> InvokeAsync(string methodName, object? arg1, object? arg2, object? arg3);
         Task<ActionResult<T>> InvokeAsync<T>(string methodName, object? arg1);
         void On(string methodName, Action handler);
         void On<T>(string methodName, Action<T> handler);

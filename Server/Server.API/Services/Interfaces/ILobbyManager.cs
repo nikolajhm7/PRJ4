@@ -17,6 +17,7 @@ namespace Server.API.Services.Interfaces
         void StartGame(string lobbyId);
         GameStatus GetGameStatus(string lobbyId);
         ActionResult<int> GetLobbyGameId(string lobbyId);
+        int GetLobbyMaxPlayers(string lobbyId);
 
     }
 }

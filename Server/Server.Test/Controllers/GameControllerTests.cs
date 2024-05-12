@@ -116,5 +116,18 @@ public class GameControllerTests : TestBase
 
         Assert.That(result, Is.Not.Null);
     }
+    
+    [Test]
+    public async Task EditGame_ReturnsOk_WhenGameIsEdited()
+    {
+        GameDTO game = new GameDTO { Name = "Game1" };
+        int gameId = 1;
+        
+        _gameRepository.GetGameById(gameId).Returns(new Game());
+
+        var result = await _controller.EditGame(gameId, game) as OkResult;
+
+        Assert.That(result, Is.Not.Null);
+    }
 
 }

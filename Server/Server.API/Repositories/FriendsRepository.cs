@@ -63,7 +63,7 @@ namespace Server.API.Repositories
                 .FirstOrDefaultAsync();
         }
         
-        private async Task<Friendship?> FindFriendship(string userName, string friendName)
+        public async Task<Friendship?> FindFriendship(string userName, string friendName)
         {
             var friendship = await FindFriendshipOneWay(userName, friendName);
             if (friendship == null)
@@ -89,6 +89,7 @@ namespace Server.API.Repositories
             }
 
             friendship.Status = "Accepted";
+            friendship.date = DateTime.Now;
 
             _context.Friendships.Update(friendship);
             await _context.SaveChangesAsync();
@@ -110,15 +111,8 @@ namespace Server.API.Repositories
         public async Task<List<FriendDTO>> GetInvitesOf(string userName)
         {
             List<Friendship> friends;
-            List<Friendship> friends2;
 
             friends = await _context.Friendships
-                .Include(f => f.User1)
-                .Include(f => f.User2)
-                .Where(f => f.User1.UserName == userName && f.Status == "Pending")
-                .ToListAsync();
-
-            friends2 = await _context.Friendships
                 .Include(f => f.User1)
                 .Include(f => f.User2)
                 .Where(f => f.User2.UserName == userName && f.Status == "Pending")
@@ -127,11 +121,6 @@ namespace Server.API.Repositories
             var friendDTOs = new List<FriendDTO>();
             
             foreach (var f in friends)
-            {
-                friendDTOs.Add(FriendDTO.FormFriendship(userName, f));
-            }
-            
-            foreach (var f in friends2)
             {
                 friendDTOs.Add(FriendDTO.FormFriendship(userName, f));
             }
