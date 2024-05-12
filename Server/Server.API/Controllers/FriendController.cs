@@ -6,6 +6,8 @@ using Server.API.DTO;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Server.API.Repositories;
+using Server.API.Repositories.Interfaces;
 
 namespace Server.API.Controllers
 {
@@ -14,52 +16,70 @@ namespace Server.API.Controllers
     public class FriendshipController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<FriendshipController> _logger;
+        private readonly IFriendsRepository _friendsRepository;
 
-        public FriendshipController(ApplicationDbContext context)
+
+        public FriendshipController(ApplicationDbContext context, IFriendsRepository friendsRepository, ILogger<FriendshipController> logger)
         {
             _context = context;
+            _friendsRepository = friendsRepository;
+            _logger = logger;
         }
 
         // PUT: api/Friendship/SendRequest
         [HttpPut("SendRequest")]
         public async Task<IActionResult> SendFriendRequest(string userId, string friendId)
         {
+            _logger.LogDebug("Start sending friend request between {userId} and {friendId}",userId,friendId);
+
             try
             {
-                // Check if users exist
-                var user = await _context.Users.FindAsync(userId);
-                var friend = await _context.Users.FindAsync(friendId);
+                await _friendsRepository.AddFriendRequest(userId, friendId);
 
-                if (user == null || friend == null)
-                    return NotFound();
-
-                // Check if friendship already exists
-                var existingFriendship = await _context.Friendships
-                    .Where(f => (f.User1Id == userId && f.User2Id == friendId) || (f.User1Id == friendId && f.User2Id == userId))
-                    .FirstOrDefaultAsync();
-
-                if (existingFriendship != null)
-                    return BadRequest("Friend request already sent or friendship already exists.");
-
-                // Create new friendship
-                var newFriendship = new Friendship
-                {
-                    User1Id = userId,
-                    User2Id = friendId,
-                    Status = "Pending", // Set status to pending initially
-                    date = DateTime.UtcNow
-                };
-
-                // Add and save changes
-                _context.Friendships.Add(newFriendship);
-                await _context.SaveChangesAsync();
-
-                return Ok("Friend request sent successfully.");
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, $"Internal server error in friend request");
             }
+
+            return Ok();
+            //try
+            //{
+            //    // Check if users exist
+            //    var user = await _context.Users.FindAsync(userId);
+            //    var friend = await _context.Users.FindAsync(friendId);
+
+            //    if (user == null || friend == null)
+            //        return NotFound();
+
+            //    // Check if friendship already exists
+            //    var existingFriendship = await _context.Friendships
+            //        .Where(f => (f.User1Id == userId && f.User2Id == friendId) || (f.User1Id == friendId && f.User2Id == userId))
+            //        .FirstOrDefaultAsync();
+
+            //    if (existingFriendship != null)
+            //        return BadRequest("Friend request already sent or friendship already exists.");
+
+            //    // Create new friendship
+            //    var newFriendship = new Friendship
+            //    {
+            //        User1Id = userId,
+            //        User2Id = friendId,
+            //        Status = "Pending", // Set status to pending initially
+            //        date = DateTime.UtcNow
+            //    };
+
+            //    // Add and save changes
+            //    _context.Friendships.Add(newFriendship);
+            //    await _context.SaveChangesAsync();
+
+            //    return Ok("Friend request sent successfully.");
+            //}
+            //catch (Exception ex)
+            //{
+            //    return StatusCode(500, $"Internal server error: {ex.Message}");
+            //}
         }
 
         // PUT: api/Friendship/AcceptRequest
