@@ -117,11 +117,16 @@ namespace Client.UI.Games
             if (result.Success)
             {
                 userQueue = result.Value;
-                var currentPlayer = userQueue.Dequeue();
-                FrontPlayer = currentPlayer + "'s turn";
-                userQueue.Enqueue(currentPlayer);
+                FrontPlayer = userQueue.Peek() + "'s turn";
             }
         }
+
+        //private void LoadPlayersTurn()
+        //{
+        //    var currentPlayer = userQueue.Dequeue();
+        //    FrontPlayer = currentPlayer + "'s turn";
+        //    userQueue.Enqueue(currentPlayer);
+        //}
 
         private void MakeUnderscores(int wordLength)
         {
@@ -163,6 +168,7 @@ namespace Client.UI.Games
             GuessedChars.Clear();
 
             LoadPlayerQueue();
+            //LoadPlayersTurn();
 
         }
         #endregion
@@ -197,9 +203,8 @@ namespace Client.UI.Games
 
             if (!guessedChars.Contains(char.ToUpper(letter))) { GuessedChars.Add(char.ToUpper(letter)); }
 
-            var currentPlayer = userQueue.Dequeue();
-            FrontPlayer = currentPlayer + "'s turn";
-            userQueue.Enqueue(currentPlayer);
+            LoadPlayerQueue();
+            //LoadPlayersTurn();
 
         }
         #endregion

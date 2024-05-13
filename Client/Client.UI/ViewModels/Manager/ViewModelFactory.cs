@@ -48,6 +48,8 @@ namespace Client.UI.ViewModels.Manager
 
         public void ResetLobbyViewModel()
         {
+            if(_lobbyViewModel != null)
+                _lobbyViewModel.unsubscribeServices();
             _lobbyViewModel = null;
         }
 
@@ -59,10 +61,16 @@ namespace Client.UI.ViewModels.Manager
             _hangmanViewModel = null;
         }
 
-        public void ResetAllViewModels()
+        public void ResetAllViewModels(string lobbyid)
         {
             ResetLobbyViewModel();
             ResetHangmanViewModel();
+            if(_lobbyViewModel == null && _hangmanViewModel == null)
+            {
+                _lobbyService.LeaveLobbyAsync(lobbyid);
+                _lobbyService.DisconnectAsync();
+                _hangmanService.DisconnectAsync();
+            }
         }
     }
 
