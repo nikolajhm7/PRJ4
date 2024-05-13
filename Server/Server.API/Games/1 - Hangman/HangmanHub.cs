@@ -238,7 +238,7 @@ namespace Server.API.Games
             }
         }
 
-        public async Task<ActionResult<string>> GetQueueForGame(string lobbyId)
+        public async Task<ActionResult<string>> GetFrontPlayerForGame(string lobbyId)
         {
             _logger.LogDebug("Attempting to get user queue for game with LobbyId {LobbyId}", lobbyId);
 

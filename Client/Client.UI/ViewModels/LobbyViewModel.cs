@@ -167,7 +167,7 @@ namespace Client.UI.ViewModels
             {
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    //remove event listeners
+                    //remove pages and connections.
                     LeaveLobbyAndGamePage();
                     CloseLobby();
                 });
