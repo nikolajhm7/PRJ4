@@ -23,6 +23,7 @@ namespace Client.UI.Games
     //[QueryProperty(nameof(Players), "Players")]
     public partial class HangmanViewModel : ObservableObject
     {
+        // Define private variables
         private readonly IHangmanService _hangmanService;
         private readonly INavigationService _navigationService;
         private readonly ILobbyService _lobbyService;
@@ -65,10 +66,6 @@ namespace Client.UI.Games
             _navigationService = navigationService;
             _lobbyService = lobbyService;
             guessedChars = [];
-            //playerNames.Add("Anthony");
-            //playerNames.Add("Nikolaj");
-            //playerNames.Add("user.Username");
-            //playerNames.Add("user.Username");
             _hangmanService.GameStartedEvent += OnGameStarted;
             _hangmanService.GuessResultEvent += OnGuessResult;
             _hangmanService.GameOverEvent += OnGameOver;
