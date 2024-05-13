@@ -137,8 +137,9 @@ namespace Client.UI.ViewModels
             {
                 if (!isHost)
                 {
-                    GoToGameAsync();
                     IsGoToGameButtonEnabled = true;
+                    gameStarted = true;
+                    GoToGameAsync();
                 }
                 else
                 {
@@ -160,8 +161,8 @@ namespace Client.UI.ViewModels
                 {
                     //remove event listeners
                     _lobbyService.LobbyClosedEvent -= OnLobbyClosed;
-                    CloseLobby();
                     LeaveLobbyAndServices();
+                    CloseLobby();
                 });
             }
         }
@@ -174,7 +175,6 @@ namespace Client.UI.ViewModels
                 "Host closed lobby",
                 "Ok"
             );
-            _viewModelFactory.ResetHangmanViewModel();
         }
 
 
