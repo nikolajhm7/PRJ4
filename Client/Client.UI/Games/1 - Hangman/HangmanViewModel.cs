@@ -112,6 +112,7 @@ namespace Client.UI.Games
 
         private async Task LoadPlayerQueue()
         {
+            await Task.Delay(1);
             await _hangmanService.InitQueueForGame(LobbyId);
             var result = await _hangmanService.GetFrontPlayerForGame(LobbyId);
             if (result.Success)
