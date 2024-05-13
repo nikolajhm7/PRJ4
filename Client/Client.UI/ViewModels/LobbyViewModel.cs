@@ -225,10 +225,10 @@ namespace Client.UI.ViewModels
 
         private async void LeaveLobbyAndServices()
         {
-            await _navigationService.RemoveCurrentPageFromStack();
-            await _navigationService.RemoveCurrentPageFromStack();
+            //await _navigationService.RemoveCurrentPageFromStack();
             _viewModelFactory.ResetHangmanViewModel();
-            await _lobbyService.LeaveLobbyAsync(LobbyId);
+            await _lobbyService.LeaveLobbyAsync(lobbyId);
+            await _navigationService.RemoveCurrentPageFromStack();
             await _navigationService.NavigateToPage(nameof(PlatformPage));
             await _lobbyService.DisconnectAsync();
             await _hangmanService.DisconnectAsync();
