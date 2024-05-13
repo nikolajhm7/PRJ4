@@ -6,6 +6,7 @@ using Client.Library.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using NSubstitute.ExceptionExtensions;
 
 namespace Client.Test;
 public class ApiServiceTests
@@ -107,6 +108,115 @@ public class ApiServiceTests
         // Kontroller at statuskode for respons er som forventet
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
+    
+    [Test]
+    public async Task MakeApiCall_PutMethod_Success()
+    {
+        var someObject = new { name = "test" };
+        var json = JsonConvert.SerializeObject(someObject);
+        // Opsæt data til PUT-anmodningen
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        // Opsæt en forventet respons
+        var expectedResponse = new HttpResponseMessage(HttpStatusCode.OK);
+        _handler.SetFakeResponse(expectedResponse);
+
+        // Udfør API kald
+        var response = await _apiService.MakeApiCall("/puttest", HttpMethod.Put, content);
+
+        // Kontroller at metoden er PUT
+        Assert.That(_handler.LastRequest.Method, Is.EqualTo(HttpMethod.Put));
+
+        // Kontroller at indholdet blev sendt korrekt
+        var requestContent = await _handler.LastRequest.Content.ReadAsStringAsync();
+        Assert.That(requestContent, Is.EqualTo("{\"name\":\"test\"}"));
+
+        // Kontroller at statuskode for respons er som forventet
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+    
+    [Test]
+    public async Task MakeApiCall_DeleteMethod_Success()
+    {
+        // Opsæt en forventet respons
+        var expectedResponse = new HttpResponseMessage(HttpStatusCode.OK);
+        _handler.SetFakeResponse(expectedResponse);
+
+        // Udfør API kald
+        var response = await _apiService.MakeApiCall("/deletetest", HttpMethod.Delete);
+
+        // Kontroller at metoden er DELETE
+        Assert.That(_handler.LastRequest.Method, Is.EqualTo(HttpMethod.Delete));
+
+        // Kontroller at statuskode for respons er som forventet
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+    
+    [Test]
+    public async Task MakeApiCall_ReturnsInternalServerError_ForUnsupportedMethod()
+    {
+        // Arrange
+        var endpoint = "https://example.com/api/test";
+        var unsupportedMethod = new HttpMethod("PATCH"); // En metode, der ikke er understøttet
+        var content = new StringContent("{\"data\":\"test\"}");
+
+        // Act
+        var response = await _apiService.MakeApiCall(endpoint, unsupportedMethod, content);
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
+        Assert.That(response.Content.ReadAsStringAsync().Result, Is.EqualTo("Internal server error: Unsupported HTTP method"));
+    }
+
+    [Test]
+    public async Task MakeApiCall_LogsError_WhenApiCallFails()
+    {
+        // Arrange
+        var endpoint = "https://example.com/api/test";
+        var method = HttpMethod.Get;
+        var content = new StringContent("{\"data\":\"test\"}");
+
+        // Opsætter et fejlrespons
+        var response = new HttpResponseMessage(HttpStatusCode.BadRequest)
+        {
+            Content = new StringContent("Bad request error")
+        };
+        
+        _handler.SetFakeResponse(response);
+        
+        _client = new HttpClient(_handler);
+        var httpClientFactory = Substitute.For<IHttpClientFactory>();
+        httpClientFactory.CreateClient().Returns(_client);
+        _apiService = new ApiService(_configuration, _logger, httpClientFactory, _preferenceManager);
+        
+        // Act
+        await _apiService.MakeApiCall(endpoint, method, content);
+
+        // Assert
+        _logger.Received().LogError($"Error calling url: {endpoint}. Status code: {response.StatusCode}");
+        
+        
+    }
+    
+    [Test]
+    public async Task GetJsonObjectFromResponse_Success()
+    {
+        // Opsæt en forventet respons
+        var expectedResponse = new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent("{\"name\":\"test\"}", Encoding.UTF8, "application/json")
+        };
+        _handler.SetFakeResponse(expectedResponse);
+
+        // Udfør API kald
+        var response = await _apiService.MakeApiCall("/test", HttpMethod.Get);
+
+        // Hent JSON objekt fra respons
+        var result = _apiService.GetJsonObjectFromResponse(response);
+
+        // Kontroller at objektet blev hentet korrekt
+        Assert.That(result["name"].ToString(), Is.EqualTo("test"));
+    }
 
 
     
@@ -137,4 +247,6 @@ public class FakeHttpMessageHandler : HttpMessageHandler
             Content = new StringContent("No response configured")
         });
     }
+    
+    
 }

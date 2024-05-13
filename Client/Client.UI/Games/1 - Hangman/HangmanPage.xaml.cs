@@ -1,26 +1,28 @@
 using System;
 using Microsoft.Maui.Controls;
+using Client.UI.ViewModels.Manager;
 
 namespace Client.UI.Games
 {
     public partial class HangmanPage : ContentPage
     {
-        public HangmanPage(HangmanViewModel vm)
+        HangmanViewModel _vm;
+        public HangmanPage(ViewModelFactory viewModelFactory)
         {
-            this.BindingContext = vm;
+            _vm = viewModelFactory.GetHangmanViewModel();
+            this.BindingContext = _vm;
             this.Appearing += OnPageAppearing;
             InitializeComponent();
         }
 
         
-        private void OnPageAppearing(object sender, EventArgs e)
+        private async void OnPageAppearing(object sender, EventArgs e)
         {
             // Call the base implementation first
             if (BindingContext is HangmanViewModel viewModel)
             {
-                viewModel.OnPageAppearing();
+                await viewModel.OnPageAppearing();
             }
-
         }
 
     }

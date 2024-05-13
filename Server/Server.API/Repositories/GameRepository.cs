@@ -23,9 +23,9 @@ public class GameRepository : IGameRepository
             .ToListAsync();
     }
 
-    public async Task AddGameToUser(string userId, int gameId)
+    public async Task AddGameToUser(string username, int gameId)
     {
-        var user = await _userRepository.GetUserByName(userId);
+        var user = await _userRepository.GetUserByName(username);
         var game = await _context.Games.FirstOrDefaultAsync(g => g.GameId == gameId);
         
         if (user == null)

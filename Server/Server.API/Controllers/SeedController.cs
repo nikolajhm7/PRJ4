@@ -40,7 +40,7 @@ namespace Server.API.Controllers
 
             await _gameRepository.AddGame(game);
 
-            await _gameRepository.AddGameToUser(user.Id, game.GameId);
+            await _gameRepository.AddGameToUser(user.UserName, game.GameId);
 
             _logger.LogInformation("Seeding completed successfully.");
             return Ok("Seeding completed successfully.");

@@ -96,7 +96,7 @@ public class GameController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("editGame")]
+    [HttpPost("editGame/{gameId}")]
     public async Task<IActionResult> EditGame([FromRoute] int gameId, [FromBody] GameDTO game)
     {
         _logger.LogDebug("Starting edit of game {GameName}.", game.Name);
