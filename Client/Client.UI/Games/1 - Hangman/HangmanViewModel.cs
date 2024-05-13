@@ -31,6 +31,7 @@ namespace Client.UI.Games
         private string _currentPlayer;
         private bool _initialized = false;
         private int maxPlayers = 0;
+        private bool _queueInitialized = false;
 
         // Define command properties
         [ObservableProperty]
@@ -113,7 +114,11 @@ namespace Client.UI.Games
         private async Task LoadPlayerQueue()
         {
             await Task.Delay(1);
-            await _hangmanService.InitQueueForGame(LobbyId);
+            if (!_queueInitialized)
+            {
+                await _hangmanService.InitQueueForGame(LobbyId);
+                _queueInitialized = true;
+            }
             var result = await _hangmanService.GetFrontPlayerForGame(LobbyId);
             if (result.Success)
             {
