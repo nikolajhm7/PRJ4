@@ -54,6 +54,7 @@ namespace Client.UI.ViewModels.Manager
         // Optionally, you can add a method to clear the cached ViewModel if necessary
         public void ResetHangmanViewModel()
         {
+            _hangmanViewModel.unsubscribeServices();
             _hangmanViewModel = null;
         }
 

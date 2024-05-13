@@ -77,6 +77,14 @@ namespace Client.UI.Games
 
             //maxPlayers = _lobbyService.GetLobbyMaxPlayers(LobbyId).Result.Value;
         }
+        public void unsubscribeServices()
+        {
+            _hangmanService.GameStartedEvent -= OnGameStarted;
+            _hangmanService.GuessResultEvent -= OnGuessResult;
+            _hangmanService.GameOverEvent -= OnGameOver;
+            _hangmanService.LobbyClosedEvent -= OnLobbyClosed;
+            _hangmanService.UserLeftLobbyEvent -= OnUserLeftLobby;
+        }
         public async Task OnPageAppearing()
         {
             if (!_initialized)
