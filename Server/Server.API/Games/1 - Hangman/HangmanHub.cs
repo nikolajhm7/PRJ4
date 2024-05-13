@@ -267,6 +267,52 @@ namespace Server.API.Games
             }
         }
 
+        public async Task<ActionResult> RemovePlayerFromQueue(string lobbyId, string username)
+        {
+            if (_logicManager.TryGetValue(lobbyId, out var logic))
+            {
+                var userQueue = logic.GetQueue();
+                if (userQueue != null && userQueue.Contains(username))
+                {
+                    // Remove the player from the queue
+                    userQueue = new Queue<string>(userQueue.Where(user => user != username));
+                    logic.SetQueue(userQueue);
+                    return new ActionResult(true, null);
+                }
+                else
+                {
+                    return new ActionResult(false, "Player not found in the queue.");
+                }
+            }
+            else
+            {
+                return new ActionResult(false, "Lobby does not exist.");
+            }
+        }
+
+        public async Task<ActionResult> AddPlayerToQueue(string lobbyId, string username)
+        {
+            if (_logicManager.TryGetValue(lobbyId, out var logic))
+            {
+                var userQueue = logic.GetQueue();
+                if (userQueue != null && !userQueue.Contains(username))
+                {
+                    // Add the player to the queue
+                    userQueue.Enqueue(username);
+                    logic.SetQueue(userQueue);
+                    return new ActionResult(true, null);
+                }
+                else
+                {
+                    return new ActionResult(false, "Player is already in the queue.");
+                }
+            }
+            else
+            {
+                return new ActionResult(false, "Lobby does not exist.");
+            }
+        }
+
         //public async Task<ActionResult<List<char>>> GetGuessedChars(string lobbyId)
         //{
         //    if (_logicManager.TryGetValue(lobbyId, out var logic))
