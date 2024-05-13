@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Client.UI.Games;
+using Microsoft.Extensions.Logging;
 
 namespace Client.UI.ViewModels.Manager
 {
@@ -15,13 +16,16 @@ namespace Client.UI.ViewModels.Manager
         private readonly IHangmanService _hangmanService;
         private readonly ILobbyService _lobbyService;
         private readonly INavigationService _navigationService;
+        private readonly ILogger<LobbyViewModel> _logger;
         private HangmanViewModel _hangmanViewModel;
+        private LobbyViewModel _lobbyViewModel;
 
-        public ViewModelFactory(IHangmanService hangmanService, ILobbyService lobbyService, INavigationService navigationService)
+        public ViewModelFactory(IHangmanService hangmanService, ILobbyService lobbyService, INavigationService navigationService, ILogger<LobbyViewModel> logger)
         {
             _hangmanService = hangmanService;
             _lobbyService = lobbyService;
             _navigationService = navigationService;
+            _logger = logger;
         }
 
         public HangmanViewModel GetHangmanViewModel()
@@ -33,10 +37,30 @@ namespace Client.UI.ViewModels.Manager
             return _hangmanViewModel;
         }
 
+        public LobbyViewModel GetLobbyViewModel()
+        {
+            if (_lobbyViewModel == null)
+            {
+                _lobbyViewModel = new LobbyViewModel(_lobbyService, _navigationService, this, _hangmanService, _logger);
+            }
+            return _lobbyViewModel;
+        }
+
+        public void ResetLobbyViewModel()
+        {
+            _lobbyViewModel = null;
+        }
+
         // Optionally, you can add a method to clear the cached ViewModel if necessary
         public void ResetHangmanViewModel()
         {
             _hangmanViewModel = null;
+        }
+
+        public void ResetAllViewModels()
+        {
+            ResetLobbyViewModel();
+            ResetHangmanViewModel();
         }
     }
 

@@ -80,11 +80,9 @@ namespace Client.UI
             builder.Services.AddTransient<HangmanPage>();
             builder.Services.AddTransient<HangmanViewModel>();
 
-            builder.Services.AddTransient<FriendsViewModel>();
+            builder.Services.AddSingleton<FriendsViewModel>();
 
             builder.Services.AddSingleton<ViewModelFactory>();
-
-            builder.Services.AddTransient<FriendsViewModel>();
 
             #endregion
 

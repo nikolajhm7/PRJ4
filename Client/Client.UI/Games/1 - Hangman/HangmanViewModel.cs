@@ -105,6 +105,23 @@ namespace Client.UI.Games
             }
         }
 
+        private async Task LoadUsersInGame()
+        {
+            await Task.Delay(1);
+            var result = await _hangmanService.GetUsersInGame(LobbyId);
+            if (result.Success)
+            {
+                foreach (var user in result.Value)
+                {
+                    PlayerNames.Add(user.Username);
+                }
+            }
+            else
+            {
+                Debug.WriteLine("Failed to get users in lobby: " + result.Msg);
+            }
+        }
+
         private async Task LoadPlayerQueue()
         {
             await Task.Delay(1);

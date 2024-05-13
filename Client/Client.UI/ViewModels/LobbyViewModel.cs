@@ -66,7 +66,7 @@ namespace Client.UI.ViewModels
             if(!_initialized)
             {
                 await InitializeLobby();
-                var isHostResult = await _lobbyService.UserIsHost(lobbyId);
+                var isHostResult = await _lobbyService.UserIsHost(LobbyId);
                 if (isHostResult.Success)
                 {
                     //The player is the host of the game
@@ -86,7 +86,7 @@ namespace Client.UI.ViewModels
         private async Task InitializeLobby()
         {
             _logger.LogInformation("Initializing lobby");
-            var gameIdResult = await _lobbyService.GetLobbyGameId(lobbyId);
+            var gameIdResult = await _lobbyService.GetLobbyGameId(LobbyId);
             if (!gameIdResult.Success)
             {
                 _logger.LogError("Failed to get game id for lobby: " + gameIdResult.Msg);
@@ -106,7 +106,7 @@ namespace Client.UI.ViewModels
         private async Task LoadUsersInLobby()
         {
             _logger.LogInformation("Loading users in lobby");
-            var result = await _lobbyService.GetUsersInLobby(lobbyId);
+            var result = await _lobbyService.GetUsersInLobby(LobbyId);
             if (result.Success)
             {
                 foreach (var user in result.Value)
@@ -137,8 +137,9 @@ namespace Client.UI.ViewModels
             {
                 if (!isHost)
                 {
-                    GoToGameAsync();
                     IsGoToGameButtonEnabled = true;
+                    gameStarted = true;
+                    GoToGameAsync();
                 }
                 else
                 {
@@ -160,6 +161,10 @@ namespace Client.UI.ViewModels
                 {
                     //remove event listeners
                     _lobbyService.LobbyClosedEvent -= OnLobbyClosed;
+                    _lobbyService.UserJoinedLobbyEvent -= OnUserJoinedLobby;
+                    _lobbyService.UserLeftLobbyEvent -= OnUserLeftLobby;
+                    _lobbyService.GameStartedEvent -= OnGameStarted;
+                    LeaveLobbyAndServices();
                     CloseLobby();
                     LeaveLobbyAndServices();
                 });
@@ -174,7 +179,6 @@ namespace Client.UI.ViewModels
                 "Host closed lobby",
                 "Ok"
             );
-            _viewModelFactory.ResetHangmanViewModel();
         }
 
 
@@ -225,7 +229,7 @@ namespace Client.UI.ViewModels
 
         private async void LeaveLobbyAndServices()
         {
-            _viewModelFactory.ResetHangmanViewModel();
+            _viewModelFactory.ResetAllViewModels();
             await _lobbyService.LeaveLobbyAsync(lobbyId);
             await _navigationService.NavigateToPage(nameof(PlatformPage));
             await _lobbyService.DisconnectAsync();
