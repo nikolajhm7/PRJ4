@@ -112,7 +112,9 @@ namespace Client.UI.Games
             if (result.Success)
             {
                 userQueue = result.Value;
-                FrontPlayer = userQueue.Peek() + "'s turn";
+                var currentPlayer = userQueue.Dequeue();
+                FrontPlayer = currentPlayer + "'s turn";
+                userQueue.Enqueue(currentPlayer);
             }
         }
 
