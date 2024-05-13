@@ -1,4 +1,4 @@
-﻿
+﻿using Client.Library.Models;
 using Client.Library.Services.Interfaces;
 
 namespace Client.Library.Services
@@ -13,6 +13,20 @@ namespace Client.Library.Services
         public async Task NavigateBack()
         {
             await Shell.Current.GoToAsync("..");
+        }
+
+        // Removes the current page from the navigation stack
+        public async Task RemoveCurrentPageFromStack()
+        {
+            var navigationStack = Shell.Current.Navigation.NavigationStack;
+            if (navigationStack.Count > 1) // Ensure there's at least two pages on the stack
+            {
+                Page currentPage = Shell.Current.Navigation.NavigationStack.LastOrDefault();
+                if (currentPage != null)
+                {
+                    Shell.Current.Navigation.RemovePage(currentPage);
+                }
+            }
         }
     }
 }
