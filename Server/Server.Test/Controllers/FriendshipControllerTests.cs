@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 using Server.API.Controllers;
 using Server.API.Models;
 
@@ -7,11 +9,13 @@ namespace Server.Test;
 public class FriendshipControllerTests : TestBase
 {
     private FriendshipController _controller;
+    private ILogger<FriendshipController> _logger;
 
     [SetUp]
     public void Setup()
     {
-        _controller = new FriendshipController(Context);
+        _logger = Substitute.For<ILogger<FriendshipController>>();
+        _controller = new FriendshipController(Context, _logger);
     }
 
     [Test]
