@@ -192,7 +192,7 @@ namespace Client.UI.Games
 
             var currentPlayer = userQueue.Dequeue();
             FrontPlayer = currentPlayer + "'s turn";
-            userQueue.Enqueue(FrontPlayer);
+            userQueue.Enqueue(currentPlayer);
 
         }
         #endregion
