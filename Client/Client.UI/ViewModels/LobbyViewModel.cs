@@ -157,12 +157,13 @@ namespace Client.UI.ViewModels
         {
             if(!isHost)
             {
+                LeaveLobbyAndServices();
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
                     //remove event listeners
                     _lobbyService.LobbyClosedEvent -= OnLobbyClosed;
                     LeaveLobbyAndServices();
-                    CloseLobby();
+                    //CloseLobby();
                 });
             }
         }
@@ -228,7 +229,7 @@ namespace Client.UI.ViewModels
             //await _navigationService.RemoveCurrentPageFromStack();
             _viewModelFactory.ResetHangmanViewModel();
             await _lobbyService.LeaveLobbyAsync(lobbyId);
-            await _navigationService.RemoveCurrentPageFromStack();
+            await _navigationService.RemoveLastPageFromStack();
             await _navigationService.NavigateToPage(nameof(PlatformPage));
             await _lobbyService.DisconnectAsync();
             await _hangmanService.DisconnectAsync();

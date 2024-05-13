@@ -16,7 +16,7 @@ namespace Client.Library.Services
         }
 
         // Removes the current page from the navigation stack
-        public async Task RemoveCurrentPageFromStack()
+        public async Task RemoveLastPageFromStack()
         {
             var navigationStack = Shell.Current.Navigation.NavigationStack;
             if (navigationStack.Count > 1) // Ensure there's at least two pages on the stack
