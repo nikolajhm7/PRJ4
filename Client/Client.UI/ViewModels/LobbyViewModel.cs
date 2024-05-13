@@ -227,7 +227,7 @@ namespace Client.UI.ViewModels
         {
             if(!isHost)
             {
-                await _navigationService.NavigateBack();
+                await _navigationService.RemoveLastPageFromStack();
             }
             _viewModelFactory.ResetHangmanViewModel();
             await _lobbyService.LeaveLobbyAsync(lobbyId);
