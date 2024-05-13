@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using Client.UI.ViewModels;
 using Microsoft.Maui.Controls;
+using System.Diagnostics;
 
 namespace Client.UI.Views
 {
@@ -25,27 +26,37 @@ namespace Client.UI.Views
         }
         public class BackgroundColorConverter : IMultiValueConverter
         {
+            public BackgroundColorConverter()
+            {
+
+            }
+
             public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
             {
-                // Check if values are provided and are of correct types
-                if (values != null && values.Length == 2 && values[0] != null && values[1] != null && values[1] is string)
+                Debug.WriteLine("Convert Initiated");
+                if (values != null)
                 {
                     string currentPlayer = (string)values[0];
                     string frontPlayer = (string)values[1];
 
-                    // Check if the current player is the front of the queue
+                    Debug.WriteLine($"Current Player: {currentPlayer}");
+                    Debug.WriteLine($"Front Player: {frontPlayer}");
+
                     if (currentPlayer == frontPlayer)
                     {
-                        return Color.FromRgb(255, 255, 255); // White background color for the front player
+                        Debug.WriteLine("Setting background color to white.");
+                        return Color.FromRgb(230, 230, 230); // White background color for the front player
                     }
                 }
 
                 // Default background color for other players
+                Debug.WriteLine("Setting default background color.");
                 return Color.FromRgb(25, 25, 25);
             }
 
             public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
             {
+                Debug.WriteLine("ConvertBack called");
                 throw new NotImplementedException();
             }
         }

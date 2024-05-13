@@ -85,16 +85,11 @@
                         CornerRadius="10" 
                         Padding="10" 
                         Margin="5" 
-                        HorizontalOptions="FillAndExpand">
+                        HorizontalOptions="FillAndExpand"
+                        BackgroundColor="{Binding ., Converter={StaticResource backgroundColorConverter}}">
                         <Label 
                             Text="{Binding .}" 
                             HorizontalTextAlignment="Center">
-                            <Label.BackgroundColor>
-                                <MultiBinding Converter="{StaticResource BackgroundColorConverter}">
-                                    <Binding />
-                                    <Binding Path="BindingContext.UserQueueFront" Source="{x:Reference PlayersCollectionView}" />
-                                </MultiBinding>
-                            </Label.BackgroundColor>
                         </Label>
                     </Frame>
                     </DataTemplate>

@@ -46,6 +46,7 @@ namespace Client.UI.Games
         [ObservableProperty] private string hiddenWord;
         ObservableCollection<char> guessedChars;
         [ObservableProperty] private string? imageSource;
+        [ObservableProperty] private string? frontPlayer;
 
 
         public ObservableCollection<char> GuessedChars
@@ -111,6 +112,7 @@ namespace Client.UI.Games
             if (result.Success)
             {
                 userQueue = result.Value;
+                FrontPlayer = userQueue.Peek() + "'s turn";
             }
         }
 
@@ -187,6 +189,8 @@ namespace Client.UI.Games
             }
 
             if (!guessedChars.Contains(char.ToUpper(letter))) { GuessedChars.Add(char.ToUpper(letter)); }
+
+            FrontPlayer = userQueue.Peek() + "'s turn";
 
         }
         #endregion
