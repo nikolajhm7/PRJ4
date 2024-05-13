@@ -66,7 +66,7 @@ namespace Client.UI.ViewModels
             if(!_initialized)
             {
                 await InitializeLobby();
-                var isHostResult = await _lobbyService.UserIsHost(lobbyId);
+                var isHostResult = await _lobbyService.UserIsHost(LobbyId);
                 if (isHostResult.Success)
                 {
                     //The player is the host of the game
@@ -86,7 +86,7 @@ namespace Client.UI.ViewModels
         private async Task InitializeLobby()
         {
             _logger.LogInformation("Initializing lobby");
-            var gameIdResult = await _lobbyService.GetLobbyGameId(lobbyId);
+            var gameIdResult = await _lobbyService.GetLobbyGameId(LobbyId);
             if (!gameIdResult.Success)
             {
                 _logger.LogError("Failed to get game id for lobby: " + gameIdResult.Msg);
@@ -106,7 +106,7 @@ namespace Client.UI.ViewModels
         private async Task LoadUsersInLobby()
         {
             _logger.LogInformation("Loading users in lobby");
-            var result = await _lobbyService.GetUsersInLobby(lobbyId);
+            var result = await _lobbyService.GetUsersInLobby(LobbyId);
             if (result.Success)
             {
                 foreach (var user in result.Value)
@@ -226,7 +226,7 @@ namespace Client.UI.ViewModels
         private async void LeaveLobbyAndServices()
         {
             _viewModelFactory.ResetHangmanViewModel();
-            await _lobbyService.LeaveLobbyAsync(lobbyId);
+            await _lobbyService.LeaveLobbyAsync(LobbyId);
             await _navigationService.NavigateToPage(nameof(PlatformPage));
             await _lobbyService.DisconnectAsync();
             await _hangmanService.DisconnectAsync();
