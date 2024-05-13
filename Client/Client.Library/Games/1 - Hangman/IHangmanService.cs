@@ -20,7 +20,7 @@ namespace Client.Library.Games
         Task<ActionResult> GuessLetter(string lobbyId, char letter);
         Task<ActionResult> RestartGame(string lobbyId);
         Task<ActionResult<List<ConnectedUserDTO>>> GetUsersInGame(string lobbyId);
-        Task<ActionResult<Queue<string>>> GetQueueForGame(string lobbyId);
+        Task<ActionResult<string>> GetQueueForGame(string lobbyId);
         Task <ActionResult> LeaveGameAsync(string lobbyId);
     }
 }

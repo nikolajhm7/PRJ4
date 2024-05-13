@@ -27,7 +27,7 @@ namespace Client.UI.Games
         private readonly INavigationService _navigationService;
         private readonly ILobbyService _lobbyService;
         private int ErrorCounter;
-        private Queue<string> userQueue;
+        private string _currentPlayer;
         private bool _initialized = false;
         private int maxPlayers = 0;
 
@@ -119,8 +119,8 @@ namespace Client.UI.Games
             var result = await _hangmanService.GetQueueForGame(LobbyId);
             if (result.Success)
             {
-                userQueue = result.Value;
-                FrontPlayer = userQueue.Peek() + "'s turn";
+                _currentPlayer = result.Value;
+                FrontPlayer = _currentPlayer + "'s turn";
             }
         }
 

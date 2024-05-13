@@ -99,8 +99,8 @@ namespace Server.API.Games
                 var userQueue = logic.GetQueue();
                 if (userQueue == null)
                 {
-                    var q = GetQueueForGame(lobbyId);
-                    userQueue = q.Result.Value;
+                    var q = InitQueueForGame(lobbyId);
+                    userQueue = logic.GetQueue();
                 }
 
                 if (currentUser == userQueue.Peek())
@@ -206,7 +206,7 @@ namespace Server.API.Games
             }
         }
 
-        public async Task<ActionResult<Queue<string>>> InitQueueForGame(string lobbyId)
+        public async Task InitQueueForGame(string lobbyId)
         {
             _logger.LogDebug("Attempting to get user queue for game with LobbyId {LobbyId}", lobbyId);
 
@@ -214,7 +214,6 @@ namespace Server.API.Games
             if (username == null)
             {
                 _logger.LogWarning("Context.User or Context.User.Identity is null.");
-                return new(false, "Authentication context is not available.", []);
             }
             if (_logicManager.TryGetValue(lobbyId, out var logic))
             {
@@ -231,17 +230,15 @@ namespace Server.API.Games
 
 
                 _logger.LogInformation("{UserName} successfully got user queue in game {LobbyId}.", Context.User?.Identity?.Name, lobbyId);
-                return new(true, null, userOrder);
             }
 
             else
             {
                 _logger.LogError("Attempt to get user queue in non-existing lobby {LobbyId}.", lobbyId);
-                return new(false, "Lobby does not exist.", []);
             }
         }
 
-        public async Task<ActionResult<Queue<string>>> GetQueueForGame(string lobbyId)
+        public async Task<ActionResult<string>> GetQueueForGame(string lobbyId)
         {
             _logger.LogDebug("Attempting to get user queue for game with LobbyId {LobbyId}", lobbyId);
 
@@ -249,26 +246,27 @@ namespace Server.API.Games
             if (username == null)
             {
                 _logger.LogWarning("Context.User or Context.User.Identity is null.");
-                return new(false, "Authentication context is not available.", []);
+                return new(false, "Authentication context is not available.", null);
             }
             if (_logicManager.TryGetValue(lobbyId, out var logic))
             {
-                var userQueue = logic.GetQueue();
-                if (userQueue == null)
+                var frontPlayer = logic.GetQueue().Peek();
+                if (frontPlayer == null)
                 {
-                    return await InitQueueForGame(lobbyId);
+                    await InitQueueForGame(lobbyId);
+                    return new(true, null, logic.GetQueue().Peek());
                 }
                 else
                 {
                     _logger.LogInformation("{UserName} successfully got user queue in game {LobbyId}.", Context.User?.Identity?.Name, lobbyId);
-                    return new(true, null, userQueue);
+                    return new(true, null, frontPlayer);
                 }
             }
 
             else
             {
                 _logger.LogError("Attempt to get user queue in non-existing lobby {LobbyId}.", lobbyId);
-                return new(false, "Lobby does not exist.", []);
+                return new(false, "Lobby does not exist.", null);
             }
         }
 

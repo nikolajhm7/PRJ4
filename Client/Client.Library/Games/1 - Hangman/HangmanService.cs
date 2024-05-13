@@ -49,9 +49,9 @@ namespace Client.Library.Games
             return await InvokeAsync<List<ConnectedUserDTO>>("GetUsersInGame", lobbyId);
         }
 
-        public async Task<ActionResult<Queue<string>>> GetQueueForGame(string lobbyId)
+        public async Task<ActionResult<string>> GetQueueForGame(string lobbyId)
         {
-            return await InvokeAsync<Queue<string>>("GetQueueForGame", lobbyId);
+            return await InvokeAsync<string>("GetQueueForGame", lobbyId);
         }
 
         public async Task<ActionResult> LeaveGameAsync(string lobbyId)
