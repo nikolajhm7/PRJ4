@@ -24,12 +24,6 @@ namespace Client.UI.Games
                 await viewModel.OnPageAppearing();
             }
         }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            Debug.WriteLine("ConvertBack called");
-            throw new NotImplementedException();
-        }
     }
 
 }

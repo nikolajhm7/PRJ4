@@ -5,9 +5,6 @@
              x:Class="Client.UI.Games.HangmanPage"
              x:DataType="viewModels:HangmanViewModel"
              Title="HangmanPage">
-    <ContentPage.Resources>
-        <viewModels:BackgroundColorConverter x:Key="backgroundColorConverter" />
-    </ContentPage.Resources>
 
     <Grid 
             RowDefinitions="*,*,*,*"
@@ -94,8 +91,7 @@
                         CornerRadius="10" 
                         Padding="10" 
                         Margin="5" 
-                        HorizontalOptions="FillAndExpand"
-                        BackgroundColor="{Binding ., Converter={StaticResource backgroundColorConverter}}">
+                        HorizontalOptions="FillAndExpand">
                         <Label 
                             Text="{Binding .}" 
                             HorizontalTextAlignment="Center"/>
