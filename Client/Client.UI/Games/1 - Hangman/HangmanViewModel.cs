@@ -190,7 +190,8 @@ namespace Client.UI.Games
 
             if (!guessedChars.Contains(char.ToUpper(letter))) { GuessedChars.Add(char.ToUpper(letter)); }
 
-            LoadPlayerQueue();
+            FrontPlayer = userQueue.Dequeue() + "'s turn";
+            userQueue.Enqueue(FrontPlayer);
 
         }
         #endregion
