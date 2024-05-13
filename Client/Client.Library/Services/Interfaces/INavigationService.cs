@@ -4,5 +4,4 @@ public interface INavigationService
 {
     Task NavigateToPage(string page);
     Task NavigateBack();
-    Task RemoveLastPageFromStack();
 }

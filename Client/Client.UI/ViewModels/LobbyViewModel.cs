@@ -161,6 +161,9 @@ namespace Client.UI.ViewModels
                 {
                     //remove event listeners
                     _lobbyService.LobbyClosedEvent -= OnLobbyClosed;
+                    _lobbyService.UserJoinedLobbyEvent -= OnUserJoinedLobby;
+                    _lobbyService.UserLeftLobbyEvent -= OnUserLeftLobby;
+                    _lobbyService.GameStartedEvent -= OnGameStarted;
                     LeaveLobbyAndServices();
                     CloseLobby();
                 });
