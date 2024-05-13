@@ -225,11 +225,7 @@ namespace Client.UI.ViewModels
 
         private async void LeaveLobbyAndServices()
         {
-            if(!isHost)
-            {
-                await _navigationService.RemoveLastPageFromStack();
-            }
-            _viewModelFactory.ResetHangmanViewModel();
+            _viewModelFactory.ResetAllViewModels();
             await _lobbyService.LeaveLobbyAsync(lobbyId);
             await _navigationService.NavigateToPage(nameof(PlatformPage));
             await _lobbyService.DisconnectAsync();
