@@ -84,6 +84,9 @@ namespace Client.UI
 
             builder.Services.AddSingleton<ViewModelFactory>();
 
+            builder.Services.AddTransient<ShopPage>();
+            builder.Services.AddTransient<ShopViewModel>();
+
             #endregion
 
             builder.Configuration.AddConfiguration(configuration);
