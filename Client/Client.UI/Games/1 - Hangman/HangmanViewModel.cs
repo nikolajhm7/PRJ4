@@ -148,6 +148,9 @@ namespace Client.UI.Games
         {
             Debug.WriteLine($"Game started with wordLength: {wordLength}");
 
+            //remove reset button
+            GameIsDone = false;
+
             // Set the title
             Title = "Welcome to Hangman!";
 
