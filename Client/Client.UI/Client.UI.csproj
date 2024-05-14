@@ -57,7 +57,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Remove="Views\ShopPage.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Content Include="..\..\Server\Server.API\appsettings.json" Link="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Views\ShopPage.xaml">
+	    <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 	<ItemGroup>
