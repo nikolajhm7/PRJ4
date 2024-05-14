@@ -7,7 +7,6 @@
              xmlns:views="clr-namespace:Client.UI.Views"
              x:Class="Client.UI.Views.LobbyPage"
              x:DataType="viewModels:LobbyViewModel"
-             Title="LobbyPage"
              NavigationPage.HasBackButton="False">
 
     <Shell.BackButtonBehavior>
@@ -22,6 +21,7 @@
         <Label
             Text="{Binding LobbyId}"
             Style="{StaticResource Headline}"
+            TextColor="Black"
             Grid.Row="1"
             Grid.Column="1"
             Grid.ColumnSpan="2"

@@ -4,14 +4,14 @@
              xmlns:behaviors="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
              xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
              x:Class="Client.UI.Views.LoginPage"
-             x:DataType="viewModels:LoginViewModel"
-             Title="LoginPage">
+             x:DataType="viewModels:LoginViewModel">
 
         <Grid
         ColumnDefinitions="*,4*,4*,*"
         RowDefinitions="*,*,*,*,*,*,*,*,10"
         RowSpacing="0"
-        Padding="0,0,0,10">
+        Padding="0,0,0,5"
+        Margin="0, 100, 0, 0">
 
         <Label
             Grid.Row="0"
@@ -45,7 +45,8 @@
                Grid.Column="1"
                Grid.ColumnSpan="2"
                IsPassword="True"
-               Text="{Binding LoginPassword}" />
+               Text="{Binding LoginPassword}"
+               Completed="OnPasswordEntryCompleted"/>
 
         <Button
             x:Name="LoginBtn"
@@ -61,10 +62,10 @@
             x:Name="NewUserBtn"
             Text="Make a new user" 
             Style="{StaticResource normalBtn}"
-            WidthRequest="600"
+            WidthRequest="295"
             Grid.Row="6"
             Grid.Column="1"
-            Grid.ColumnSpan="2"
+            HorizontalOptions="End"
             Command="{Binding GoToNewUserCommand}">
             </Button>
 
@@ -72,10 +73,10 @@
             x:Name="GuestJoinBtn"   
             Text="Join as Guest" 
             Style="{StaticResource normalBtn}"
-            WidthRequest="600"
-            Grid.Row="7"
-            Grid.Column="1"
-            Grid.ColumnSpan="2"
+            WidthRequest="295"
+            Grid.Row="6"
+            Grid.Column="2"
+            HorizontalOptions="Start"
             Command="{Binding JoinAsGuestCommand}">
         </Button>
     </Grid>

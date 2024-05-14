@@ -19,9 +19,9 @@
     <!--Egne farver-->
     <Color x:Key="OffBlack">#240750</Color>
     <Color x:Key="OpaquePurple">#64b4f099</Color>
-    <Color x:Key="OffWhite">#dcfaf0</Color>
-    <Color x:Key="SkyBlue">#6AD4DD</Color>
-    <Color x:Key="DarkSkyBlue">#65cfd8</Color>
+    <Color x:Key="OffWhite">#e6f2ee</Color>
+    <Color x:Key="SkyBlue">#5abcc4</Color>
+    <Color x:Key="DarkSkyBlue">#54b0b8</Color>
 
     <Color x:Key="Gray100">#E1E1E1</Color>
     <Color x:Key="Gray200">#C8C8C8</Color>
@@ -442,7 +442,7 @@
             </VisualStateGroupList>
         </Setter>
     </Style>
-
+*
     <Style TargetType="Page" ApplyToDerivedTypes="True">
         <Setter Property="Padding" Value="0"/>
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource OffWhite}, Dark={StaticResource OffWhite}}" />

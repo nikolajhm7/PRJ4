@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:Client.UI.Games"
              x:Class="Client.UI.Games.HangmanPage"
-             x:DataType="viewModels:HangmanViewModel"
-             Title="HangmanPage">
+             x:DataType="viewModels:HangmanViewModel">
 
     <Grid 
             RowDefinitions="*,*,*,*"
@@ -48,7 +47,9 @@
                 FontSize="Large"
                 Margin="0, 40, 0, 0"
                 ClearButtonVisibility="WhileEditing"
-                Text="{Binding Letter}"/>
+                MaxLength="1"
+                Text="{Binding Letter}"
+                Completed="OnEntryCompleted"/>
 
         <Label
                 Grid.Row="1"

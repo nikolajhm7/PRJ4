@@ -13,6 +13,7 @@
           x:DataType="{x:Type viewModels:FriendsViewModel}"
           IsVisible="{Binding IsUser}"
           Padding="10, 0, 10, 0"
+          Margin="10"
           BackgroundColor="#6482b4cc">
         <StackLayout>
             <Label Text="Friends List" HorizontalOptions="Center" Margin="10" />

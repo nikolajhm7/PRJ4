@@ -220,10 +220,10 @@ namespace Client.UI.Games
             Console.WriteLine($"Game over: {didWin}, {word}");
 
             // Set the message
-            StatusMessage = didWin ? $"You won!\nThe Hidden Word was: {word} " : $"You lost!\nThe Hidden Word was: {word}";
+            StatusMessage = didWin ? "You won!" : $"You lost!\nThe hidden word was: {word.ToUpper()}";
 
             // Set the title
-            Title = "HangMan: Game Over";
+            Title = "Hangman: Game Over";
 
             // Make reset button visible
             GameIsDone = true;
@@ -240,7 +240,7 @@ namespace Client.UI.Games
             StatusMessage = "Lobby closed!";
 
             // Set the title
-            Title = "HangMan: Game Over";
+            Title = "Hangman: Game Over";
 
             // Close the lobby
             //await _navigationService.NavigateBack();
