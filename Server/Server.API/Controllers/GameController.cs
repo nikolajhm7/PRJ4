@@ -34,14 +34,14 @@ public class GameController : ControllerBase
     public async Task<IActionResult> GetAllGames()
     {
         _logger.LogDebug("Getting all games");
-        var game = await _gameRepository.GetAllGames();
-        if (game == null)
+        var games = await _gameRepository.GetAllGames();
+        if (games == null)
         {
             _logger.LogDebug("No games found");
             return NotFound();
         }
 
-        return Ok();
+        return Ok(games);
     }
 
 

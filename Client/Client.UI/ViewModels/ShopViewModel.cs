@@ -36,6 +36,7 @@ namespace Client.UI.ViewModels
         {
             _navigationService = navigationService;
             _jwtTokenService = jwtTokenService;
+            _apiService = apiService;
 
         }
 
