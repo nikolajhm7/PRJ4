@@ -9,7 +9,7 @@
             { "Sports", new List<string> { "football", "basketball", "tennis", "volleyball", "swimming" } },
             { "Countries", new List<string> { "usa", "canada", "france", "germany", "japan" } },
             { "Programming", new List<string> { "csharp", "java", "python", "javascript", "typescript" } },
-            {"SverreLingo", new List<string> {"lootbanana", "soaking", "partyplayplalace"}}
+            {"SverreLingo", new List<string> {"lootbanana", "soaking", "partyplayplalace", "edging"}}
         };
     }
 }
