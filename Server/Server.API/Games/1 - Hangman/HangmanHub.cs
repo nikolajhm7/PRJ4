@@ -99,8 +99,7 @@ namespace Server.API.Games
                 var userQueue = logic.GetQueue();
                 if (userQueue == null)
                 {
-                    var q = GetQueueForGame(lobbyId);
-                    userQueue = q.Result.Value;
+                    return new(false, "There is no queue for the game");
                 }
 
                 if (currentUser == userQueue.Peek())
@@ -176,6 +175,7 @@ namespace Server.API.Games
                 await Clients.Group(lobbyId).SendAsync("UserLeftLobby", user.Username);
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyId);
                 _lobbyManager.RemoveFromLobby(user, lobbyId);
+                await RemovePlayerFromQueue(lobbyId, user.Username);
                 _logger.LogInformation("{UserName} successfully left lobby {LobbyId}.", user.Username, lobbyId);
             }
         }
@@ -205,7 +205,7 @@ namespace Server.API.Games
             }
         }
 
-        public async Task<ActionResult<Queue<string>>> GetQueueForGame(string lobbyId)
+        public async Task InitQueueForGame(string lobbyId)
         {
             _logger.LogDebug("Attempting to get user queue for game with LobbyId {LobbyId}", lobbyId);
 
@@ -213,7 +213,6 @@ namespace Server.API.Games
             if (username == null)
             {
                 _logger.LogWarning("Context.User or Context.User.Identity is null.");
-                return new(false, "Authentication context is not available.", []);
             }
             if (_logicManager.TryGetValue(lobbyId, out var logic))
             {
@@ -230,13 +229,43 @@ namespace Server.API.Games
 
 
                 _logger.LogInformation("{UserName} successfully got user queue in game {LobbyId}.", Context.User?.Identity?.Name, lobbyId);
-                return new(true, null, userOrder);
             }
 
             else
             {
                 _logger.LogError("Attempt to get user queue in non-existing lobby {LobbyId}.", lobbyId);
-                return new(false, "Lobby does not exist.", []);
+            }
+        }
+
+        public async Task<ActionResult<string>> GetFrontPlayerForGame(string lobbyId)
+        {
+            _logger.LogDebug("Attempting to get user queue for game with LobbyId {LobbyId}", lobbyId);
+
+            var username = Context.User?.Identity?.Name;
+            if (username == null)
+            {
+                _logger.LogWarning("Context.User or Context.User.Identity is null.");
+                return new(false, "Authentication context is not available.", null);
+            }
+            if (_logicManager.TryGetValue(lobbyId, out var logic))
+            {
+                var frontPlayer = logic.GetQueue().Peek();
+                if (frontPlayer == null)
+                {
+                    //await InitQueueForGame(lobbyId);
+                    return new(false, "There is no queue for the game", null);
+                }
+                else
+                {
+                    _logger.LogInformation("{UserName} successfully got user queue in game {LobbyId}.", Context.User?.Identity?.Name, lobbyId);
+                    return new(true, null, frontPlayer);
+                }
+            }
+
+            else
+            {
+                _logger.LogError("Attempt to get user queue in non-existing lobby {LobbyId}.", lobbyId);
+                return new(false, "Lobby does not exist.", null);
             }
         }
 
@@ -262,6 +291,52 @@ namespace Server.API.Games
             else
             {
                 _logger.LogError("Attempt to leave non-existing lobby {LobbyId}.", lobbyId);
+                return new ActionResult(false, "Lobby does not exist.");
+            }
+        }
+
+        public async Task<ActionResult> RemovePlayerFromQueue(string lobbyId, string username)
+        {
+            if (_logicManager.TryGetValue(lobbyId, out var logic))
+            {
+                var userQueue = logic.GetQueue();
+                if (userQueue != null && userQueue.Contains(username))
+                {
+                    // Remove the player from the queue
+                    userQueue = new Queue<string>(userQueue.Where(user => user != username));
+                    logic.SetQueue(userQueue);
+                    return new ActionResult(true, null);
+                }
+                else
+                {
+                    return new ActionResult(false, "Player not found in the queue.");
+                }
+            }
+            else
+            {
+                return new ActionResult(false, "Lobby does not exist.");
+            }
+        }
+
+        public async Task<ActionResult> AddPlayerToQueue(string lobbyId, string username)
+        {
+            if (_logicManager.TryGetValue(lobbyId, out var logic))
+            {
+                var userQueue = logic.GetQueue();
+                if (userQueue != null && !userQueue.Contains(username))
+                {
+                    // Add the player to the queue
+                    userQueue.Enqueue(username);
+                    logic.SetQueue(userQueue);
+                    return new ActionResult(true, null);
+                }
+                else
+                {
+                    return new ActionResult(false, "Player is already in the queue.");
+                }
+            }
+            else
+            {
                 return new ActionResult(false, "Lobby does not exist.");
             }
         }

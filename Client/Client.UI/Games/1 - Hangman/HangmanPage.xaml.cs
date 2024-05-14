@@ -24,7 +24,6 @@ namespace Client.UI.Games
                 await viewModel.OnPageAppearing();
             }
         }
-
     }
 
 }
