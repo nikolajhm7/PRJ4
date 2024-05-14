@@ -10,9 +10,49 @@
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
 
+        <Label
+            Text="Welcome To The Shop"
+            Style="{StaticResource normalBtn}"
+            Grid.Row="3"
+            Grid.Column="3"
+            />
+
         <Button
             Text="Back"
             Command="{Binding GoBackCommand}"/>
+
+        
+
+        <Button
+            Text="hangman"
+            Style="{StaticResource normalBtn}"
+            Grid.Row="3"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            Command="{Binding BuyHangMan}"
+            IsVisible="{Binding ShowHost}"
+            />
+
+
+        <Button
+            Text="krydsogbolle"
+            Style="{StaticResource normalBtn}"
+            Grid.Row="2"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            Command="{Binding BuyKrydsOgBolle}"
+            IsVisible="{Binding ShowHost}"
+            />
+
+        <Button
+            Text="stensakspapir"
+            Style="{StaticResource normalBtn}"
+            Grid.Row="1"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            Command="{Binding BuyStenSaksPapir}"
+            IsVisible="{Binding ShowHost}"
+            />
     </StackLayout>
 
 </ContentPage>

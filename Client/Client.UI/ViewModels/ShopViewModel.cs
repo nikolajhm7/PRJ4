@@ -21,5 +21,7 @@ namespace Client.UI.ViewModels
             await _navigationService.NavigateBack();
         }
 
+        
+
     }
 }

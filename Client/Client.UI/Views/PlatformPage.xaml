@@ -66,6 +66,7 @@
             Command="{Binding GoToShopCommand}"
             IsVisible="{Binding ShowHost }"
             />
+        
 
         <Button
             Text="Back"
