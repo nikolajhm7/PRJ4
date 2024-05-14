@@ -30,7 +30,8 @@ namespace Client.UI.Games
         private int ErrorCounter;
         private string _currentPlayer;
         private bool _initialized = false;
-        private int maxPlayers = 0;
+        private int _maxPlayers = 0;
+        private int _playerCount = 0;
         private bool _queueInitialized = false;
 
         // Define command properties
@@ -49,6 +50,7 @@ namespace Client.UI.Games
         ObservableCollection<char> guessedChars;
         [ObservableProperty] private string? imageSource;
         [ObservableProperty] private string? frontPlayer;
+        [ObservableProperty] private bool? gameIsDone = false;
 
 
         public ObservableCollection<char> GuessedChars
@@ -67,13 +69,13 @@ namespace Client.UI.Games
             _navigationService = navigationService;
             _lobbyService = lobbyService;
             guessedChars = [];
+
+            // Subscribe to events
             _hangmanService.GameStartedEvent += OnGameStarted;
             _hangmanService.GuessResultEvent += OnGuessResult;
             _hangmanService.GameOverEvent += OnGameOver;
             _hangmanService.LobbyClosedEvent += OnLobbyClosed;
             _hangmanService.UserLeftLobbyEvent += OnUserLeftLobby;
-
-            //maxPlayers = _lobbyService.GetLobbyMaxPlayers(LobbyId).Result.Value;
         }
         public void unsubscribeServices()
         {
@@ -90,10 +92,16 @@ namespace Client.UI.Games
                 await _hangmanService.ConnectAsync();
                 GuessedChars.Clear();
                 await LoadUsersInGame();
+
+                // Set the player status variables
+                var maxplayersResult = await _lobbyService.GetLobbyMaxPlayers(LobbyId);
+                _maxPlayers = maxplayersResult.Value;
+                _playerCount = PlayerNames.Count();
+                PlayerStatus = $"Players: {_playerCount}/{_maxPlayers}";
+
                 _initialized = true;
             }
         }
-
         private async Task LoadUsersInGame()
         {
             await Task.Delay(1);
@@ -127,13 +135,6 @@ namespace Client.UI.Games
             }
         }
 
-        //private void LoadPlayersTurn()
-        //{
-        //    var currentPlayer = userQueue.Dequeue();
-        //    FrontPlayer = currentPlayer + "'s turn";
-        //    userQueue.Enqueue(currentPlayer);
-        //}
-
         private void MakeUnderscores(int wordLength)
         {
             for (int i = 0; i < wordLength; i++)
@@ -152,10 +153,9 @@ namespace Client.UI.Games
 
             // Set the message
             StatusMessage = $"Game started with wordLength: {wordLength}";
-            PlayerStatus = $"Players: {PlayerNames.Count}/{maxPlayers}";
-
             // Set the lobby id
             LobbyIdLabel = $"Lobby ID: {LobbyId}";
+            PlayerStatus = $"Players: {_playerCount}/{_maxPlayers}";
 
             // Set the error counter
             ErrorCounter = 0;
@@ -174,8 +174,6 @@ namespace Client.UI.Games
             GuessedChars.Clear();
 
             LoadPlayerQueue();
-            //LoadPlayersTurn();
-
         }
         #endregion
 
@@ -210,8 +208,6 @@ namespace Client.UI.Games
             if (!guessedChars.Contains(char.ToUpper(letter))) { GuessedChars.Add(char.ToUpper(letter)); }
 
             LoadPlayerQueue();
-            //LoadPlayersTurn();
-
         }
         #endregion
 
@@ -225,6 +221,9 @@ namespace Client.UI.Games
 
             // Set the title
             Title = "HangMan: Game Over";
+
+            // Make reset button visible
+            GameIsDone = true;
 
         }
         #endregion
@@ -249,11 +248,14 @@ namespace Client.UI.Games
         {
             Console.WriteLine($"User left lobby: {username}");
 
-
-
-            //// Remove the player
-            PlayerStatus = $"Players: {PlayerNames.Count}/{maxPlayers} - {username} has left";
+            // Remove player
             PlayerNames.Remove(username);
+
+            // Update max players
+            _playerCount = PlayerNames.Count();
+
+            // Update player status
+            PlayerStatus = $"Players: {_playerCount}/{_maxPlayers} - {username} has left";
         }
 
         [RelayCommand]

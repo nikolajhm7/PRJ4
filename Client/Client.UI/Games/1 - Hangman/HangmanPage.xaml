@@ -150,7 +150,8 @@
                 Style="{StaticResource normalBtn}"
                 WidthRequest="100"
                 Text="Reset"
-                Command="{Binding RestartGameCommand}"/>
+                Command="{Binding RestartGameCommand}"
+                IsVisible="{Binding GameIsDone}"/>
 
 
     </Grid>
