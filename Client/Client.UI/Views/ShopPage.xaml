@@ -3,56 +3,48 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Client.UI.Views.ShopPage"
              Title="ShopPage">
-    <StackLayout
-        Padding="20">
-        <Label 
-            Text="This page could be used for shop but for now it is empty"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+    <VerticalStackLayout
+        Padding="100">
 
         <Label
             Text="Welcome To The Shop"
             Style="{StaticResource normalBtn}"
             Grid.Row="3"
             Grid.Column="3"
+            HorizontalTextAlignment="Center"
+            VerticalTextAlignment="Center"
             />
+
+        <CollectionView 
+            x:Name="GameCollectionView"
+            ItemsSource="{Binding Games}" 
+            EmptyView="No Games"
+            VerticalOptions="FillAndExpand">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="3" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout>
+                        <ImageButton 
+                            Source="{Binding Image}"
+                            WidthRequest="100"
+                            HeightRequest="100"
+                            Command ="{Binding Source={x:Reference GameCollectionView},Path=BindingContext.GoToLobbyCommand}"
+                            CommandParameter="{Binding .}"
+                        />
+                        <Label 
+                            Text="{Binding Name}" 
+                            HorizontalOptions="Center" />
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
         <Button
             Text="Back"
             Command="{Binding GoBackCommand}"/>
 
-        
-
-        <Button
-            Text="hangman"
-            Style="{StaticResource normalBtn}"
-            Grid.Row="3"
-            Grid.Column="3"
-            Grid.ColumnSpan="2"
-            Command="{Binding BuyHangMan}"
-            IsVisible="{Binding ShowHost}"
-            />
-
-
-        <Button
-            Text="krydsogbolle"
-            Style="{StaticResource normalBtn}"
-            Grid.Row="2"
-            Grid.Column="3"
-            Grid.ColumnSpan="2"
-            Command="{Binding BuyKrydsOgBolle}"
-            IsVisible="{Binding ShowHost}"
-            />
-
-        <Button
-            Text="stensakspapir"
-            Style="{StaticResource normalBtn}"
-            Grid.Row="1"
-            Grid.Column="3"
-            Grid.ColumnSpan="2"
-            Command="{Binding BuyStenSaksPapir}"
-            IsVisible="{Binding ShowHost}"
-            />
-    </StackLayout>
+    </VerticalStackLayout>
 
 </ContentPage>

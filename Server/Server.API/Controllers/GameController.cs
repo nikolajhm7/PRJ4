@@ -28,7 +28,23 @@ public class GameController : ControllerBase
         _gameRepository = gameRepository;
         _jwtTokenService = jwtTokenService;
     }
-    
+
+    [Authorize]
+    [HttpGet("getAllGames")]
+    public async Task<IActionResult> GetAllGames()
+    {
+        _logger.LogDebug("Getting all games");
+        var game = await _gameRepository.GetAllGames();
+        if (game == null)
+        {
+            _logger.LogDebug("No games found");
+            return NotFound();
+        }
+
+        return Ok();
+    }
+
+
     [Authorize]
     [HttpGet("getGamesForUser/{userId}")]
     public async Task<IActionResult> GetGamesForUser([FromRoute] string userId)

@@ -3,19 +3,22 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Server.API.Controllers;
 using Server.API.Models;
-
+using Server.API.Repositories.Interfaces;
 namespace Server.Test;
 
 public class FriendshipControllerTests : TestBase
 {
     private FriendshipController _controller;
     private ILogger<FriendshipController> _logger;
+    private IFriendsRepository _friendsRepository;
 
     [SetUp]
     public void Setup()
     {
         _logger = Substitute.For<ILogger<FriendshipController>>();
-        _controller = new FriendshipController(Context, _logger);
+
+        _controller = new FriendshipController(Context, _friendsRepository, _logger);
+
     }
 
     [Test]
