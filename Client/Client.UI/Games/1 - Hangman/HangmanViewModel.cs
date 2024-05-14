@@ -65,6 +65,11 @@ namespace Client.UI.Games
             _navigationService = navigationService;
             _lobbyService = lobbyService;
             guessedChars = [];
+            errorLabel = "Errors: 0";
+            hiddenWord = String.Empty;
+            lobbyIdLabel = "Lobby ID: 000000";
+            imageSource = "hangman_img0.jpg";
+            userQueue = new Queue<string>();
             //playerNames.Add("Anthony");
             //playerNames.Add("Nikolaj");
             //playerNames.Add("user.Username");

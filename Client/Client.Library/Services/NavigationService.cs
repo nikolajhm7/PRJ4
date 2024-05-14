@@ -1,4 +1,4 @@
-﻿
+﻿using Client.Library.Models;
 using Client.Library.Services.Interfaces;
 
 namespace Client.Library.Services

@@ -17,6 +17,7 @@ using Client.Library.Services.Interfaces;
 using Client.UI.Games;
 using ChatAppPage = Client.UI.Games.ChatAppPage;
 using ChatAppViewModel = Client.UI.Games.ChatAppViewModel;
+using Client.UI.ViewModels.Manager;
 
 namespace Client.UI
 {
@@ -79,7 +80,9 @@ namespace Client.UI
             builder.Services.AddTransient<HangmanPage>();
             builder.Services.AddTransient<HangmanViewModel>();
 
-            builder.Services.AddTransient<FriendsViewModel>();
+            builder.Services.AddSingleton<FriendsViewModel>();
+
+            builder.Services.AddSingleton<ViewModelFactory>();
 
             #endregion
 

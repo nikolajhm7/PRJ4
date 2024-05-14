@@ -1,16 +1,18 @@
 using System;
 using Client.UI.ViewModels;
+using Client.UI.ViewModels.Manager;
 using Microsoft.Maui.Controls;
 
 namespace Client.UI.Views 
 { 
 	public partial class LobbyPage : ContentPage
 	{
+		private ViewModelFactory viewModelFactory;
 		private LobbyViewModel _vm;
-		public LobbyPage(LobbyViewModel vm)
+		public LobbyPage(ViewModelFactory viewModelFactory)
 		{
-			this.BindingContext = vm;
-			_vm = vm;
+			_vm = viewModelFactory.GetLobbyViewModel();
+			this.BindingContext = _vm;
             InitializeComponent();
 		}
 
