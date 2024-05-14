@@ -99,8 +99,7 @@ namespace Server.API.Games
                 var userQueue = logic.GetQueue();
                 if (userQueue == null)
                 {
-                    var q = InitQueueForGame(lobbyId);
-                    userQueue = logic.GetQueue();
+                    return new(false, "There is no queue for the game");
                 }
 
                 if (currentUser == userQueue.Peek())
@@ -253,8 +252,8 @@ namespace Server.API.Games
                 var frontPlayer = logic.GetQueue().Peek();
                 if (frontPlayer == null)
                 {
-                    await InitQueueForGame(lobbyId);
-                    return new(true, null, logic.GetQueue().Peek());
+                    //await InitQueueForGame(lobbyId);
+                    return new(false, "There is no queue for the game", null);
                 }
                 else
                 {
