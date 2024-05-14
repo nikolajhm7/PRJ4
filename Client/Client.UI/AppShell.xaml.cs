@@ -16,6 +16,7 @@ namespace Client.UI
             Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
             Routing.RegisterRoute(nameof(JoinPage), typeof(JoinPage));
             Routing.RegisterRoute(nameof(GuestLoginPage), typeof(GuestLoginPage));
+            Routing.RegisterRoute(nameof(ShopPage),typeof(ShopPage));
             //Games:
             Routing.RegisterRoute(nameof(HangmanPage), typeof(HangmanPage));
         }

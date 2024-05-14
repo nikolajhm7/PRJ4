@@ -175,6 +175,12 @@ namespace Client.UI.ViewModels
         {
             await _navigationService.NavigateToPage(nameof(JoinPage));
         }
+
+        [RelayCommand]
+        async Task GoToShop()
+        {
+            await _navigationService.NavigateToPage(nameof(ShopPage));
+        }
         #endregion
         
     }
