@@ -4,4 +4,6 @@ public interface INavigationService
 {
     Task NavigateToPage(string page);
     Task NavigateBack();
+
+    Task NavigateBackToPage(string page);
 }

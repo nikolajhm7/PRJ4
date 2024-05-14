@@ -233,7 +233,7 @@ namespace Client.UI.ViewModels
         private async void LeaveLobbyAndGamePage()
         {
             _viewModelFactory.ResetAllViewModels(lobbyId);
-            await _navigationService.NavigateToPage(nameof(PlatformPage));
+            await _navigationService.NavigateBackToPage(nameof(PlatformPage));
         }
     }
 }

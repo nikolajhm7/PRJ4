@@ -139,7 +139,7 @@ namespace Client.UI.ViewModels
             _preferenceManager.Remove("refresh_token");
             await _friendsService.DisconnectAsync();
             await _lobbyService.DisconnectAsync();
-            await _navigationService.NavigateToPage(nameof(LoginPage));
+            await _navigationService.NavigateBackToPage(nameof(LoginPage));
         }
 
         [RelayCommand]

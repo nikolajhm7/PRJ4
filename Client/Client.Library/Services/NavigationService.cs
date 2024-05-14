@@ -14,5 +14,24 @@ namespace Client.Library.Services
         {
             await Shell.Current.GoToAsync("..");
         }
+
+        public async Task NavigateBackToPage(string page)
+        {
+            // Construct the target page path
+            string AuthenticatedPagePath = $"//Loading/{page}";
+            string LoggedInPagePath = $"//Loading/LoginPage/{page}";
+
+            // Loop until the current location matches the target page or the root page
+            while (Shell.Current.CurrentState.Location.OriginalString != AuthenticatedPagePath
+                   && Shell.Current.CurrentState.Location.OriginalString != LoggedInPagePath
+                   && Shell.Current.CurrentState.Location.OriginalString != "//")
+            {
+                await Shell.Current.GoToAsync("..");
+
+                // To prevent the loop from running too fast
+                await Task.Delay(300);
+            }
+        }
+
     }
 }
