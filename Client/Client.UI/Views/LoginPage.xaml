@@ -42,6 +42,7 @@
                Grid.Row="4"
                Grid.Column="1"
                Grid.ColumnSpan="2"
+               IsPassword="True"
                Text="{Binding LoginPassword}" />
 
         <Button
