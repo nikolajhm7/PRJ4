@@ -64,7 +64,7 @@
             Grid.Row="4"
             Grid.Column="3"
             Command="{Binding GoToShopCommand}"
-            IsVisible="{Binding ShowHost }"
+            IsVisible="{Binding Showhost }"
             />
 
         <Button
