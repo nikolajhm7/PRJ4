@@ -228,6 +228,9 @@ namespace Client.UI.Games
             // Make reset button visible
             GameIsDone = true;
 
+            // Make reset button visible
+            GameIsDone = true;
+
         }
         #endregion
 
