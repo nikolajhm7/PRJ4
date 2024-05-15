@@ -18,6 +18,17 @@ namespace Client.UI.Views
             }
         }
 
+        private void OnPasswordEntryCompleted(object sender, EventArgs e)
+        {
+            if (BindingContext is LoginViewModel viewModel)
+            {
+                if (viewModel.LoginOnPlatformCommand.CanExecute(null))
+                {
+                    viewModel.LoginOnPlatformCommand.Execute(null);
+                }
+            }
+        }
+
     }
 
 }

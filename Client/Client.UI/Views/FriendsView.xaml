@@ -11,15 +11,20 @@
           VerticalOptions="FillAndExpand"
           BindingContext="{Binding Source={RelativeSource AncestorType={x:Type local:FriendsView}}, Path=ViewModel}"
           x:DataType="{x:Type viewModels:FriendsViewModel}"
-          IsVisible="{Binding IsUser}">
+          IsVisible="{Binding IsUser}"
+          Padding="10, 0, 10, 0"
+          Margin="10"
+          BackgroundColor="#6482b4cc">
         <StackLayout>
-            <Label Text="Friends List" HorizontalOptions="Center" />
+            <Label Text="Friends List" HorizontalOptions="Center" Margin="10" />
 
             <CollectionView x:Name="FriendsCollectionView" 
                             ItemsSource="{Binding FriendsCollection}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="{x:Type DTOs:FriendDTO}">
-                        <Grid>
+                        <Grid BackgroundColor="#6482b4cc"
+                              Padding="5"
+                              >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -29,22 +34,25 @@
 
                             <StackLayout Orientation="Horizontal" Grid.Column="1">
                                 <Button BackgroundColor="Red"
+                                        Text="-"
                                         Command="{Binding Source={x:Reference FriendsCollectionView}, Path=BindingContext.DeclineFriendRequestCommand}"
                                         CommandParameter="{Binding Name}"
-                                        WidthRequest="10"
-                                        HeightRequest="10"/>
+                                        WidthRequest="5"
+                                        HeightRequest="5"/>
                                 <Button BackgroundColor="Green"
+                                        Text="+"
                                         Command="{Binding Source={x:Reference FriendsCollectionView}, Path=BindingContext.AcceptFriendRequestCommand}"
                                         CommandParameter="{Binding Name}"
                                         IsVisible="{Binding IsPending}"
-                                        WidthRequest="10"
-                                        HeightRequest="10"/>
+                                        WidthRequest="5"
+                                        HeightRequest="5"/>
                                 <Button BackgroundColor="Blue"
+                                        Text="Invite"
                                         Command="{Binding Source={x:Reference FriendsCollectionView}, Path=BindingContext.InviteFriendCommand}"
                                         CommandParameter="{Binding Name}"
                                         IsVisible="{Binding Source={x:Reference FriendsViewGrid}, Path=BindingContext.CanInvite}"
                                         WidthRequest="10"
-                                        HeightRequest="10"/>
+                                        HeightRequest="5"/>
                             </StackLayout>
                         </Grid>
                     </DataTemplate>
@@ -54,7 +62,7 @@
 
         <StackLayout Grid.Row="1"
                      Padding="10">
-            <Entry Placeholder="Enter friends username"
+            <Entry Placeholder="Enter username"
                    Text="{Binding AddFriendText}"/>
             <Button Text="Add Friend"
                     Command="{Binding AddNewFriendCommand}"
