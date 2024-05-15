@@ -36,10 +36,26 @@
                         <Label 
                             Text="{Binding Name}" 
                             HorizontalOptions="Center" />
+
+                        <Button
+                            Text="Enable"
+                            Command="{Binding Enable}"
+                        />
+
+                        <Button
+                            Text="Enable"
+                            Command="{Binding Enable}"
+                        />
+
+                        <Button
+                            Text="Enable"
+                            Command="{Binding Enable}"/>
+
                     </StackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+
 
         <Button
             Text="Back"

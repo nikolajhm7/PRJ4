@@ -49,6 +49,11 @@ namespace Client.UI.ViewModels
             await pullGames();
         }
 
+        public async void Addgame()
+        {
+           
+        }
+
         #region Commands
         [RelayCommand]
         public async Task GoBack()

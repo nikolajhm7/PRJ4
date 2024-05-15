@@ -19,4 +19,10 @@ public partial class ShopPage : ContentPage
             viewModel.OnPageAppearing();
         }
     }
+
+    private void Addgame(object sender, EventArgs e)
+    {
+       // Add the purchased game to the Users profile
+       
+    }
 }
