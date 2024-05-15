@@ -9,7 +9,8 @@
         ColumnDefinitions="*,4*,4*,*"
         RowDefinitions="*,*,*,*,*,*,10"
         RowSpacing="0"
-        Padding="0,0,0,10">
+        Padding="0,0,0,10"
+        Margin="0,100,0,0">
 
         <Label
             Text="Login as Guest"
@@ -34,7 +35,9 @@
             Grid.Row="3"
             Grid.Column="1"
             Grid.ColumnSpan="2"
-            Text="{Binding Username}" />
+            WidthRequest="600"
+            Text="{Binding Username}" 
+            Completed="OnGuestNameComplete"/>
 
         <Button
             x:Name="CreateButton"
@@ -43,6 +46,7 @@
             Grid.Row="4"
             Grid.Column="1"
             Grid.ColumnSpan="2"
+            WidthRequest="600"
             Command="{Binding MakeNewUserCommand}"/>
         <Button
             x:Name="Back"
@@ -51,6 +55,7 @@
             Grid.Row="5"
             Grid.Column="1"
             Grid.ColumnSpan="2"
+            WidthRequest="600"
             Command="{Binding GoBackCommand}"/>
     </Grid>
 
