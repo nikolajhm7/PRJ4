@@ -7,7 +7,6 @@
              xmlns:views="clr-namespace:Client.UI.Views"
              x:Class="Client.UI.Views.LobbyPage"
              x:DataType="viewModels:LobbyViewModel"
-             Title="LobbyPage"
              NavigationPage.HasBackButton="False">
 
     <Shell.BackButtonBehavior>

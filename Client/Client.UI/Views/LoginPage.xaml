@@ -4,8 +4,7 @@
              xmlns:behaviors="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
              xmlns:viewModels="clr-namespace:Client.UI.ViewModels"
              x:Class="Client.UI.Views.LoginPage"
-             x:DataType="viewModels:LoginViewModel"
-             Title="LoginPage">
+             x:DataType="viewModels:LoginViewModel">
 
         <Grid
         ColumnDefinitions="*,4*,4*,*"
