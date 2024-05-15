@@ -6,7 +6,9 @@ using Client.Library.Models;
 using System.Collections.ObjectModel;
 using Client.Library.Services;
 using Client.Library;
+using Client.Library.DTO;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 
 namespace Client.UI.ViewModels
@@ -49,10 +51,6 @@ namespace Client.UI.ViewModels
             await pullGames();
         }
 
-        public async void Addgame()
-        {
-           
-        }
 
         #region Commands
         [RelayCommand]
@@ -84,7 +82,34 @@ namespace Client.UI.ViewModels
             }
 
         }
+        [RelayCommand]
+        public async void AddGame(Game g)
+        {
+            var username = _jwtTokenService.GetUsernameFromToken();
 
+            string endpoint = $"/Game/addGameForUser";
+
+            var gameUserDto = new GameUserDTO
+            {
+                UserName = username,
+                GameId = g.GameId // Assuming 'Game' object has an 'Id' property
+            };
+            // Serialize GameUserDTO object to JSON
+            string jsonContent = JsonConvert.SerializeObject(gameUserDto);
+
+            // Create StringContent from JSON
+            var content = new StringContent(jsonContent);
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            // Make API call with the JSON content in the request body
+            var response = await _apiService.MakeApiCall(endpoint, HttpMethod.Post, content);
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                await Shell.Current.DisplayAlert("Fejl", "Kunne ikke tilføje spil", "OK");
+            }
+
+        }
 
         #endregion
 

@@ -30,26 +30,13 @@
                             Source="{Binding Image}"
                             WidthRequest="100"
                             HeightRequest="100"
-                            Command ="{Binding Source={x:Reference GameCollectionView},Path=BindingContext.GoToLobbyCommand}"
+                            Command ="{Binding Source={x:Reference GameCollectionView},Path=BindingContext.AddGameCommand}"
                             CommandParameter="{Binding .}"
                         />
                         <Label 
                             Text="{Binding Name}" 
                             HorizontalOptions="Center" />
 
-                        <Button
-                            Text="Enable"
-                            Command="{Binding Enable}"
-                        />
-
-                        <Button
-                            Text="Enable"
-                            Command="{Binding Enable}"
-                        />
-
-                        <Button
-                            Text="Enable"
-                            Command="{Binding Enable}"/>
 
                     </StackLayout>
                 </DataTemplate>
