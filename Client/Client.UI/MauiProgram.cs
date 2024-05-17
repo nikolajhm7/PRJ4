@@ -33,6 +33,7 @@ namespace Client.UI
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                    fonts.AddFont("coolvetica-rg.otf", "MainFont");
                 });
 
             Log.Logger = new LoggerConfiguration()

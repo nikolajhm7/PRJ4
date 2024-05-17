@@ -136,6 +136,7 @@ namespace Client.UI.ViewModels
             {
                 _logger.LogWarning("Attempted to accept friend request, but user not found in list: {Username}", s);
             }
+
         }
 
         [RelayCommand]

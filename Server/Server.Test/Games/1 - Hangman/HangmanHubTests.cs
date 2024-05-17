@@ -157,6 +157,17 @@ public class HangmanHubTests
         });
         _logic.IsGameOver().Returns(false);
 
+        // Mocking the queue
+        var userQueue = new Queue<string>();
+        userQueue.Enqueue(username); // Ensuring the currentUser is at the front
+        _logic.GetQueue().Returns(userQueue);
+
+        // Mocking the GuessLetter call
+        _logic.GuessLetter(Arg.Any<char>(), out Arg.Any<List<int>>()).Returns(x =>
+        {
+            x[1] = new List<int> { 0 }; // Suppose 'c' is at position 0
+            return true; // Letter guessed correctly
+        });
 
         // Act
         var res = await _uut.GuessLetter(lobbyId, 'c');
@@ -189,6 +200,18 @@ public class HangmanHubTests
             return true;
         });
         _logic.IsGameOver().Returns(true);
+
+        // Mocking the queue
+        var userQueue = new Queue<string>();
+        userQueue.Enqueue(username); // Ensuring the currentUser is at the front
+        _logic.GetQueue().Returns(userQueue);
+
+        // Mocking the GuessLetter call
+        _logic.GuessLetter(Arg.Any<char>(), out Arg.Any<List<int>>()).Returns(x =>
+        {
+            x[1] = new List<int> { 0 }; // Suppose 'c' is at position 0
+            return true; // Letter guessed correctly
+        });
 
         // Act
         var res = await _uut.GuessLetter(lobbyId, 'c');

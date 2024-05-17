@@ -10,5 +10,15 @@ namespace Client.UI.Views {
 			InitializeComponent();
 			BindingContext = vm;
 		}
-	}
+        private void OnGuestNameComplete(object sender, EventArgs e)
+        {
+            if (BindingContext is JoinViewModel viewModel)
+            {
+                if (viewModel.GoToLobbyCommand.CanExecute(null))
+                {
+                    viewModel.GoToLobbyCommand.Execute(null);
+                }
+            }
+        }
+    }
 }
