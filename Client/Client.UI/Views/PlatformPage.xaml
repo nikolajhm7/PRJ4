@@ -70,7 +70,7 @@
         <Button
             Text="Shop"
             Style="{StaticResource normalBtn}"
-            Grid.Row="4"
+            Grid.Row="3"
             Grid.Column="3"
             Command="{Binding GoToShopCommand}"
             IsVisible="{Binding Showhost }"
