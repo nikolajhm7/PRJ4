@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Server.API.Data;
 using Server.API.DTO;
 using Server.API.Models;
 using Server.API.Repository.Interfaces;
@@ -9,12 +11,30 @@ public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
     private IUserRepository _userRepository;
-    public UserController(ILogger<UserController> logger, IUserRepository userRepository)
+    private readonly ApplicationDbContext _context;
+
+    public UserController(ILogger<UserController> logger, IUserRepository userRepository, ApplicationDbContext context)
     {
         _logger = logger;
         _userRepository = userRepository;
+        _context = context;
     }
-    
+
+    [HttpGet("GetUserIdFromUsername/{username}")]
+    public async Task<IActionResult> GetUserIdFromUsername(string username)
+    {
+        var user = await _context.Users
+            .Where(u => u.UserName == username)
+            .FirstOrDefaultAsync();
+
+        if (user == null)
+        {
+            return NotFound("User not found");
+        }
+
+        return Ok(user.Id);
+    }
+
 
     [HttpPost("makeNewUser")]
     public async Task<IActionResult> MakeNewUser([FromBody] RegisterDto registerDto)

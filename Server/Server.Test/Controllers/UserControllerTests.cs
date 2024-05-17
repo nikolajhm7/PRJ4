@@ -18,6 +18,7 @@ public class UserControllerTests
     private UserController _controller;
     private IUserRepository _userRepository;
     private ILogger<UserController> _logger;
+    private ApplicationDbContext _context;
 
     [SetUp]
     public void Setup()
@@ -25,7 +26,7 @@ public class UserControllerTests
         _userRepository = Substitute.For<IUserRepository>();
         _logger = Substitute.For<ILogger<UserController>>();
 
-        _controller = new UserController(_logger, _userRepository)
+        _controller = new UserController(_logger, _userRepository, _context)
         {
             ControllerContext = new ControllerContext()
             {

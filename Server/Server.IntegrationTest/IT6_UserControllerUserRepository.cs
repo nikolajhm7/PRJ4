@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Server.API.Controllers;
+using Server.API.Data;
 using Server.API.DTO;
 using Server.API.Models;
 using Server.API.Repositories;
@@ -18,6 +19,7 @@ public class IT6_UserControllerUserRepository : IntegrationTestBase
     private IUserRepository _userRepository;
     private ILogger<UserController> _logger;
     private UserManager<User> _userManager;
+    private ApplicationDbContext _context;
     
     [SetUp]
     public void SetUp()
@@ -38,7 +40,7 @@ public class IT6_UserControllerUserRepository : IntegrationTestBase
         _userRepository = new UserRepository(_userManager);
         _logger = Substitute.For<ILogger<UserController>>();
         
-        _userController = new UserController(_logger, _userRepository);
+        _userController = new UserController(_logger, _userRepository, _context);
     }
 
     [Test]

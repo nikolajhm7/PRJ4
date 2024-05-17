@@ -7,13 +7,18 @@
         Padding="100">
 
         <Label
-            Text="Welcome To The Shop"
+            Text="Velkommen til shoppen"
             Style="{StaticResource normalBtn}"
-            Grid.Row="3"
-            Grid.Column="3"
             HorizontalTextAlignment="Center"
             VerticalTextAlignment="Center"
             />
+
+        <Label
+            Text="Vælg et spil du gerne vil købe"
+            Style="{StaticResource normalBtn}"
+            HorizontalTextAlignment="Center"
+            VerticalTextAlignment="Center"
+        />
 
         <CollectionView 
             x:Name="GameCollectionView"
@@ -30,23 +35,31 @@
                             Source="{Binding Image}"
                             WidthRequest="100"
                             HeightRequest="100"
-                            Command ="{Binding Source={x:Reference GameCollectionView},Path=BindingContext.AddGameCommand}"
+                            Command="{Binding Source={x:Reference GameCollectionView}, Path=BindingContext.SelectGameCommand}"
                             CommandParameter="{Binding .}"
                         />
                         <Label 
                             Text="{Binding Name}" 
                             HorizontalOptions="Center" />
 
-
                     </StackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
+        <Grid ColumnDefinitions="*,*">
+            <Button 
+                Grid.Column="1"
+                Text="Add Game" 
+                Command="{Binding AddGameCommand}"
+                IsVisible="{Binding ShopViewModel.IsAddButtonVisible}" />
+            <Button
+                Grid.Column="2"
+                Text="Back"
+                Command="{Binding GoBackCommand}"/>
+        </Grid>
 
-        <Button
-            Text="Back"
-            Command="{Binding GoBackCommand}"/>
+
 
     </VerticalStackLayout>
 

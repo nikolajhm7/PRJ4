@@ -20,9 +20,4 @@ public partial class ShopPage : ContentPage
         }
     }
 
-    private void Addgame(object sender, EventArgs e)
-    {
-       // Add the purchased game to the Users profile
-       
-    }
 }
