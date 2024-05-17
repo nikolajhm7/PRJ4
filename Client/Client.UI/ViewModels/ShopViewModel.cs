@@ -32,7 +32,7 @@ namespace Client.UI.ViewModels
         private IJwtTokenService _jwtTokenService;
         private readonly IApiService _apiService;
         private Game _selectedGame;
-        [ObservableProperty] private bool _IsAddButtonVisible = true;
+        [ObservableProperty] private bool _IsAddButtonVisible = false;
 
 
 
@@ -56,11 +56,6 @@ namespace Client.UI.ViewModels
 
 
         #region Commands
-        [RelayCommand]
-        public async Task GoBack()
-        {
-            await _navigationService.NavigateBack();
-        }
         public void SetImagesForGames()
         {
             foreach (var game in Games)
@@ -89,6 +84,12 @@ namespace Client.UI.ViewModels
         public async void AddGame()
         {
             var username = _jwtTokenService.GetUsernameFromToken();
+
+            if (_selectedGame == null)
+            {
+                await Shell.Current.DisplayAlert($"Fejl", $"ingen spil valgt", "OK");
+                return;
+            }
 
             string getEndpoint = $"/Game/getGamesForUser/{_jwtTokenService.GetUsernameFromToken()}";
             var getresponse = await _apiService.MakeApiCall(getEndpoint, HttpMethod.Get);
@@ -151,9 +152,16 @@ namespace Client.UI.ViewModels
         private async Task SelectGame(Game selectedGame)
         {
             _selectedGame = selectedGame;
-            IsAddButtonVisible = !IsAddButtonVisible;
-
+            IsAddButtonVisible = true;
         }
+
+        [RelayCommand]
+        private async Task Cancel()
+        {
+            IsAddButtonVisible = false;
+            await _navigationService.NavigateBack();
+        }
+
 
         #endregion
 

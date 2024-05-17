@@ -3,24 +3,25 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Client.UI.Views.ShopPage"
              Title="ShopPage">
-    <VerticalStackLayout
-        Padding="100">
+    <Grid RowDefinitions="2*,*,6*,2*,*">
 
         <Label
+            Grid.Row="0"
             Text="Velkommen til shoppen"
-            Style="{StaticResource normalBtn}"
+            FontSize="50"
             HorizontalTextAlignment="Center"
             VerticalTextAlignment="Center"
             />
 
         <Label
+            Grid.Row="1"
             Text="Vælg et spil du gerne vil købe"
-            Style="{StaticResource normalBtn}"
             HorizontalTextAlignment="Center"
             VerticalTextAlignment="Center"
         />
 
         <CollectionView 
+            Grid.Row="2"
             x:Name="GameCollectionView"
             ItemsSource="{Binding Games}" 
             EmptyView="No Games"
@@ -47,20 +48,20 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Grid ColumnDefinitions="*,*">
+        <Grid ColumnDefinitions="*,*"
+              Grid.Row="3">
+            <Button 
+                Grid.Column="0"
+                Text="Add Game" 
+                Command="{Binding AddGameCommand}" 
+                IsVisible="{Binding IsAddButtonVisible}"/>
             <Button 
                 Grid.Column="1"
-                Text="Add Game" 
-                Command="{Binding AddGameCommand}"
-                IsVisible="{Binding ShopViewModel.IsAddButtonVisible}" />
-            <Button
-                Grid.Column="2"
-                Text="Back"
-                Command="{Binding GoBackCommand}"/>
+                Text="Cancel" 
+                Command="{Binding CancelCommand}" 
+                IsVisible="{Binding IsAddButtonVisible}"/>
         </Grid>
 
-
-
-    </VerticalStackLayout>
+    </Grid>
 
 </ContentPage>
