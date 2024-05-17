@@ -61,6 +61,14 @@ namespace Client.UI.ViewModels
             _lobbyService.LobbyClosedEvent += OnLobbyClosed;
         }
 
+        public void unsubscribeServices()
+        {
+            _lobbyService.UserJoinedLobbyEvent -= OnUserJoinedLobby;
+            _lobbyService.UserLeftLobbyEvent -= OnUserLeftLobby;
+            _lobbyService.GameStartedEvent -= OnGameStarted;
+            _lobbyService.LobbyClosedEvent -= OnLobbyClosed;
+        }
+
         public async Task OnPageappearing()
         {
             if(!_initialized)
@@ -159,12 +167,8 @@ namespace Client.UI.ViewModels
             {
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    //remove event listeners
-                    _lobbyService.LobbyClosedEvent -= OnLobbyClosed;
-                    _lobbyService.UserJoinedLobbyEvent -= OnUserJoinedLobby;
-                    _lobbyService.UserLeftLobbyEvent -= OnUserLeftLobby;
-                    _lobbyService.GameStartedEvent -= OnGameStarted;
-                    LeaveLobbyAndServices();
+                    //remove pages and connections.
+                    LeaveLobbyAndGamePage();
                     CloseLobby();
                 });
             }
@@ -206,7 +210,7 @@ namespace Client.UI.ViewModels
 
             if (answer)
             {
-                LeaveLobbyAndServices();
+                LeaveLobbyAndGamePage();
             }
         }
 
@@ -226,13 +230,10 @@ namespace Client.UI.ViewModels
         }
 
 
-        private async void LeaveLobbyAndServices()
+        private async void LeaveLobbyAndGamePage()
         {
-            _viewModelFactory.ResetAllViewModels();
-            await _lobbyService.LeaveLobbyAsync(lobbyId);
-            await _navigationService.NavigateToPage(nameof(PlatformPage));
-            await _lobbyService.DisconnectAsync();
-            await _hangmanService.DisconnectAsync();
+            _viewModelFactory.ResetAllViewModels(lobbyId);
+            await _navigationService.NavigateBackToPage(nameof(PlatformPage));
         }
     }
 }

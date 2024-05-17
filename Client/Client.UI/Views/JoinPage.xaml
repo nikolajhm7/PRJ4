@@ -13,7 +13,8 @@
                Grid.Row="0"
                Grid.Column="1"
                HeightRequest="20"
-               Text="{Binding LobbyId}"/>
+               Text="{Binding LobbyId}"
+               Completed="OnGuestNameComplete"/>
 
         <Button Text="Join"
             Style="{StaticResource normalBtn}"

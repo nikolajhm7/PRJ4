@@ -53,11 +53,11 @@ namespace Client.UI.ViewModels
                 
                 if(!string.IsNullOrEmpty(authToken) && !_jwtTokenService.IsUserRoleGuest())
                 {
-                    await _navigationService.NavigateToPage(nameof(PlatformPage));
+                    await _navigationService.NavigateBackToPage(nameof(PlatformPage));
                 }
                 else
                 {
-                    await _navigationService.NavigateToPage(nameof(LoginPage));
+                    await _navigationService.NavigateBackToPage(nameof(LoginPage));
                 }
         }
     }

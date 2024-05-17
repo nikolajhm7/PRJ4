@@ -25,6 +25,18 @@ namespace Client.UI.Games
             }
         }
 
+        private void OnEntryCompleted(object sender, EventArgs e)
+        {
+            // Check if the DataContext is your ViewModel
+            if (BindingContext is HangmanViewModel viewModel)
+            {
+                // Ensure the command can be executed
+                if (viewModel.GuessLetterCommand.CanExecute(viewModel.Letter) && viewModel.Letter != null)
+                {
+                    viewModel.GuessLetterCommand.Execute(viewModel.Letter);
+                }
+            }
+        }
     }
 
 }
