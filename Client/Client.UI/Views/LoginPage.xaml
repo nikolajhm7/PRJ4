@@ -71,7 +71,7 @@
 
         <Button
             x:Name="GuestJoinBtn"   
-            Text="Join as Guest" 
+            Text="Login as Guest" 
             Style="{StaticResource normalBtn}"
             WidthRequest="295"
             Grid.Row="6"
