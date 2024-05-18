@@ -28,6 +28,10 @@ namespace Server.API.Repositories
                 throw new Exception("Cannot add yourself as a friend");
             }
             
+            if (await FindFriendship(userName, friendName) != null)
+            {
+                throw new Exception("Friendship already exists");
+            }
 
             var user = await FindUserFromUserName(userName);
             var friend = await FindUserFromUserName(friendName);

@@ -33,17 +33,9 @@ namespace Server.API.Controllers
         {
             _logger.LogDebug("Start sending friend request between {userId} and {friendId}",userId,friendId);
 
-            try
-            {
-                await _friendsRepository.AddFriendRequest(userId, friendId);
-
-            }
-            catch
-            {
-                return StatusCode(500, $"Internal server error in friend request");
-            }
-
-            return Ok();
+            await _friendsRepository.AddFriendRequest(userId, friendId);
+            
+            return Ok("Friend request sent successfully.");
             //try
             //{
             //    // Check if users exist
