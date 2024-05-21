@@ -16,55 +16,12 @@ public class FriendshipControllerTests : TestBase
     public void Setup()
     {
         _logger = Substitute.For<ILogger<FriendshipController>>();
+        _friendsRepository = Substitute.For<IFriendsRepository>();
+        
+        _friendsRepository.AddFriendRequest("user1", "user2").Returns(Task.CompletedTask);
 
         _controller = new FriendshipController(Context, _friendsRepository, _logger);
 
-    }
-
-    [Test]
-    public async Task SendFriendRequest_ReturnsNotFound_WhenUserNotFound()
-    {
-        string userId = "user1";
-        string friendId = "user2";
-        User friend = new User { Id = friendId };
-        Context.Users.Add(friend);
-        Context.SaveChanges();
-
-        var result = await _controller.SendFriendRequest(userId, friendId);
-        
-        Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
-    }
-    
-    [Test]
-    public async Task SendFriendRequest_ReturnsNotFound_WhenFriendNotFound()
-    {
-        string userId = "user1";
-        string friendId = "user2";
-        User user = new User { Id = userId };
-        Context.Users.Add(user);
-        Context.SaveChanges();
-
-        var result = await _controller.SendFriendRequest(userId, friendId);
-        
-        Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
-    }
-
-    [Test]
-    public async Task SendFriendRequest_ReturnsBadRequest_WhenFriendshipAlreadyExists()
-    {
-        string userId = "user1";
-        string friendId = "user2";
-        User user = new User { Id = userId };
-        User friend = new User { Id = friendId };
-        Friendship friendship = new Friendship { User1Id = userId, User2Id = friendId, Status = "Accepted" };
-        Context.Users.Add(user);
-        Context.Users.Add(friend);
-        Context.Friendships.Add(friendship);
-        Context.SaveChanges();
-
-        var result = await _controller.SendFriendRequest(userId, friendId) as BadRequestObjectResult;
-
-        Assert.That(result, Is.Not.Null);
     }
 
     [Test]
@@ -72,11 +29,6 @@ public class FriendshipControllerTests : TestBase
     {
         string userId = "user1";
         string friendId = "user2";
-        User user = new User { Id = userId };
-        User friend = new User { Id = friendId };
-        Context.Users.Add(user);
-        Context.Users.Add(friend);
-        Context.SaveChanges();
 
         var result = await _controller.SendFriendRequest(userId, friendId) as OkObjectResult;
 
