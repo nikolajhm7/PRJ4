@@ -86,8 +86,13 @@ namespace Server.API.Hubs
 
         public async Task<ActionResult<int>> GetLobbyMaxPlayers(string lobbyId)
         {
-            var maxPlayers = _lobbyManager.GetLobbyMaxPlayers(lobbyId);
-            return new(true, null, maxPlayers);
+            if (_lobbyManager.LobbyExists(lobbyId))
+            {
+                var maxPlayers = _lobbyManager.GetLobbyMaxPlayers(lobbyId);
+                return new(true, null, maxPlayers);
+            }
+            return new(false, "Lobby does not exist.", 0);
+
         }
 
         public async Task<ActionResult> UserIsHost(string lobbyId)
