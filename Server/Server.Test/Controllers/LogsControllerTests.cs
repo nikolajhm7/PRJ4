@@ -54,6 +54,29 @@ public class LogsControllerTests
         });
     }
 
+    [Test]
+    public void Logs_ProcessesEntriesAbbreviated_AndLogsAppropriately()
+    {
+        var logEntries = new List<LogEntryDTO>
+        {
+            new LogEntryDTO { Level = "dbg", Message = "Test debug", Timestamp = DateTime.UtcNow },
+            new LogEntryDTO { Level = "inf", Message = "Test info", Timestamp = DateTime.UtcNow },
+            new LogEntryDTO { Level = "err", Message = "Test error", Timestamp = DateTime.UtcNow },
+            new LogEntryDTO { Level = "crit", Message = "Test critical", Timestamp = DateTime.UtcNow },
+        };
+
+        var result = _controller.Logs(logEntries) as OkResult;
+
+        Assert.That(result, Is.Not.Null);
+        Received.InOrder(() =>
+        {
+            _logger.Log(LogLevel.Debug, Arg.Any<EventId>(), Arg.Is<object>(o => o.ToString().Contains("Test debug")), null, Arg.Any<Func<object, Exception, string>>());
+            _logger.Log(LogLevel.Information, Arg.Any<EventId>(), Arg.Is<object>(o => o.ToString().Contains("Test info")), null, Arg.Any<Func<object, Exception, string>>());
+            _logger.Log(LogLevel.Error, Arg.Any<EventId>(), Arg.Is<object>(o => o.ToString().Contains("Test error")), null, Arg.Any<Func<object, Exception, string>>());
+            _logger.Log(LogLevel.Critical, Arg.Any<EventId>(), Arg.Is<object>(o => o.ToString().Contains("Test critical")), null, Arg.Any<Func<object, Exception, string>>());
+        });
+    }
+
 
     [Test]
     public void Logs_HandlesUnknownLogLevel()
