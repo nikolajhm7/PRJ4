@@ -79,7 +79,8 @@ namespace Client.UI
             builder.Services.AddTransient<HangmanPage>();
             builder.Services.AddTransient<HangmanViewModel>();
 
-            builder.Services.AddSingleton<FriendsViewModel>();
+            builder.Services.AddTransient<FriendsView>();
+            builder.Services.AddTransient<FriendsViewModel>();
 
             builder.Services.AddSingleton<ViewModelFactory>();
 
@@ -100,11 +101,6 @@ namespace Client.UI
 
             #endregion
 
-            builder.Services.AddTransient<HangmanPage>();
-            builder.Services.AddTransient<HangmanViewModel>();
-
-            //builder.Services.AddTransient<ChatAppPage>();
-            //builder.Services.AddTransient<ChatAppViewModel>();
 
 #if DEBUG
             builder.Logging.AddDebug();
