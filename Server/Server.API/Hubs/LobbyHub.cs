@@ -67,8 +67,6 @@ namespace Server.API.Hubs
 
                 _logger.LogInformation("{UserName} joined lobby {LobbyId}.", Context.User?.Identity?.Name, lobbyId);
 
-                var users = _lobbyManager.GetUsersInLobby(lobbyId);
-
                 return new(true, lobbyId);
             }
             else
