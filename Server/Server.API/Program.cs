@@ -96,7 +96,7 @@ builder.Host.UseSerilog((ctx, lc) =>
             connectionString: ctx.Configuration.GetConnectionString("DefaultConnection"),
             sinkOptions: new MSSqlServerSinkOptions { TableName = "LogEvents", AutoCreateSqlTable = true }
         );
-        lc.WriteTo.Seq("http://localhost:5341"); // Erstat med den faktiske adresse til din Seq server
+        lc.WriteTo.Seq("http://localhost:5341");
         lc.Enrich.WithMachineName();
         lc.Enrich.WithThreadId();
     }
