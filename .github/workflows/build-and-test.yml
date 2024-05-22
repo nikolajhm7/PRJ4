@@ -171,6 +171,11 @@ jobs:
           cd Server
           dotnet test Server.Test/Server.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByFile="**/Migrations/*"
 
+      - name: Run Integration Tests with Coverage
+        run: |
+          cd Server
+          dotnet test Server.IntegrationTest/Server.IntegrationTest.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByFile="**/Migrations/*"
+
       - name: Install ReportGenerator Tool
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
