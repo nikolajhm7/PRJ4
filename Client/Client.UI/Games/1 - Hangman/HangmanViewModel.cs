@@ -260,16 +260,11 @@ namespace Client.UI.Games
             try
             {
                 var response = await _hangmanService.GuessLetter(LobbyId, letter);
-                //if(guessedChars.Contains(char.ToUpper(letter)) ) 
-                //{ 
-                //    await Shell.Current.DisplayAlert("Fejl", $"'{char.ToUpper(letter)}' er allerede g�ttet p�!", "OK"); 
-                //}
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error guessing letter: {ex.Message}");
             }
-
         }
 
         [RelayCommand]
