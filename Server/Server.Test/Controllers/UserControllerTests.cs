@@ -183,7 +183,7 @@ public class UserControllerTests
 
         // Test password as null
         var result6 = attribute.IsValid(null);
-        Assert.That(result5, Is.EqualTo(false));
+        Assert.That(result6, Is.EqualTo(false));
     }
 
 }

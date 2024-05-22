@@ -233,11 +233,11 @@ public class HangmanHubTests
 
         // Simulate an unauthenticated user
         _context.User?.Identity?.Name.Returns((string?)null);
-        _logicManager.TryGetValue(Arg.Any<string>(), out Arg.Any<IHangmanLogic>()).Returns(x =>
-        {
-            x[1] = _logic;
-            return true;
-        });
+        //_logicManager.TryGetValue(Arg.Any<string>(), out Arg.Any<IHangmanLogic>()).Returns(x =>
+        //{
+        //    x[1] = _logic;
+        //    return true;
+        //});
 
         // Act
         var res = await _uut.GuessLetter(lobbyId, 'c');
