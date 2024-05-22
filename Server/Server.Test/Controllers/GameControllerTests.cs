@@ -130,4 +130,35 @@ public class GameControllerTests : TestBase
         Assert.That(result, Is.Not.Null);
     }
 
+    [Test]
+    public async Task GetAllGames_ReturnsOk_WhenGamesAreFound()
+    {
+        // Arrange
+        var games = new List<Game> { new Game { Name = "Game1" }, new Game { Name = "Game2" } };
+        _gameRepository.GetAllGames().Returns(Task.FromResult(games));
+
+        // Act
+        var result = await _controller.GetAllGames() as OkObjectResult;
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(200));
+        Assert.That(result.Value, Is.EqualTo(games));
+    }
+
+    [Test]
+    public async Task GetAllGames_ReturnsNotFound_WhenNoGamesAreFound()
+    {
+        // Arrange
+        List<Game> games = null;
+        _gameRepository.GetAllGames().Returns(Task.FromResult(games));
+
+        // Act
+        var result = await _controller.GetAllGames() as NotFoundResult;
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(404));
+    }
+
 }
