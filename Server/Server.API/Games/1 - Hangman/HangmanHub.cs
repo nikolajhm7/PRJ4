@@ -347,19 +347,5 @@ namespace Server.API.Games
                 return new ActionResult(false, "Lobby does not exist.");
             }
         }
-
-        //public async Task<ActionResult<List<char>>> GetGuessedChars(string lobbyId)
-        //{
-        //    if (_logicManager.TryGetValue(lobbyId, out var logic))
-        //    {
-        //        var guessedLetters = logic.GetGuessedLetters();
-        //        return new(true, null, guessedLetters);
-        //    }
-        //    else
-        //    {
-        //        return new(false, "Lobby does not exist", []);
-        //    }
-
-        //}
     }
 }
