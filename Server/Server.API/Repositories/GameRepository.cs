@@ -15,7 +15,11 @@ public class GameRepository : IGameRepository
         _context = context;
         _userRepository = userRepository;
     }
-    
+    public async Task<List<Game>> GetAllGames()
+    {
+        return await _context.Games.ToListAsync();
+    }
+
     public async Task<List<Game>> GetGamesForUser(User user)
     {
         return await _context.Games

@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Client.UI.Views.ShopPage"
+             Title="ShopPage">
+    <Grid RowDefinitions="2*,*,6*,2*,*">
+
+        <Label
+            Grid.Row="0"
+            Text="Velkommen til shoppen"
+            FontSize="50"
+            HorizontalTextAlignment="Center"
+            VerticalTextAlignment="Center"
+            />
+
+        <Label
+            Grid.Row="1"
+            Text="Vælg et spil du gerne vil købe"
+            HorizontalTextAlignment="Center"
+            VerticalTextAlignment="Center"
+        />
+
+        <CollectionView 
+            Grid.Row="2"
+            x:Name="GameCollectionView"
+            ItemsSource="{Binding Games}" 
+            EmptyView="No Games"
+            VerticalOptions="FillAndExpand">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="3" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout>
+                        <ImageButton 
+                            Source="{Binding Image}"
+                            WidthRequest="100"
+                            HeightRequest="100"
+                            Command="{Binding Source={x:Reference GameCollectionView}, Path=BindingContext.SelectGameCommand}"
+                            CommandParameter="{Binding .}"
+                        />
+                        <Label 
+                            Text="{Binding Name}" 
+                            HorizontalOptions="Center" />
+
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Grid ColumnDefinitions="*,*"
+              Grid.Row="3">
+            <Button 
+                Grid.Column="0"
+                Text="Add Game" 
+                Command="{Binding AddGameCommand}" 
+                IsVisible="{Binding IsAddButtonVisible}"/>
+            <Button 
+                Grid.Column="1"
+                Text="Cancel" 
+                Command="{Binding CancelCommand}" 
+                IsVisible="{Binding IsAddButtonVisible}"/>
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

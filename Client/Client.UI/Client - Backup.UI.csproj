@@ -57,7 +57,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Remove="Views\ShopPage.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Content Include="..\..\Server\Server.API\appsettings.json" Link="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AdditionalFiles Include="Views\ShopPage.xaml">
+	    <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+	  </AdditionalFiles>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -84,9 +94,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Games\2 - ChatApp\ChatAppPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Resources\Themes\DefaultTheme.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\ChatAppPage.xaml">
@@ -117,17 +124,11 @@
 	    <SubType>Designer</SubType>
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\ShopPage.xaml">
-	    <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-	  </MauiXaml>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Compile Update="Games\2 - ChatApp\ChatAppPage.xaml.cs">
 	    <DependentUpon>%(Filename)</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Themes\DefaultTheme.xaml.cs">
-	    <DependentUpon>DefaultTheme.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\ChatAppPage.xaml.cs">
 	    <DependentUpon>ChatAppPage.xaml</DependentUpon>

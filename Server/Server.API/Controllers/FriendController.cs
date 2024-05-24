@@ -6,6 +6,8 @@ using Server.API.DTO;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Server.API.Repositories;
+using Server.API.Repositories.Interfaces;
 
 namespace Server.API.Controllers
 {
@@ -15,10 +17,13 @@ namespace Server.API.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<FriendshipController> _logger;
+        private readonly IFriendsRepository _friendsRepository;
 
-        public FriendshipController(ApplicationDbContext context, ILogger<FriendshipController> logger)
+
+        public FriendshipController(ApplicationDbContext context, IFriendsRepository friendsRepository, ILogger<FriendshipController> logger)
         {
             _context = context;
+            _friendsRepository = friendsRepository;
             _logger = logger;
         }
 
@@ -26,70 +31,75 @@ namespace Server.API.Controllers
         [HttpPut("SendRequest")]
         public async Task<IActionResult> SendFriendRequest(string userId, string friendId)
         {
-            _logger.LogInformation("Attempting to send friend request from user {UserId} to {FriendId}", userId, friendId);
+            _logger.LogDebug("Start sending friend request between {userId} and {friendId}",userId,friendId);
 
-            var user = await _context.Users.FindAsync(userId);
-            var friend = await _context.Users.FindAsync(friendId);
-
-            if (user == null)
-            {
-                _logger.LogWarning("User with ID {UserId} not found.", userId);
-                return NotFound("User not found.");
-            }
+            await _friendsRepository.AddFriendRequest(userId, friendId);
             
-            if (friend == null)
-            {
-                _logger.LogWarning("Friend with ID {FriendId} not found.", friendId);
-                return NotFound("Friend not found.");
-            }
-
-            var existingFriendship = await _context.Friendships
-                .Where(f => (f.User1Id == userId && f.User2Id == friendId) ||
-                            (f.User1Id == friendId && f.User2Id == userId))
-                .FirstOrDefaultAsync();
-
-            if (existingFriendship != null)
-            {
-                _logger.LogWarning("Friend request between {UserId} and {FriendId} already exists.", userId, friendId);
-                return BadRequest("Friend request already sent or friendship already exists.");
-            }
-
-            var newFriendship = new Friendship
-            {
-                User1Id = userId,
-                User2Id = friendId,
-                Status = "Pending",
-                date = DateTime.UtcNow
-            };
-
-            _context.Friendships.Add(newFriendship);
-            await _context.SaveChangesAsync();
-
-            _logger.LogInformation("Friend request from {UserId} to {FriendId} sent successfully.", userId, friendId);
             return Ok("Friend request sent successfully.");
+            //try
+            //{
+            //    // Check if users exist
+            //    var user = await _context.Users.FindAsync(userId);
+            //    var friend = await _context.Users.FindAsync(friendId);
+
+            //    if (user == null || friend == null)
+            //        return NotFound();
+
+            //    // Check if friendship already exists
+            //    var existingFriendship = await _context.Friendships
+            //        .Where(f => (f.User1Id == userId && f.User2Id == friendId) || (f.User1Id == friendId && f.User2Id == userId))
+            //        .FirstOrDefaultAsync();
+
+            //    if (existingFriendship != null)
+            //        return BadRequest("Friend request already sent or friendship already exists.");
+
+            //    // Create new friendship
+            //    var newFriendship = new Friendship
+            //    {
+            //        User1Id = userId,
+            //        User2Id = friendId,
+            //        Status = "Pending", // Set status to pending initially
+            //        date = DateTime.UtcNow
+            //    };
+
+            //    // Add and save changes
+            //    _context.Friendships.Add(newFriendship);
+            //    await _context.SaveChangesAsync();
+
+            //    return Ok("Friend request sent successfully.");
+            //}
+            //catch (Exception ex)
+            //{
+            //    return StatusCode(500, $"Internal server error: {ex.Message}");
+            //}
         }
 
         // PUT: api/Friendship/AcceptRequest
         [HttpPut("AcceptRequest")]
         public async Task<IActionResult> AcceptFriendRequest(string userId, string friendId)
         {
-            _logger.LogInformation("Attempting to accept friend request for {UserId} from {FriendId}", userId, friendId);
-
-            var friendship = await _context.Friendships
-                .Where(f => (f.User1Id == friendId && f.User2Id == userId && f.Status == "Pending"))
-                .FirstOrDefaultAsync();
-
-            if (friendship == null)
+            try
             {
-                _logger.LogWarning("Friend request between {FriendId} and {UserId} not found or already processed.", friendId, userId);
-                return NotFound("Friend request not found or already accepted/declined.");
+                // Find the friendship
+                var friendship = await _context.Friendships
+                    .Where(f => (f.User1Id == friendId && f.User2Id == userId && f.Status == "Pending"))
+                    .FirstOrDefaultAsync();
+
+                if (friendship == null)
+                    return NotFound("Friend request not found or already accepted/declined.");
+
+                // Update friendship status to Accepted
+                friendship.Status = "Accepted";
+
+                // Save changes
+                await _context.SaveChangesAsync();
+
+                return Ok("Friend request accepted successfully.");
             }
-
-            friendship.Status = "Accepted";
-            await _context.SaveChangesAsync();
-
-            _logger.LogInformation("Friend request between {FriendId} and {UserId} accepted successfully.", friendId, userId);
-            return Ok("Friend request accepted successfully.");
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }

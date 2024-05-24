@@ -182,7 +182,7 @@ namespace Server.API.Migrations
                             User1Id = "59fbd0c8-0e0b-4cba-980e-f196b905a249",
                             User2Id = "3de1a4b2-2b03-4b9d-b04d-d02cbef1f447",
                             Status = "Accepted",
-                            date = new DateTime(2024, 4, 26, 10, 16, 58, 566, DateTimeKind.Utc).AddTicks(263)
+                            date = new DateTime(2024, 5, 14, 12, 2, 9, 922, DateTimeKind.Utc).AddTicks(609)
                         });
                 });
 
@@ -326,15 +326,15 @@ namespace Server.API.Migrations
                         {
                             Id = "59fbd0c8-0e0b-4cba-980e-f196b905a249",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "08ac1e46-a7db-40c2-9bc7-dedc1fd14a06",
+                            ConcurrencyStamp = "85fd46c5-5ade-4803-9850-e5801c871ae2",
                             Email = "frank@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "FRANK@GMAIL.COM",
                             NormalizedUserName = "FRANK",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBByMrXjw9e+ZnlFjTvYClJGsv6iQ9PMRouyTAFNpp3ySjq1GfEInrBfY2ywsJalCg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEA5Bb6crWafDFmOrCSQ9PntnjwgiOwMi7aFH5g/wudDqgiad3KuZZWORu2xkQvvBSQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "cd3557ae-e910-4839-a53d-f37f23236538",
+                            SecurityStamp = "ce9e7136-1596-4fe3-8ac0-5cdfc265448d",
                             TwoFactorEnabled = false,
                             UserName = "Frank",
                             coins = 0
@@ -343,15 +343,15 @@ namespace Server.API.Migrations
                         {
                             Id = "3de1a4b2-2b03-4b9d-b04d-d02cbef1f447",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8b2240d6-f153-4a0a-bbd5-c5a6d04ce544",
+                            ConcurrencyStamp = "7edb2ebb-443d-4fbb-9de7-59cc8f3089ea",
                             Email = "Peter@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "PETER@GMAIL.COM",
                             NormalizedUserName = "PETER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPaeehFkm0hZUFNwQ6elb0fEfIh9HQHMnmP+7FwPzrCJBCkXuhDzbqTgAt4cQGyeiQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKmZIcAphhTsDivIMCq/FOpXFZww9Ck/gX50oUsBAMchyVCMz8J18ZlmX/J1x0rAHg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "54e412be-48d7-470c-8191-60beaab39064",
+                            SecurityStamp = "c7b25cc2-954b-45de-9422-5a8cc51438db",
                             TwoFactorEnabled = false,
                             UserName = "Peter",
                             coins = 0
@@ -360,15 +360,15 @@ namespace Server.API.Migrations
                         {
                             Id = "1c7e97d3-a982-4a1b-8d8e-b6b9d7e32c0f",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "751daeb4-9aea-469f-9773-51b6b8fa8b48",
+                            ConcurrencyStamp = "c430b9d2-7a91-4887-8a3b-e1448e6bcebd",
                             Email = "Hans@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "HANS@GMAIL.COM",
                             NormalizedUserName = "HANS",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHllCw9HY8axsfKyjdWs0r1s3V+xgD/k3ApSqSFeFwCM0O640+hjRaJNlMkLK+Zcrw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFT73J2kr5n6yrCgXEP0G/gjh5jtNm59uEBfKPwkyZD7+y0U3gRSaM94Tnr/st41qQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0c51f13e-ca3d-4a95-8ab9-3ba7b1ab8338",
+                            SecurityStamp = "b8655213-23f1-4d11-adf4-a54d8defe422",
                             TwoFactorEnabled = false,
                             UserName = "Hans",
                             coins = 0
@@ -493,7 +493,7 @@ namespace Server.API.Migrations
                     b.HasOne("Server.API.Models.User", "User2")
                         .WithMany("Invitees")
                         .HasForeignKey("User2Id")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User1");

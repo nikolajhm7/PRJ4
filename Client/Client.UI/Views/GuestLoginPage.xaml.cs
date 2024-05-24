@@ -14,4 +14,15 @@ public partial class GuestLoginPage : ContentPage
             BindingContext = viewModel;
         }
     }
+
+    private void OnGuestNameComplete(object sender, EventArgs e)
+    {
+        if (BindingContext is GuestLoginViewModel viewModel)
+        {
+            if (viewModel.MakeNewUserCommand.CanExecute(null))
+            {
+                viewModel.MakeNewUserCommand.Execute(null);
+            }
+        }
+    }
 }

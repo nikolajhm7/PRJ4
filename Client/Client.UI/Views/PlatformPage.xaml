@@ -7,7 +7,6 @@
              x:Class="Client.UI.Views.PlatformPage"
             >
     <Grid
-        Padding="50,0"
         RowDefinitions="*,*,*,*,10"
         ColumnDefinitions="*,2*,2*,*"
         ColumnSpacing="10"
@@ -15,11 +14,11 @@
 
         <Label 
             Text="{Binding Username}"
-            Style="{StaticResource SubHeadline}"
+            Style="{StaticResource Headline}"
             Grid.Row="0"
             Grid.Column="1"
-            Grid.ColumnSpan="1"
-            HorizontalOptions="Fill"
+            Grid.ColumnSpan="2"
+            HorizontalOptions="Center"
             VerticalOptions="Center"
         />
 
@@ -32,10 +31,10 @@
             />
 
         <Button
-            Text="Log ud"
+            Text="Log out"
             Style="{StaticResource normalBtn}"
             Command="{Binding LogOutCommand}"
-            Grid.Row="3"
+            Grid.Row="1"
             Grid.Column="3"
             BackgroundColor="Bisque"
         />
@@ -43,9 +42,14 @@
         <Button
             Text="Host"
             Grid.Row="1"
+            Grid.RowSpan="2"
             Style="{StaticResource normalBtn}"
-            Grid.Column="3"
+            Grid.Column="1"
             BackgroundColor="Bisque"
+            HorizontalOptions="End"
+            MaximumWidthRequest="300"
+            MinimumWidthRequest="250"
+            MinimumHeightRequest="100"
             Command="{Binding ChangeViewCommand}"
             IsVisible="{Binding Showhost}"/>
 
@@ -53,17 +57,34 @@
         <Button
             Text="Join"
             Style="{StaticResource normalBtn}"
-            Grid.Row="2"
-            Grid.Column="3"
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            Grid.Column="2"
+            HorizontalOptions="Start"
+            MaximumWidthRequest="300"
+            MinimumWidthRequest="250"
+            MinimumHeightRequest="100"
             Command="{Binding GoToJoinCommand}"
             IsVisible="{Binding Showhost}"
         />
+        <Button
+            Text="Shop"
+            Style="{StaticResource normalBtn}"
+            Grid.Row="3"
+            Grid.Column="3"
+            Command="{Binding GoToShopCommand}"
+            IsVisible="{Binding Showhost }"
+            />
+        
+
         <Button
             Text="Back"
             Style="{StaticResource normalBtn}"
             Grid.Row="3"
             Grid.Column="1"
             Grid.ColumnSpan="2"
+            MaximumWidthRequest="800"
+            MinimumWidthRequest="400"
             BackgroundColor="Bisque"
             IsVisible="{Binding GamesShowing}"
             Command="{Binding ChangeViewCommand}"/>
@@ -74,10 +95,13 @@
                 Grid.Column="1"
                 Grid.RowSpan="2"
                 Grid.ColumnSpan="2"
+                BackgroundColor="#6482b4cc"
             x:Name="GameCollectionView"
             ItemsSource="{Binding Games}" 
             EmptyView="No Games"
             VerticalOptions="FillAndExpand"
+            MaximumWidthRequest="800"
+            MinimumWidthRequest="400"
             IsVisible="{Binding GamesShowing}">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical" Span="3" />
@@ -101,6 +125,9 @@
         </CollectionView>
 
         <views:FriendsView Grid.Column="0" Grid.Row="0" Grid.RowSpan="5"
+                           Grid.ColumnSpan="2"
+                           WidthRequest="300"
+                           HorizontalOptions="Start"
                            CanInvite="False"/>
 
     </Grid>

@@ -24,7 +24,7 @@ namespace Client.Library.Services
             // Loop until the current location matches the target page or the root page
             while (Shell.Current.CurrentState.Location.OriginalString != AuthenticatedPagePath
                    && Shell.Current.CurrentState.Location.OriginalString != LoggedInPagePath
-                   && Shell.Current.CurrentState.Location.OriginalString != "//")
+                   && Shell.Current.CurrentState.Location.OriginalString != "//Loading")
             {
                 await Shell.Current.GoToAsync("..");
 
