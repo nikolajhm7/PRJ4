@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NSubstitute.ExceptionExtensions;
+using System.Security.Cryptography;
 
 namespace Client.Test;
 public class ApiServiceTests
@@ -218,6 +219,88 @@ public class ApiServiceTests
         Assert.That(result["name"].ToString(), Is.EqualTo("test"));
     }
 
+    [Test]
+    
+    public async Task MakeApiCall_HttpPost_AddGame_ToUSerProfile()
+    {
+        // Sæt mock data for tokens
+        _preferenceManager.ContainsKey("auth_token").Returns(true);
+        _preferenceManager.Get("auth_token", "").Returns("valid_auth_token");
+        _preferenceManager.ContainsKey("refresh_token").Returns(true);
+        _preferenceManager.Get("refresh_token", "").Returns("valid_refresh_token");
+
+        // Opsæt en forventet respons
+        var expectedResponse = new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent("{\"Game\":\"test\"}", Encoding.UTF8, "application/json")
+        };
+        _handler.SetFakeResponse(expectedResponse);
+
+        // Udfør API kald
+        var response = await _apiService.MakeApiCall("/test", HttpMethod.Post);
+
+        // Hent JSON objekt fra respons
+        var result = _apiService.GetJsonObjectFromResponse(response);
+
+        // Kontroller at objektet blev sat korrekt
+        Assert.That(result["Game"].ToString() , Is.EqualTo("test"));
+    }
+
+    [Test]
+
+    public async Task MakeApiCall_HttpPost_CancelAddGame_ToUserProfile()
+    {
+        // Sæt mock data for tokens
+        _preferenceManager.ContainsKey("auth_token").Returns(true);
+        _preferenceManager.Get("auth_token", "").Returns("valid_auth_token");
+        _preferenceManager.ContainsKey("refresh_token").Returns(true);
+        _preferenceManager.Get("refresh_token", "").Returns("valid_refresh_token");
+
+        // Opsætter et fejlrespons
+        var expectedResponse = new HttpResponseMessage(HttpStatusCode.BadRequest)
+        {
+            Content = new StringContent("{\"Game purchase has been cancelled\":\"test\"}", Encoding.UTF8, "application/json")
+        };
+
+        _handler.SetFakeResponse(expectedResponse);
+
+
+        // Udfør API kald
+        var response = await _apiService.MakeApiCall("/test", HttpMethod.Post);
+
+        // Check for cancel
+        
+
+        // Hent JSON objekt fra respons
+        var result = _apiService.GetJsonObjectFromResponse(response);
+
+    }
+
+    [Test]
+
+    public async Task MakeApiCall_HttpPost_CheckUserHasGame()
+    {
+        // Sæt mock data for tokens
+        _preferenceManager.ContainsKey("auth_token").Returns(true);
+        _preferenceManager.Get("auth_token", "").Returns("valid_auth_token");
+        _preferenceManager.ContainsKey("refresh_token").Returns(true);
+        _preferenceManager.Get("refresh_token", "").Returns("valid_refresh_token");
+
+        // Opsætter et fejlrespons
+        var expectedResponse = new HttpResponseMessage(HttpStatusCode.BadRequest)
+        {
+            Content = new StringContent("{\"Game purchase has been cancelled\":\"test\"}", Encoding.UTF8, "application/json")
+        };
+
+        _handler.SetFakeResponse(expectedResponse);
+
+        // Udfør API kald
+        var response = await _apiService.MakeApiCall("/test", HttpMethod.Post);
+
+        // Hent JSON objekt fra respons
+        var result = _apiService.GetJsonObjectFromResponse(response);
+
+    }
 
     
     [TearDown]
