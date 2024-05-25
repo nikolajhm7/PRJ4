@@ -6,17 +6,17 @@ using System.ComponentModel.DataAnnotations;
 
 public class RegisterDto
 {
-    [Required(ErrorMessage = "Brugernavn er påkrævet.")]
-    [StringLength(256, ErrorMessage = "Brugernavnet må ikke være længere end 256 tegn.")]
-    [RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Brugernavnet må kun indeholde bogstaver og tal.")]
+    [Required(ErrorMessage = "Username is required.")]
+    [StringLength(256, ErrorMessage = "Username cannot be longer than 256 characters.")]
+    [RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Username can only contain letters and numbers.")]
     public string? UserName { get; set; }
 
-    [Required(ErrorMessage = "E-mail er påkrævet.")]
-    [EmailAddress(ErrorMessage = "Ugyldig e-mail adresse.")]
+    [Required(ErrorMessage = "Email is required.")]
+    [EmailAddress(ErrorMessage = "Email is not valid.")]
     public string? Email { get; set; }
 
-    [Required(ErrorMessage = "Adgangskode er påkrævet.")]
-    [MinLength(8, ErrorMessage = "Adgangskoden skal være mindst 8 tegn lang.")]
+    [Required(ErrorMessage = "Password is required.")]
+    [MinLength(8, ErrorMessage = "Password must be at least 8 characters long.")]
     [PasswordRequirements]
     public string? Password { get; set; }
 }
@@ -37,14 +37,17 @@ public class PasswordRequirementsAttribute : ValidationAttribute
         {
             errors.Add("Password must contain at least one digit.");
         }
+        
         if (!password.Any(char.IsLower))
         {
             errors.Add("Password must contain at least one lowercase letter.");
         }
+        
         if (!password.Any(char.IsUpper))
         {
             errors.Add("Password must contain at least one uppercase letter.");
         }
+        
         /*if (!password.Any(ch => !char.IsLetterOrDigit(ch)))
         {
             errors.Add("Password must contain at least one non-alphanumeric character.");

@@ -139,7 +139,7 @@ namespace Client.UI
             }
 
             var logsDirectory = Path.Combine(FileSystem.AppDataDirectory, "Logs");
-            var logFiles = Directory.GetFiles(logsDirectory, "*.txt"); // Antager at logs er i .txt filer
+            var logFiles = Directory.GetFiles(logsDirectory, "*.txt");
             foreach (var logFile in logFiles)
             {
 
@@ -156,7 +156,6 @@ namespace Client.UI
                 }
                 catch (Exception ex)
                 {
-                    // Log fejlen
                     Log.Error(ex, "Fejl under upload af logfil. Fil: {logFile}", logFile);
                 }
             }
