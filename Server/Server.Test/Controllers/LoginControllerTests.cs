@@ -10,6 +10,8 @@ using Server.API.DTO;
 using Server.API.Models;
 using Server.API.Repository.Interfaces;
 using Server.API.Controllers;
+using Server.API.Services.Interfaces;
+using Microsoft.Extensions.Primitives;
 
 namespace Server.Test;
 
@@ -180,7 +182,31 @@ public class LoginControllerTests : TestBase
         var objectResult = result as ObjectResult;
         Assert.That(objectResult.StatusCode, Is.Not.EqualTo(StatusCodes.Status429TooManyRequests));
     }
-    
+
+    [Test]
+    public void CheckLoginToken_ReturnsOk()
+    {
+        // Act
+        var result = _controller.CheckLoginToken();
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<OkObjectResult>());
+        var okResult = result as OkObjectResult;
+        Assert.That(okResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+    }
+
+    [Test]
+    public void CheckGuestToken_ReturnsOk()
+    {
+        // Act
+        var result = _controller.CheckGuestToken();
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<OkObjectResult>());
+        var okResult = result as OkObjectResult;
+        Assert.That(okResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+    }
+
     [TearDown]
     public void TearDown()
     {
