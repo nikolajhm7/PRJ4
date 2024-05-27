@@ -7,7 +7,7 @@ using Client.Library.DTO;
 using Client.Library.Services;
 using Client.Library.Services.Interfaces;
 using Client.UI.Views;
-using Client.Library.Constants;
+using Client.UI.Constants;
 using Client.UI.Games;
 using Client.UI.ViewModels.Manager;
 using Client.Library.Games;
@@ -158,7 +158,9 @@ namespace Client.UI.ViewModels
 
         private async void GoToGameAsync()
         {
-            await _navigationService.NavigateToPage($"{nameof(HangmanPage)}?LobbyId={LobbyId}");
+            if (GameInfMapper.GameInfoDictionary.TryGetValue(gameId, out GameInfo? _gameInfo)) {
+                await _navigationService.NavigateToPage($"{_gameInfo.Route}?LobbyId={LobbyId}");
+            }
         }
 
         private void OnLobbyClosed()
@@ -226,7 +228,11 @@ namespace Client.UI.ViewModels
                 }
                 gameStarted = true;
             }
-            await _navigationService.NavigateToPage($"{nameof(HangmanPage)}?LobbyId={LobbyId}");
+
+            if (GameInfMapper.GameInfoDictionary.TryGetValue(gameId, out GameInfo? _gameInfo))
+            {
+                await _navigationService.NavigateToPage($"{_gameInfo.Route}?LobbyId={LobbyId}");
+            }
         }
 
 

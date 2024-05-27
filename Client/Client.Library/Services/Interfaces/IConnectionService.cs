@@ -12,6 +12,7 @@ namespace Client.Library.Services
     {
         Task ConnectAsync();
         Task DisconnectAsync();
+        Task<ActionResult> InvokeAsync(string methodName);
         Task<ActionResult> InvokeAsync(string methodName, object? arg1);
         Task<ActionResult> InvokeAsync(string methodName, object? arg1, object? arg2);
         Task<ActionResult> InvokeAsync(string methodName, object? arg1, object? arg2, object? arg3);
