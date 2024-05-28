@@ -1,1 +1,2 @@
-CREATE DATABASE PartyPlayPalaceDB
+CREATE DATABASE PartyPlayPalaceDB;
+GO

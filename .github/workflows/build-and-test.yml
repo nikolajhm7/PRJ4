@@ -196,6 +196,10 @@ jobs:
           - ./init-database.sql:/docker-entrypoint-initdb.d/init-database.sql
         ports:
           - 1433:1433
+        healthcheck:
+          test: ["CMD-SHELL", "sqlcmd -S localhost -U SA -P abc123AB -Q 'SELECT 1'"]
+          interval: 10s
+          retries: 4
     
     steps:
       - name: Checkout repository
@@ -211,10 +215,20 @@ jobs:
 
       - name: Install EF Tools
         run: dotnet tool install --global dotnet-ef
+      
+      - name: Wait for SQL Server to be ready
+        run: |
+          for i in {1..4}; do
+            if sqlcmd -S localhost -U SA -P abc123AB -Q "SELECT name FROM sys.databases WHERE name = 'PartyPlayPalaceDB'" | grep "PartyPlayPalaceDB"; then
+              echo "Database is ready"
+              break
+            fi
+            echo "Waiting for database to be ready..."
+            sleep 10
+          done
 
       - name: Run Postman Tests
         run: |
-          sleep 20
           cd Server/Server.API
           dotnet ef database update
           sleep 60
