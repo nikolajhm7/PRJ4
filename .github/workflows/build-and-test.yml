@@ -244,9 +244,11 @@ jobs:
           cd Server/Server.API
           dotnet ef database update
 
-      - name: Run Postman Tests
+      - name: Run Server
         run: |
           cd Server/Server.API
           nohup dotnet run &
-          sleep 60
+
+      - name: Run Postman Tests
+        run: |
           docker run -v ${{ github.workspace }}:/etc/newman -t postman/newman run /etc/newman/.github/workflows/prj4_PartyPlayPalace.postman_collection.json
