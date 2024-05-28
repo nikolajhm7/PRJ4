@@ -30,22 +30,22 @@ public class LogsController : ControllerBase
 
             switch (logEntry.Level.ToLower())
             {
-                case "dbg": // Antager "DBG" for "debug", tilpas som nødvendigt
+                case "dbg":
                 case "debug":
                     _logger.LogDebug(logMessage);
                     break;
-                case "inf": // Brug "INF" for "info"
+                case "inf":
                 case "info":
                     _logger.LogInformation(logMessage);
                     break;
-                case "warn": // "WARN" synes at være ens
+                case "warn":
                     _logger.LogWarning(logMessage);
                     break;
-                case "err": // Antager "ERR" for "error", tilpas som nødvendigt
+                case "err":
                 case "error":
                     _logger.LogError(logMessage);
                     break;
-                case "crit": // Antager "CRIT" for "critical", tilpas som nødvendigt
+                case "crit":
                 case "critical":
                     _logger.LogCritical(logMessage);
                     break;

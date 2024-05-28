@@ -48,9 +48,10 @@ public class TokenRepositoryTests : TestBase
         string username = "testUser";
         var tokens = new List<RefreshToken>
         {
-            new RefreshToken { Token = "oldToken", Created = DateTime.UtcNow.AddDays(-10) },
-            new RefreshToken { Token = "newToken", Created = DateTime.UtcNow }
+            new RefreshToken { Id = 1, Token = "oldToken", Created = DateTime.UtcNow.AddDays(-10) },
+            new RefreshToken { Id = 2, Token = "newToken", Created = DateTime.UtcNow }
         };
+        //var oldId = tokens[0].Id;
 
         Context.Users.Add(new User { Id = "1", UserName = username, RefreshTokens = tokens });
         Context.SaveChanges();

@@ -383,6 +383,35 @@ namespace Server.Test.Services
             Assert.That(result.Msg, Is.EqualTo("Could not find lobby"));
             Assert.That(result.Value, Is.EqualTo(0));
         }
-    }
 
+        [Test]
+        public void GetLobbyMaxPlayers_LobbyExists_ReturnsMaxPlayers()
+        {
+            // Arrange
+            var lobbyId = "123";
+            int maxPlayers = 10;
+            var lobby = new Lobby(lobbyId, "host", 1, maxPlayers);
+            _uut.lobbies.Add(lobbyId, lobby);
+
+            // Act
+            var result = _uut.GetLobbyMaxPlayers(lobbyId);
+
+            // Assert
+            Assert.That(result, Is.EqualTo(maxPlayers));
+        }
+
+        [Test]
+        public void GetLobbyMaxPlayers_LobbyDoesNotExist_ReturnsZero()
+        {
+            // Arrange
+            var lobbyId = "123";
+
+            // Act
+            var result = _uut.GetLobbyMaxPlayers(lobbyId);
+
+            // Assert
+            Assert.That(result, Is.EqualTo(0));
+        }
+
+    }
 }
