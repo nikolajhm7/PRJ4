@@ -197,5 +197,5 @@ jobs:
         run: |
           cd Server/Server.API
           nohup dotnet run &
-          sleep 20
+          sleep 60
           docker run -v ${{ github.workspace }}:/etc/newman -t postman/newman run /etc/newman/.github/workflows/prj4_PartyPlayPalace.postman_collection.json
