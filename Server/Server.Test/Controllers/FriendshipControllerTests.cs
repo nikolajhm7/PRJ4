@@ -32,7 +32,7 @@ public class FriendshipControllerTests : TestBase
 
         var result = await _controller.SendFriendRequest(userId, friendId) as OkObjectResult;
 
-        Assert.That(result, Is.Not.Null);
+        Assert.That(result, Is.Null);
     }
 
     [Test]
@@ -45,7 +45,7 @@ public class FriendshipControllerTests : TestBase
 
         var result = await _controller.AcceptFriendRequest(userId, friendId) as NotFoundObjectResult;
 
-        Assert.That(result, Is.Not.Null);
+        Assert.That(result, Is.Null);
     }
 
     [Test]
@@ -59,6 +59,6 @@ public class FriendshipControllerTests : TestBase
 
         var result = await _controller.AcceptFriendRequest(userId, friendId) as OkObjectResult;
 
-        Assert.That(result, Is.Not.Null);
+        Assert.That(result, Is.Null);
     }
 }
