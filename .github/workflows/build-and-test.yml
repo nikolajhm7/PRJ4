@@ -64,12 +64,3 @@ jobs:
         with:
           name: coverage-report-unittest
           path: Server/coverage/CoverageReport/
-          
-  run-postman-tests:
-    needs: test-server
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Run Postman Tests
-        run: |
-          docker run -t postman/newman run "https://api.getpostman.com/collections/34736257-32fbee38-5ef4-4341-9ee4-423dd14a99e1?apikey=PMAK-6655c248abea2d0001c65de5-4d1c255d515776d9864b2b3a04f7359dbd"
