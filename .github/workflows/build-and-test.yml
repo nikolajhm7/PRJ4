@@ -214,6 +214,7 @@ jobs:
 
       - name: Run Postman Tests
         run: |
+          sleep 20
           cd Server/Server.API
           dotnet ef database update
           sleep 60
