@@ -228,7 +228,7 @@ jobs:
           sqlcmd -S localhost -U SA -P abc123AB -Q "CREATE DATABASE PartyPlayPalaceDB"
           echo "Database PartyPlayPalaceDB created"
       
-            - name: Ensure PartyPlayPalaceDB is created
+      - name: Ensure PartyPlayPalaceDB is created
         run: |
           for i in {1..4}; do
             if sqlcmd -S localhost -U SA -P abc123AB -Q "SELECT name FROM sys.databases WHERE name = 'PartyPlayPalaceDB'" | grep "PartyPlayPalaceDB"; then
