@@ -185,7 +185,7 @@ jobs:
           path: Server/coverage/CoverageReport/
           
   run-postman-tests:
-    # needs: test-server
+    needs: buildServer
     runs-on: ubuntu-latest
 
     steps:
