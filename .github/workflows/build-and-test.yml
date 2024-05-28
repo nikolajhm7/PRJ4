@@ -186,6 +186,19 @@ jobs:
     needs: buildServer
     runs-on: ubuntu-latest
 
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        env:
+          SA_PASSWORD: "abc123AB"
+          ACCEPT_EULA: "Y"
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "sqlcmd -S localhost -U SA -P abc123AB -Q 'SELECT 1'" 
+          --health-interval 10s 
+          --health-retries 10
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -196,6 +209,8 @@ jobs:
       - name: Run Postman Tests
         run: |
           cd Server/Server.API
+          dotnet ef database update
+          sleep 60
           nohup dotnet run &
           sleep 60
-          docker run -v ${{ github.workspace }}:/etc/newman -t postman/newman run /etc/newman/.github/workflows/prj4_PartyPlayPalace.postman_collection.json
+          newman run .github/workflows/prj4_PartyPlayPalace.postman_collection.json
