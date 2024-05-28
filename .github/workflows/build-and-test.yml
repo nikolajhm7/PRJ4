@@ -239,11 +239,13 @@ jobs:
             sleep 10
           done
 
-      - name: Run Postman Tests
+      - name: Update Database
         run: |
           cd Server/Server.API
           dotnet ef database update
-          sleep 60
+
+      - name: Run Postman Tests
+        run: |
           nohup dotnet run &
           sleep 60
-          newman run .github/workflows/prj4_PartyPlayPalace.postman_collection.json
+          docker run -v ${{ github.workspace }}:/etc/newman -t postman/newman run /etc/newman/.github/workflows/prj4_PartyPlayPalace.postman_collection.json
