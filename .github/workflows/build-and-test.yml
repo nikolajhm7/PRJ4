@@ -195,6 +195,12 @@ jobs:
       - name: Download Newman Docker image
         run: docker pull postman/newman
 
+      - name: Start Server
+        run: |
+          cd Server/Server.API
+          nohup dotnet run &
+
       - name: Run Postman Tests
         run: |
+          sleep 10
           docker run -v ${{ github.workspace }}:/etc/newman -t postman/newman run /etc/newman/.github/workflows/prj4_PartyPlayPalace.postman_collection.json
