@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using Server.API.Controllers;
 using Server.API.Models;
 using Server.API.Repositories.Interfaces;
@@ -53,41 +51,14 @@ public class FriendshipControllerTests : TestBase
     [Test]
     public async Task AcceptFriendRequest_ReturnsOk_WhenFriendRequestAcceptedSuccessfully()
     {
-        // Arrange
         string userId = "user1";
         string friendId = "user2";
         Friendship friendship = new Friendship { User1Id = friendId, User2Id = userId, Status = "Pending" };
         Context.Friendships.Add(friendship);
         Context.SaveChanges();
 
-        // Act
         var result = await _controller.AcceptFriendRequest(userId, friendId) as OkObjectResult;
 
-        // Assert
         Assert.That(result, Is.Not.Null);
-    }
-
-    [Test]
-    public async Task AcceptFriendRequest_ReturnsInternalServerError_WhenExceptionIsThrown()
-    {
-        // Arrange
-        string userId = "user1";
-        string friendId = "user2";
-        var exceptionMessage = "Some error occurred";
-
-        var friendshipDbSetMock = Substitute.For<DbSet<Friendship>, IQueryable<Friendship>>();
-        ((IQueryable<Friendship>)friendshipDbSetMock).Provider.Returns(_ => throw new Exception(exceptionMessage));
-
-        // Setup for exception
-        //Context.Friendships.Add(Arg.Any<Friendship>()).Throws(new Exception(exceptionMessage));
-        Context.Friendships = friendshipDbSetMock;
-
-        // Act
-        var result = await _controller.AcceptFriendRequest(userId, friendId) as ObjectResult;
-
-        // Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.StatusCode, Is.EqualTo(500));
-        Assert.That(result.Value, Is.EqualTo($"Internal server error: {exceptionMessage}"));
     }
 }

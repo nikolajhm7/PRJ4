@@ -75,14 +75,24 @@ namespace Server.API.Games
             }
         }
 
+        //public async Task<ActionResult> StartGame(string lobbyId)
+        //{
+        //    if (_logicManager.LobbyExists(lobbyId))
+        //    {
+        //        return new(false, "Game lobby already exists, and started.");
+        //    }
+
+        //    var logic = new HangmanLogic(_randomPicker);
+        //    _logicManager.Add(lobbyId, logic);
+
+        //    var wordLength = logic.StartGame();
+        //    await Clients.Group(lobbyId).SendAsync("GameStarted", wordLength);
+        //    return new(true, null);
+        //}
+
         public async Task<ActionResult> GuessLetter(string lobbyId, char letter)
         {
             var currentUser = Context.User?.Identity?.Name;
-            if (currentUser == null)
-            {
-                return new ActionResult(false, "User is not authenticated.");
-            }
-
             if (_logicManager.TryGetValue(lobbyId, out var logic))
             {
                 List<int> positions;
@@ -207,7 +217,7 @@ namespace Server.API.Games
             if (_logicManager.TryGetValue(lobbyId, out var logic))
             {
                 var users = _lobbyManager.GetUsersInLobby(lobbyId);
-                Queue<string> userOrder = new Queue<string>();
+                Queue<string> userOrder = [];
                 foreach (var user in users)
                 {
                     if (!userOrder.Contains(user.Username))
@@ -239,16 +249,14 @@ namespace Server.API.Games
             }
             if (_logicManager.TryGetValue(lobbyId, out var logic))
             {
-                //var frontPlayer = logic.GetQueue().Peek();
-                var userQueue = logic.GetQueue();
-                if (userQueue == null || userQueue.Count == 0)
+                var frontPlayer = logic.GetQueue().Peek();
+                if (frontPlayer == null)
                 {
                     //await InitQueueForGame(lobbyId);
                     return new(false, "There is no queue for the game", null);
                 }
                 else
                 {
-                    var frontPlayer = userQueue.Peek();
                     _logger.LogInformation("{UserName} successfully got user queue in game {LobbyId}.", Context.User?.Identity?.Name, lobbyId);
                     return new(true, null, frontPlayer);
                 }
@@ -332,5 +340,19 @@ namespace Server.API.Games
                 return new ActionResult(false, "Lobby does not exist.");
             }
         }
+
+        //public async Task<ActionResult<List<char>>> GetGuessedChars(string lobbyId)
+        //{
+        //    if (_logicManager.TryGetValue(lobbyId, out var logic))
+        //    {
+        //        var guessedLetters = logic.GetGuessedLetters();
+        //        return new(true, null, guessedLetters);
+        //    }
+        //    else
+        //    {
+        //        return new(false, "Lobby does not exist", []);
+        //    }
+
+        //}
     }
 }

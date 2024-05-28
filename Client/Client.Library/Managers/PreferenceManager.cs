@@ -13,4 +13,3 @@ public class PreferenceManager : IPreferenceManager
     public void Remove(string key) => Preferences.Remove(key);
     public void Clear(string sharedName) => Preferences.Clear(sharedName);
 }
-

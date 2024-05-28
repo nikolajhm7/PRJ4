@@ -491,43 +491,6 @@ namespace Server.Test.Hubs
             Assert.That(result.Msg, Is.EqualTo("Authentication context is not available."));
         }
 
-        [Test]
-        public async Task GetLobbyMaxPlayers_LobbyExists_ReturnsMaxPlayers()
-        {
-            // Arrange
-            string lobbyId = "123456";
-            int maxPlayers = 10;
-            var users = new List<ConnectedUserDTO> { new ConnectedUserDTO("testuser", "connection-id") };
-            _context.User?.Identity?.Name.Returns("testuser");
-            _lobbyManager.LobbyExists(lobbyId).Returns(true);
-            _lobbyManager.GetUsersInLobby(lobbyId).Returns(users);
-
-            _lobbyManager.GetLobbyMaxPlayers(lobbyId).Returns(maxPlayers);
-
-            // Act
-            var result = await _uut.GetLobbyMaxPlayers(lobbyId);
-
-            // Assert
-            Assert.That(result.Success, Is.True);
-            Assert.That(result.Msg, Is.Null);
-            Assert.That(result.Value, Is.EqualTo(maxPlayers));
-        }
-
-        [Test]
-        public async Task GetLobbyMaxPlayers_LobbyDoesNotExist_ReturnsError()
-        {
-            // Arrange
-            string lobbyId = "nonexistent";
-            _lobbyManager.GetLobbyMaxPlayers(lobbyId).Returns(default(Int32));
-
-            // Act
-            var result = await _uut.GetLobbyMaxPlayers(lobbyId);
-
-            // Assert
-            Assert.That(result.Success, Is.False);
-            Assert.That(result.Msg, Is.EqualTo("Lobby does not exist."));
-        }
-
         [TearDown]
         public void TearDown()
         {

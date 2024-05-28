@@ -49,6 +49,7 @@ public class JwtTokenService : IJwtTokenService
         {
             new Claim(ClaimTypes.Name, userName),
             new Claim(ClaimTypes.Role, isGuest ? "Guest" : "User")
+            // Tilføj yderligere claims her efter behov
         };
 
         var token = new JwtSecurityToken(

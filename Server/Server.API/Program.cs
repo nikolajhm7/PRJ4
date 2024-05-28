@@ -87,6 +87,7 @@ builder.Services.AddSignalR();
 //logging
 builder.Host.UseSerilog((ctx, lc) =>
 {
+    // Aktiver kun Serilog i bestemte miljøer
     if (ctx.HostingEnvironment.IsDevelopment() || ctx.HostingEnvironment.IsProduction())
     {
         lc.ReadFrom.Configuration(ctx.Configuration);
@@ -95,7 +96,7 @@ builder.Host.UseSerilog((ctx, lc) =>
             connectionString: ctx.Configuration.GetConnectionString("DefaultConnection"),
             sinkOptions: new MSSqlServerSinkOptions { TableName = "LogEvents", AutoCreateSqlTable = true }
         );
-        lc.WriteTo.Seq("http://localhost:5341");
+        lc.WriteTo.Seq("http://localhost:5341"); // Erstat med den faktiske adresse til din Seq server
         lc.Enrich.WithMachineName();
         lc.Enrich.WithThreadId();
     }
@@ -186,11 +187,11 @@ void addJWTAuthentication(WebApplicationBuilder builder)
     builder.Services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme =
-            options.DefaultChallengeScheme =
-            options.DefaultForbidScheme =
-            options.DefaultScheme =
-            options.DefaultSignInScheme =
-            options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme =
+                    options.DefaultForbidScheme =
+                        options.DefaultScheme =
+                            options.DefaultSignInScheme =
+                                options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
         })
         .AddJwtBearer(options =>
         {
@@ -236,12 +237,16 @@ void addJWTAuthentication(WebApplicationBuilder builder)
     {
         options.DefaultPolicy = new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
-            .RequireRole("User")
+            .RequireRole("User") // Angiv de roller, som standard autentificerede brugere skal have
             .Build();
 
         options.AddPolicy("Guest+", policy =>
             policy.RequireAssertion(context =>
                 context.User.IsInRole("Guest") || context.User.IsInRole("User")));
+
+        options.AddPolicy("User+", policy =>
+            policy.RequireAssertion(context =>
+                context.User.IsInRole("User")));
     });
 }
 

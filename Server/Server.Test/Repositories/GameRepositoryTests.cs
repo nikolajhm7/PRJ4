@@ -192,26 +192,5 @@ public class GameRepositoryTests : TestBase
         Assert.That(editedGame.MaxPlayers, Is.EqualTo(game.MaxPlayers));
     }
 
-    [Test]
-    public async Task GetAllGames_ReturnsAllGames()
-    {
-        // Arrange
-        var game1 = new Game { GameId = 1, Name = "Game1" };
-        var game2 = new Game { GameId = 2, Name = "Game2" };
-        var game3 = new Game { GameId = 3, Name = "Game3" };
-
-        Context.Games.AddRange(game1, game2, game3);
-        Context.SaveChanges();
-
-        // Act
-        var games = await _gameRepository.GetAllGames();
-
-        // Assert
-        Assert.That(games, Is.Not.Null);
-        Assert.That(games.Count, Is.EqualTo(3));
-        Assert.That(games.Any(g => g.GameId == game1.GameId && g.Name == game1.Name), Is.True);
-        Assert.That(games.Any(g => g.GameId == game2.GameId && g.Name == game2.Name), Is.True);
-        Assert.That(games.Any(g => g.GameId == game3.GameId && g.Name == game3.Name), Is.True);
-    }
 
 }

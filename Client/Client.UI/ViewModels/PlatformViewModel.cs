@@ -9,7 +9,6 @@ using Client.Library.Services.Interfaces;
 using Client.UI.Views;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Client.UI.Constants;
 
 namespace Client.UI.ViewModels
 {
@@ -154,23 +153,15 @@ namespace Client.UI.ViewModels
         {
             if (s != null)
             {
-                if (GameInfMapper.GameInfoDictionary.TryGetValue(s.GameId, out GameInfo? _gameInfo)) {
-                    var response = await _lobbyService.CreateLobbyAsync(s.GameId);
+                var response = await _lobbyService.CreateLobbyAsync(s.GameId);
 
-                    if (_gameInfo.Route == null)
-                    {
-                        await Shell.Current.DisplayAlert("Fejl", "Spillet er ikke implementeret endnu", "OK");
-                        return;
-                    }
-
-                    if (response.Success)
-                    {
-                        await _navigationService.NavigateToPage($"{nameof(LobbyPage)}?LobbyId={response.Msg}");
-                    }
-                    else
-                    {
-                        await Shell.Current.DisplayAlert("Fejl", "Kunne ikke oprette lobby", "OK");
-                    }
+                if (response.Success)
+                {
+                    await _navigationService.NavigateToPage($"{nameof(LobbyPage)}?LobbyId={response.Msg}");
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Fejl", "Kunne ikke oprette lobby", "OK");
                 }
             }
             else
@@ -180,7 +171,7 @@ namespace Client.UI.ViewModels
         }
 
         [RelayCommand]
-        async Task GoToJoin()
+        async Task GoToJoin(string s)
         {
             await _navigationService.NavigateToPage(nameof(JoinPage));
         }
