@@ -202,6 +202,14 @@ jobs:
       - name: Download Newman Docker image
         run: docker pull postman/newman
 
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Install EF Tools
+        run: dotnet tool install --global dotnet-ef
+
       - name: Run Postman Tests
         run: |
           cd Server/Server.API
