@@ -102,4 +102,40 @@ public class GameRepository : IGameRepository
         
         await _context.SaveChangesAsync();
     }
+
+    public async Task DeleteGame(string gamename)
+    {
+        var game = await _context.Games.FirstOrDefaultAsync(g => g.Name == gamename);
+
+        if (game == null)
+        {
+            throw new Exception("Game not found");
+        }
+
+        _context.Games.Remove(game);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteGameForUser(string gamename, string username)
+    {
+        var user = await _userRepository.GetUserByName(username);
+        var game = await _context.Games.FirstOrDefaultAsync(g => g.Name == gamename);
+
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        if (game == null)
+        {
+            throw new Exception("Game not found");
+        }
+
+        var gameuser = await _context.UserGames
+            .Where(u => u.UserId == user.Id && u.GameId == game.GameId)
+            .FirstOrDefaultAsync();
+        _context.UserGames.Remove(gameuser);
+        _context.SaveChanges();
+    }
+
 }
