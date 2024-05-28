@@ -179,69 +179,69 @@ public class IT5_GameControllerJwtTokenServiceGameRepositoryUserRepository : Int
         var addedGame = await Context.Games.FirstOrDefaultAsync(g => g.Name == gameName);
         Assert.That(addedGame, Is.Not.Null);
     }
-    
+
     [Test]
     public async Task EditGame_ReturnsOk()
     {
         // Arrange
         var username = "testUser";
-        
+
         var user = new User
         {
             Id = "1",
             UserName = username
         };
-        
+
         await Context.Users.AddAsync(user);
         await Context.SaveChangesAsync();
-        
+
         var token = JwtTokenService.GenerateToken(username);
         _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-        
+
         var game = new Game
         {
             GameId = 1,
             Name = "testGame",
             MaxPlayers = 4
         };
-        
+
         await Context.Games.AddAsync(game);
         await Context.SaveChangesAsync();
-        
+
         var gameName = "testGame2";
-        
+
         var gameDto = new GameDTO
         {
             Name = gameName,
             MaxPlayers = 6
         };
-        
-        var request = new HttpRequestMessage(HttpMethod.Post, $"/Game/editGame/{game.GameId}")
+
+        var request = new HttpRequestMessage(HttpMethod.Put, $"/Game/editGame/{game.GameId}")
         {
             Content = new StringContent(JsonConvert.SerializeObject(gameDto), Encoding.UTF8, "application/json")
         };
-        
+
         // Act
         var response = await _client!.SendAsync(request);
 
         await Context.Entry(game).ReloadAsync();
-        
+
         // Assert
         response.EnsureSuccessStatusCode();
-        
+
         var editedGame = await Context.Games.FirstOrDefaultAsync(g => g.GameId == game.GameId);
         Assert.That(editedGame, Is.Not.Null);
         Assert.That(editedGame.Name, Is.EqualTo(gameName));
         Assert.That(editedGame.MaxPlayers, Is.EqualTo(6));
     }
-    
+
     [TearDown]
     public void TearDown()
     {
         _client?.Dispose();
         _factory?.Dispose();
     }
-    
+
 }
 
 public class SpecializedWebApplicationFactory : CustomWebApplicationFactory<Program>
