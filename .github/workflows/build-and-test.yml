@@ -192,6 +192,8 @@ jobs:
         env:
           SA_PASSWORD: "abc123AB"
           ACCEPT_EULA: "Y"
+        volumes:
+          - ./init-database.sql:/docker-entrypoint-initdb.d/init-database.sql
         ports:
           - 1433:1433
     
