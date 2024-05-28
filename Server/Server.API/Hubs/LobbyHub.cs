@@ -67,8 +67,6 @@ namespace Server.API.Hubs
 
                 _logger.LogInformation("{UserName} joined lobby {LobbyId}.", Context.User?.Identity?.Name, lobbyId);
 
-                var users = _lobbyManager.GetUsersInLobby(lobbyId);
-
                 return new(true, lobbyId);
             }
             else
@@ -86,8 +84,13 @@ namespace Server.API.Hubs
 
         public async Task<ActionResult<int>> GetLobbyMaxPlayers(string lobbyId)
         {
-            var maxPlayers = _lobbyManager.GetLobbyMaxPlayers(lobbyId);
-            return new(true, null, maxPlayers);
+            if (_lobbyManager.LobbyExists(lobbyId))
+            {
+                var maxPlayers = _lobbyManager.GetLobbyMaxPlayers(lobbyId);
+                return new(true, null, maxPlayers);
+            }
+            return new(false, "Lobby does not exist.", 0);
+
         }
 
         public async Task<ActionResult> UserIsHost(string lobbyId)
