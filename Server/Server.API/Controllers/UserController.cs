@@ -69,37 +69,5 @@ public class UserController : ControllerBase
     
         return Ok(new { message = "User created successfully." });
     }
-
-    [HttpDelete("DeleteUser")]
-    public async Task<IActionResult> DeleteUser([FromBody] string username)
-    {
-        _logger.LogDebug("Starting deletion of user.");
-        try
-        {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogDebug("Model validation failed: {ModelState}", ModelState);
-                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-                return BadRequest(new { errors = errors });
-            }
-
-            var user = await _context.Users
-                .Where(u => u.UserName == username)
-                .FirstOrDefaultAsync();
-
-            if (user == null)
-            {
-                return BadRequest("User not found");
-            }
-
-            _context.Users.Remove(user);
-            _context.SaveChanges();
-            return Ok("User removed successfully");
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
-    }
-
+    
 }

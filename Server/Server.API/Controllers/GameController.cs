@@ -112,7 +112,7 @@ public class GameController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("editGame/{gameId}")]
+    [HttpPost("editGame/{gameId}")]
     public async Task<IActionResult> EditGame([FromRoute] int gameId, [FromBody] GameDTO game)
     {
         _logger.LogDebug("Starting edit of game {GameName}.", game.Name);
@@ -128,39 +128,4 @@ public class GameController : ControllerBase
         
         return Ok();
     }
-
-    [HttpDelete("DeleteGame")]
-    public async Task<IActionResult> DeleteGame([FromBody] string gameName)
-    {
-        _logger.LogDebug("Starting deletion of game.");
-
-        await _gameRepository.DeleteGame(gameName);
-
-        _logger.LogDebug("Game {GameName} removed.", gameName);
-
-
-        return Ok();
-    }
-
-    [HttpDelete("DeleteGameForUser")]
-    public async Task<IActionResult> DeleteGameForUser([FromBody] GameUserDTO gameuser)
-    {
-        _logger.LogDebug("Starting deletion of game.");
-
-        var game = await _gameRepository.GetGameById(gameuser.GameId);
-        if (game == null)
-        {
-            return NotFound("game not found");
-        }
-        
-        
-
-        await _gameRepository.DeleteGameForUser(game.Name, gameuser.UserName);
-
-        _logger.LogDebug("GameUser {GameName} and {username} removed.", game.Name,gameuser.UserName);
-
-
-        return Ok();
-    }
-
 }
