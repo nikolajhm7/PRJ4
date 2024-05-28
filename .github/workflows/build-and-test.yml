@@ -247,7 +247,7 @@ jobs:
       - name: Run Server
         run: |
           cd Server/Server.API
-          nohup dotnet run &
+          nohup dotnet run
 
       - name: Run Postman Tests
         run: |
