@@ -214,12 +214,28 @@ jobs:
       
       - name: Wait for SQL Server to be ready
         run: |
-          for i in {1..4}; do
-            if sqlcmd -S localhost -U SA -P abc123AB -Q "SELECT name FROM sys.databases WHERE name = 'PartyPlayPalaceDB'" | grep "PartyPlayPalaceDB"; then
-              echo "Database is ready"
+          for i in {1..30}; do
+            if sqlcmd -S localhost -U SA -P abc123AB -Q "SELECT 1"; then
+              echo "SQL Server is ready"
               break
             fi
-            echo "Waiting for database to be ready..."
+            echo "Waiting for SQL Server to be ready..."
+            sleep 10
+          done
+
+      - name: Create PartyPlayPalaceDB
+        run: |
+          sqlcmd -S localhost -U SA -P abc123AB -Q "CREATE DATABASE PartyPlayPalaceDB"
+          echo "Database PartyPlayPalaceDB created"
+      
+            - name: Ensure PartyPlayPalaceDB is created
+        run: |
+          for i in {1..4}; do
+            if sqlcmd -S localhost -U SA -P abc123AB -Q "SELECT name FROM sys.databases WHERE name = 'PartyPlayPalaceDB'" | grep "PartyPlayPalaceDB"; then
+              echo "Database PartyPlayPalaceDB is ready"
+              break
+            fi
+            echo "Waiting for PartyPlayPalaceDB to be ready..."
             sleep 10
           done
 
