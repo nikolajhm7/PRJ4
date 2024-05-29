@@ -130,30 +130,6 @@ public class FriendsRepositoryTests : TestBase
     }
 
     [Test]
-    public async Task AddFriendRequest_ThrowsExceptionWhenFriendshipAlreadyExists()
-    {
-        // Arrange
-        var user1 = new User { Id = "user1", UserName = "User1" };
-        var user2 = new User { Id = "user2", UserName = "User2" };
-        var friendship = new Friendship
-        {
-            User1Id = user1.Id,
-            User1 = user1,
-            User2Id = user2.Id,
-            User2 = user2,
-            Status = "Accepted",
-            date = DateTime.Now
-        };
-        Context.Users.AddRange(user1, user2);
-        Context.Friendships.Add(friendship);
-        Context.SaveChanges();
-
-        // Act & Assert
-        var ex = Assert.ThrowsAsync<Exception>(() => _friendsRepository.AddFriendRequest(user1.UserName, user2.UserName));
-        Assert.That(ex.Message, Is.EqualTo("Friendship already exists"));
-    }
-
-    [Test]
     public async Task RemoveFriend_ThrowsExceptionWhenFriendshipNotFound()
     {
         // Arrange

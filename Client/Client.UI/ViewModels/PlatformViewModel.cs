@@ -161,7 +161,7 @@ namespace Client.UI.ViewModels
         }
 
         [RelayCommand]
-        async Task GoToJoin()
+        async Task GoToJoin(string s)
         {
             await _navigationService.NavigateToPage(nameof(JoinPage));
         }

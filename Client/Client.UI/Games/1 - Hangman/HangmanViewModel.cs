@@ -1,9 +1,20 @@
 using Client.Library.Services;
+using Client.UI.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using Client.Library.Games;
+using System.Windows.Input;
+using Microsoft.Maui.Controls;
 using System.Diagnostics;
+using System.Threading;
+using Client.Library.Models;
 using Client.Library.Services.Interfaces;
 
 namespace Client.UI.Games
@@ -260,11 +271,16 @@ namespace Client.UI.Games
             try
             {
                 var response = await _hangmanService.GuessLetter(LobbyId, letter);
+                //if(guessedChars.Contains(char.ToUpper(letter)) ) 
+                //{ 
+                //    await Shell.Current.DisplayAlert("Fejl", $"'{char.ToUpper(letter)}' er allerede gættet på!", "OK"); 
+                //}
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error guessing letter: {ex.Message}");
             }
+
         }
 
         [RelayCommand]

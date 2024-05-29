@@ -11,4 +11,7 @@ public interface IGameRepository
     public Task<Game> GetGameById(int gameId);
     public Task EditGame(Game game);
     public Task<int> GetMaxPlayers(int gameId);
+    public Task DeleteGame(string gamename);
+    public Task DeleteGameForUser(string gamename, string username);
+
 }
