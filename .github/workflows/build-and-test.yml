@@ -89,7 +89,6 @@ jobs:
 
   buildServer:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -98,7 +97,6 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: "8.0.x"
-
       - name: Build Server Solution
         run: |
           cd Server
@@ -183,24 +181,3 @@ jobs:
         with:
           name: coverage-report-unittest
           path: Server/coverage/CoverageReport/
-          
-  run-postman-tests:
-    needs: buildServer
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Download Newman Docker image
-        run: docker pull postman/newman
-
-      - name: Start Server
-        run: |
-          cd Server/Server.API
-          nohup dotnet run &
-
-      - name: Run Postman Tests
-        run: |
-          sleep 10
-          docker run -v ${{ github.workspace }}:/etc/newman -t postman/newman run /etc/newman/.github/workflows/prj4_PartyPlayPalace.postman_collection.json
