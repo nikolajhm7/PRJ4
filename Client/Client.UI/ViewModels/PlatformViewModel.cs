@@ -29,16 +29,6 @@ namespace Client.UI.ViewModels
             set { SetProperty(ref games, value); }
         }
 
-        [ObservableProperty]
-        private string _addFriendText;
-        
-        private ObservableCollection<FriendDTO> friendsCollection = [];
-        public ObservableCollection<FriendDTO> FriendsCollection
-        {
-            get { return friendsCollection; }
-            set { SetProperty(ref friendsCollection, value); }
-        }
-
         #endregion
 
         #region Interfaces
